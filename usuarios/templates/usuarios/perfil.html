@@ -1,0 +1,104 @@
+{% extends 'usuarios/base.html' %}
+
+{% block title %}Meu Perfil{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Meu Perfil</h1>
+    <p class="page-subtitle">Gerencie suas informações pessoais</p>
+</div>
+
+<div class="perfil-content">
+    <div class="perfil-card">
+        <div class="perfil-header">
+            <div class="perfil-avatar">
+                <div class="avatar-placeholder">
+                    {{ user.first_name.0|default:user.username.0|upper }}
+                </div>
+            </div>
+            <div class="perfil-info">
+                <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+                <p class="perfil-role">
+                    {% if user.tipo == 'ADMIN' %}Administrador
+                    {% elif user.tipo == 'TUTOR' %}Tutor
+                    {% elif user.tipo == 'TUTORADO' %}Tutorado
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        <div class="perfil-body">
+            <div class="info-section">
+                <h3>Informações Pessoais</h3>
+                <div class="info-grid">
+                    <div class="info-item"><label>Nome de usuário:</label> <span>{{ user.username }}</span></div>
+                    <div class="info-item"><label>Nome completo:</label> <span>{{ user.first_name }} {{ user.last_name }}</span></div>
+                    <div class="info-item"><label>E-mail:</label> <span>{{ user.email }}</span></div>
+                    <div class="info-item"><label>Tipo de usuário:</label>
+                        <span>
+                            {% if user.tipo == 'ADMIN' %}Administrador
+                            {% elif user.tipo == 'TUTOR' %}Tutor
+                            {% elif user.tipo == 'TUTORADO' %}Tutorado
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="info-item"><label>Membro desde:</label> <span>{{ user.date_joined|date:"d/m/Y" }}</span></div>
+                    <div class="info-item"><label>Status:</label>
+                        <span class="status-badge {% if user.is_active %}active{% else %}inactive{% endif %}">
+                            {% if user.is_active %}Ativo{% else %}Inativo{% endif %}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="actions-section">
+                <h3>Ações</h3>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="toggleEditMode()" id="editBtn">✏️ Editar Perfil</button>
+                    <button class="btn btn-secondary" onclick="changePassword()">🔒 Alterar Senha</button>
+                </div>
+            </div>
+
+            <div class="edit-section" id="editSection" style="display: none;">
+                <h3>Editar Informações</h3>
+                <form method="post" class="edit-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="first_name">Nome:</label>
+                        <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="last_name">Sobrenome:</label>
+                        <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail:</label>
+                        <input type="email" id="email" name="email" value="{{ user.email }}" class="form-control">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">💾 Salvar Alterações</button>
+                        <button type="button" class="btn btn-secondary" onclick="toggleEditMode()">❌ Cancelar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function toggleEditMode() {
+        const editSection = document.getElementById('editSection');
+        const editBtn = document.getElementById('editBtn');
+        if (editSection.style.display === 'none') {
+            editSection.style.display = 'block';
+            editBtn.textContent = '❌ Cancelar Edição';
+        } else {
+            editSection.style.display = 'none';
+            editBtn.textContent = '✏️ Editar Perfil';
+        }
+    }
+    function changePassword() {
+        alert('Funcionalidade de alteração de senha será implementada em breve!');
+    }
+</script>
+{% endblock %}

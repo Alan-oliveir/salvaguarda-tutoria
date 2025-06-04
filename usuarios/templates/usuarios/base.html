@@ -1,0 +1,61 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Salvaguarda{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+    <!-- Header padrão -->
+    <header class="main-header">
+        <div class="header-content">
+            <img src="{% static 'img/logo.png' %}" alt="Logo Salvaguarda" class="logo-header">
+            <nav class="header-nav">
+                {% if user.is_authenticated %}
+                    <span class="user-greeting">Olá, {{ user.first_name|default:user.username }}!</span>
+                    <a href="{% url 'usuarios:painel_inicial' %}" class="btn">Painel</a>
+                    <a href="{% url 'usuarios:perfil_usuario' %}" class="btn">Perfil</a>
+                    <a href="{% url 'usuarios:logout' %}" class="btn btn-logout">Sair</a>
+                {% else %}
+                    <a href="{% url 'usuarios:login' %}" class="btn">Login</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <!-- Mensagens do sistema -->
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    <!-- Conteúdo principal -->
+    <main class="main-content">
+        <div class="container">
+            {% block content %}
+            <!-- Conteúdo das páginas vai aqui -->
+            {% endblock %}
+        </div>
+    </main>
+
+    <!-- Footer padrão -->
+    <footer class="main-footer">
+        <div class="container">
+            <p>&copy; 2024 Salvaguarda - Plataforma de Apoio Educacional</p>
+        </div>
+    </footer>
+
+    {% block extra_scripts %}{% endblock %}
+
+</body>
+</html>
