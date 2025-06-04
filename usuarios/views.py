@@ -14,6 +14,5 @@ class CustomLogoutView(LogoutView):
 
 @login_required
 def painel_inicial(request):
-    tipo = request.user.tipo
-    contexto = {"tipo": tipo}
-    return render(request, 'usuarios/painel_inicial.html', contexto)
+    tipo = request.user.tipo.upper()  # força tipo em maiúsculas
+    return render(request, 'usuarios/painel_inicial.html', {'tipo': tipo})

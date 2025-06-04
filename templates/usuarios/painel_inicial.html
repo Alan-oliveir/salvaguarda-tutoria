@@ -15,8 +15,8 @@
         {% if tipo == "ADMIN" %}
             <p>Você está logado como <strong>Administrador</strong>.</p>
             <ul>
-                <li>Gerenciar usuários</li>
-                <li>Acessar relatórios</li>
+                <li><a href="{% url 'admin:index' %}">Gerenciar usuários (admin)</a></li>
+                <li><a href="#">Acessar relatórios (em breve)</a></li>
             </ul>
 
         {% elif tipo == "TUTOR" %}
