@@ -1,0 +1,117 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar {{ tutorado.nome }} — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/tutorados.css' %}">
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'tutorias:detalhe_tutorado' tutorado.pk %}">← {{ tutorado.nome }}</a>
+</p>
+
+<div class="page-hero">
+  <div>
+    <h1>Editar Tutorado</h1>
+    <p>Atualize as informações de {{ tutorado.nome }}.</p>
+  </div>
+</div>
+
+<div class="form-page">
+  <form method="post" enctype="multipart/form-data" class="form-card">
+    {% csrf_token %}
+
+    <!-- Identificação -->
+    <div class="form-section">
+      <p class="form-section-title">Identificação</p>
+      <div class="form-grid-2">
+
+        <div class="form-group col-full">
+          <label>Foto</label>
+          <div class="foto-upload-row">
+            <div class="foto-thumb" id="fotoPreview">
+              {% if tutorado.foto %}<img src="{{ tutorado.foto.url }}" id="fotoImg">
+              {% else %}{{ tutorado.nome|slice:":1"|upper }}{% endif %}
+            </div>
+            <label class="foto-input-label">
+              📷 Alterar foto (opcional)
+              <input type="file" name="foto" accept="image/*" onchange="previewFoto(this)">
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group col-full">
+          <label for="nome">Nome completo *</label>
+          <input type="text" id="nome" name="nome" value="{{ tutorado.nome }}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="serie">Série</label>
+          <select id="serie" name="serie">
+            {% for val, label in series_choices %}
+              <option value="{{ val }}" {% if tutorado.serie == val %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="idade">Idade</label>
+          <input type="number" id="idade" name="idade" value="{{ tutorado.idade|default:'' }}" min="10" max="30">
+        </div>
+
+        <div class="form-group col-full">
+          <label class="checkbox-row" for="fez_enem">
+            <input type="checkbox" id="fez_enem" name="fez_enem" value="1" {% if tutorado.fez_enem %}checked{% endif %}>
+            <span>Já prestou o ENEM ao menos uma vez</span>
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Contato -->
+    <div class="form-section">
+      <p class="form-section-title">Contato & Localização</p>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label for="whatsapp">WhatsApp</label>
+          <input type="text" id="whatsapp" name="whatsapp" value="{{ tutorado.whatsapp }}">
+        </div>
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" value="{{ tutorado.email }}">
+        </div>
+        <div class="form-group">
+          <label for="cidade">Cidade</label>
+          <input type="text" id="cidade" name="cidade" value="{{ tutorado.cidade }}">
+        </div>
+        <div class="form-group">
+          <label for="estado">Estado</label>
+          <input type="text" id="estado" name="estado" maxlength="2" value="{{ tutorado.estado }}">
+        </div>
+      </div>
+    </div>
+
+    <!-- Objetivos -->
+    <div class="form-section">
+      <p class="form-section-title">Objetivos Acadêmicos</p>
+      <div class="form-group">
+        <label for="cursos_interesse">Cursos de interesse</label>
+        <textarea id="cursos_interesse" name="cursos_interesse">{{ tutorado.cursos_interesse }}</textarea>
+      </div>
+    </div>
+
+    <div class="form-footer-bar">
+      <a href="{% url 'tutorias:detalhe_tutorado' tutorado.pk %}" class="btn btn-secondary">Cancelar</a>
+      <button type="submit" class="btn btn-success">✓ Salvar Alterações</button>
+    </div>
+  </form>
+</div>
+
+{% block extra_scripts %}
+<script src="{% static 'js/tutorado_foto.js' %}"></script>
+{% endblock %}
+{% endblock %}

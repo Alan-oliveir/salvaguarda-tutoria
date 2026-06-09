@@ -1,274 +1,81 @@
-{% extends 'usuarios/base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Meus Tutorados — Salvaguarda{% endblock %}
 
 {% block extra_head %}
-<style>
-  /* ── Paleta ── */
-  :root {
-    --sg-green:   #1a7a4a;
-    --sg-green-l: #e8f5ee;
-    --sg-gold:    #d4a017;
-    --sg-dark:    #12243a;
-    --sg-muted:   #6b7280;
-    --sg-border:  #e2e8f0;
-    --sg-white:   #ffffff;
-    --sg-bg:      #f8fafc;
-  }
-
-  .page-tutorados { padding: 2rem 0 4rem; }
-
-  /* Cabeçalho da página */
-  .page-hero {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-  .page-hero h1 {
-    font-size: 1.75rem;
-    font-weight: 700;
-    color: var(--sg-dark);
-    margin: 0;
-  }
-  .page-hero p { color: var(--sg-muted); margin: .25rem 0 0; font-size: .95rem; }
-
-  .btn-novo {
-    display: inline-flex;
-    align-items: center;
-    gap: .5rem;
-    background: var(--sg-green);
-    color: #fff;
-    padding: .65rem 1.4rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: .9rem;
-    text-decoration: none;
-    transition: background .2s, transform .1s;
-    white-space: nowrap;
-  }
-  .btn-novo:hover { background: #155f39; transform: translateY(-1px); }
-
-  /* Cards */
-  .cards-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 1.25rem;
-  }
-
-  .tutorado-card {
-    background: var(--sg-white);
-    border: 1px solid var(--sg-border);
-    border-radius: 14px;
-    padding: 1.5rem;
-    transition: box-shadow .2s, transform .15s;
-    position: relative;
-    overflow: hidden;
-  }
-  .tutorado-card:hover {
-    box-shadow: 0 8px 24px rgba(26,122,74,.1);
-    transform: translateY(-2px);
-  }
-  .tutorado-card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 4px;
-    background: var(--sg-green);
-    border-radius: 14px 14px 0 0;
-  }
-
-  .card-avatar {
-    width: 56px; height: 56px;
-    border-radius: 50%;
-    object-fit: cover;
-    background: var(--sg-green-l);
-    display: flex; align-items: center; justify-content: center;
-    font-size: 1.4rem; font-weight: 700;
-    color: var(--sg-green);
-    margin-bottom: 1rem;
-    overflow: hidden;
-  }
-  .card-avatar img { width: 100%; height: 100%; object-fit: cover; }
-
-  .card-nome {
-    font-size: 1.05rem;
-    font-weight: 700;
-    color: var(--sg-dark);
-    margin: 0 0 .25rem;
-  }
-  .card-serie {
-    font-size: .8rem;
-    color: var(--sg-green);
-    font-weight: 600;
-    background: var(--sg-green-l);
-    display: inline-block;
-    padding: .2rem .65rem;
-    border-radius: 20px;
-    margin-bottom: .75rem;
-  }
-
-  .card-info { font-size: .85rem; color: var(--sg-muted); margin-bottom: .25rem; }
-  .card-info span { color: var(--sg-dark); font-weight: 500; }
-
-  .card-enem {
-    margin-top: .5rem;
-    font-size: .8rem;
-    font-weight: 600;
-    padding: .2rem .65rem;
-    border-radius: 20px;
-    display: inline-block;
-  }
-  .enem-sim { background: #fef3c7; color: #92400e; }
-  .enem-nao { background: #f1f5f9; color: #64748b; }
-
-  .card-actions {
-    margin-top: 1.25rem;
-    display: flex;
-    gap: .5rem;
-  }
-  .btn-detalhe {
-    flex: 1;
-    text-align: center;
-    background: var(--sg-green);
-    color: #fff;
-    padding: .5rem;
-    border-radius: 7px;
-    font-size: .85rem;
-    font-weight: 600;
-    text-decoration: none;
-    transition: background .2s;
-  }
-  .btn-detalhe:hover { background: #155f39; }
-  .btn-editar {
-    background: var(--sg-bg);
-    color: var(--sg-dark);
-    padding: .5rem .85rem;
-    border-radius: 7px;
-    font-size: .85rem;
-    font-weight: 600;
-    text-decoration: none;
-    border: 1px solid var(--sg-border);
-    transition: background .2s;
-  }
-  .btn-editar:hover { background: var(--sg-border); }
-
-  /* Estado vazio */
-  .empty-state {
-    text-align: center;
-    padding: 4rem 2rem;
-    color: var(--sg-muted);
-    grid-column: 1 / -1;
-  }
-  .empty-state .empty-icon { font-size: 3rem; margin-bottom: 1rem; display: block; }
-  .empty-state h3 { color: var(--sg-dark); margin: 0 0 .5rem; }
-  .empty-state p { margin: 0 0 1.5rem; }
-
-  /* Barra de busca */
-  .search-bar {
-    display: flex;
-    gap: .75rem;
-    margin-bottom: 1.75rem;
-    flex-wrap: wrap;
-  }
-  .search-bar input {
-    flex: 1;
-    min-width: 200px;
-    padding: .6rem 1rem;
-    border: 1px solid var(--sg-border);
-    border-radius: 8px;
-    font-size: .9rem;
-    outline: none;
-    transition: border-color .2s;
-  }
-  .search-bar input:focus { border-color: var(--sg-green); }
-  .search-bar select {
-    padding: .6rem 1rem;
-    border: 1px solid var(--sg-border);
-    border-radius: 8px;
-    font-size: .9rem;
-    outline: none;
-    background: #fff;
-    cursor: pointer;
-  }
-  .search-bar select:focus { border-color: var(--sg-green); }
-</style>
+<link rel="stylesheet" href="{% static 'css/tutorados.css' %}">
 {% endblock %}
 
 {% block content %}
-<div class="page-tutorados">
-  <div class="page-hero">
-    <div>
-      <h1>👥 Meus Tutorados</h1>
-      <p>{{ tutorados.count }} estudante{{ tutorados.count|pluralize }} cadastrado{{ tutorados.count|pluralize }}</p>
-    </div>
-    <a href="{% url 'tutorias:cadastrar_tutorado' %}" class="btn-novo">
-      ＋ Novo Tutorado
-    </a>
+<div class="page-hero">
+  <div>
+    <h1>👥 Meus Tutorados</h1>
+    <p>{{ tutorados.count }} estudante{{ tutorados.count|pluralize }} cadastrado{{ tutorados.count|pluralize }}</p>
   </div>
-
-  {% if tutorados %}
-  <div class="search-bar">
-    <input type="text" id="buscaNome" placeholder="🔍 Buscar por nome..." oninput="filtrar()">
-    <select id="filtreSerie" onchange="filtrar()">
-      <option value="">Todas as séries</option>
-      {% for val, label in series_choices %}
-        <option value="{{ val }}">{{ label }}</option>
-      {% endfor %}
-    </select>
-  </div>
-  {% endif %}
-
-  <div class="cards-grid" id="cardsGrid">
-    {% for t in tutorados %}
-    <div class="tutorado-card" data-nome="{{ t.nome|lower }}" data-serie="{{ t.serie }}">
-      <div class="card-avatar">
-        {% if t.foto %}
-          <img src="{{ t.foto.url }}" alt="{{ t.nome }}">
-        {% else %}
-          {{ t.nome|slice:":1"|upper }}
-        {% endif %}
-      </div>
-
-      <p class="card-nome">{{ t.nome }}</p>
-      <span class="card-serie">{{ t.get_serie_display }}</span>
-
-      {% if t.cidade %}<p class="card-info">📍 <span>{{ t.cidade }}{% if t.estado %}/{{ t.estado }}{% endif %}</span></p>{% endif %}
-      {% if t.whatsapp %}<p class="card-info">📱 <span>{{ t.whatsapp }}</span></p>{% endif %}
-      {% if t.cursos_interesse %}<p class="card-info">🎯 <span>{{ t.cursos_interesse|truncatechars:40 }}</span></p>{% endif %}
-
-      <span class="card-enem {% if t.fez_enem %}enem-sim{% else %}enem-nao{% endif %}">
-        {% if t.fez_enem %}✓ Já fez ENEM{% else %}Ainda não fez ENEM{% endif %}
-      </span>
-
-      <div class="card-actions">
-        <a href="{% url 'tutorias:detalhe_tutorado' t.pk %}" class="btn-detalhe">Ver detalhes</a>
-        <a href="{% url 'tutorias:editar_tutorado' t.pk %}" class="btn-editar">✏️</a>
-      </div>
-    </div>
-    {% empty %}
-    <div class="empty-state">
-      <span class="empty-icon">🎓</span>
-      <h3>Nenhum tutorado ainda</h3>
-      <p>Cadastre seu primeiro tutorado para começar.</p>
-      <a href="{% url 'tutorias:cadastrar_tutorado' %}" class="btn-novo">＋ Cadastrar agora</a>
-    </div>
-    {% endfor %}
-  </div>
+  <a href="{% url 'tutorias:cadastrar_tutorado' %}" class="btn btn-success">＋ Novo Tutorado</a>
 </div>
 
-<script>
-function filtrar() {
-  const nome = document.getElementById('buscaNome').value.toLowerCase();
-  const serie = document.getElementById('filtreSerie').value;
-  document.querySelectorAll('.tutorado-card').forEach(card => {
-    const nomeOk = card.dataset.nome.includes(nome);
-    const serieOk = !serie || card.dataset.serie === serie;
-    card.style.display = (nomeOk && serieOk) ? '' : 'none';
-  });
-}
-</script>
+{% if tutorados %}
+<div class="search-bar">
+  <input type="text" id="buscaNome" placeholder="🔍 Buscar por nome..." oninput="filtrar()">
+  <select id="filtreSerie" onchange="filtrar()">
+    <option value="">Todas as séries</option>
+    {% for val, label in series_choices %}
+      <option value="{{ val }}">{{ label }}</option>
+    {% endfor %}
+  </select>
+</div>
+{% endif %}
+
+<div class="cards-grid" id="cardsGrid">
+  {% for t in tutorados %}
+  <div class="tutorado-card" data-nome="{{ t.nome|lower }}" data-serie="{{ t.serie }}">
+    <div class="card-avatar-tutorado">
+      {% if t.foto %}
+        <img src="{{ t.foto.url }}" alt="{{ t.nome }}">
+      {% else %}
+        {{ t.nome|slice:":1"|upper }}
+      {% endif %}
+    </div>
+
+    <p class="card-nome">{{ t.nome }}</p>
+
+    <div class="card-badges">
+      <span class="badge badge-serie">{{ t.get_serie_display }}</span>
+      {% if t.fez_enem %}
+        <span class="badge badge-enem-sim">✓ Já fez ENEM</span>
+      {% else %}
+        <span class="badge badge-enem-nao">Ainda não fez ENEM</span>
+      {% endif %}
+    </div>
+
+    {% if t.cidade %}
+    <p class="card-info-row">📍 <strong>{{ t.cidade }}{% if t.estado %}/{{ t.estado }}{% endif %}</strong></p>
+    {% endif %}
+    {% if t.whatsapp %}
+    <p class="card-info-row">📱 <strong>{{ t.whatsapp }}</strong></p>
+    {% endif %}
+    {% if t.cursos_interesse %}
+    <p class="card-info-row">🎯 <strong>{{ t.cursos_interesse|truncatechars:40 }}</strong></p>
+    {% endif %}
+
+    <div class="card-actions">
+      <a href="{% url 'tutorias:detalhe_tutorado' t.pk %}" class="btn btn-primary">Ver detalhes</a>
+      <a href="{% url 'tutorias:editar_tutorado' t.pk %}" class="btn btn-secondary btn-icon">✏️</a>
+    </div>
+  </div>
+  {% empty %}
+  <div class="empty-state">
+    <span class="empty-icon">🎓</span>
+    <h3>Nenhum tutorado ainda</h3>
+    <p>Cadastre seu primeiro tutorado para começar.</p>
+    <a href="{% url 'tutorias:cadastrar_tutorado' %}" class="btn btn-success">＋ Cadastrar agora</a>
+  </div>
+  {% endfor %}
+</div>
+
+{% block extra_scripts %}
+<script src="{% static 'js/lista_tutorados.js' %}"></script>
+{% endblock %}
 {% endblock %}

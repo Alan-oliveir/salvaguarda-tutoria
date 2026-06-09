@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cadastrar Tutorado — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/tutorados.css' %}">
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'tutorias:lista_tutorados' %}">← Meus Tutorados</a>
+</p>
+
+<div class="page-hero">
+  <div>
+    <h1>Cadastrar Tutorado</h1>
+    <p>Preencha as informações do novo estudante.</p>
+  </div>
+</div>
+
+<div class="form-page">
+  <form method="post" enctype="multipart/form-data" class="form-card">
+    {% csrf_token %}
+
+    <!-- Identificação -->
+    <div class="form-section">
+      <p class="form-section-title">Identificação</p>
+      <div class="form-grid-2">
+
+        <div class="form-group col-full">
+          <label for="foto">Foto</label>
+          <div class="foto-upload-row">
+            <div class="foto-thumb" id="fotoPreview">🧑‍🎓</div>
+            <label class="foto-input-label">
+              📷 Clique para escolher uma foto (opcional)
+              <input type="file" name="foto" id="fotoInput" accept="image/*" onchange="previewFoto(this)">
+            </label>
+          </div>
+        </div>
+
+        <div class="form-group col-full">
+          <label for="nome">Nome completo *</label>
+          <input type="text" id="nome" name="nome" required placeholder="Ex: João da Silva">
+        </div>
+
+        <div class="form-group">
+          <label for="serie">Série</label>
+          <select id="serie" name="serie">
+            {% for val, label in series_choices %}
+              <option value="{{ val }}">{{ label }}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="idade">Idade</label>
+          <input type="number" id="idade" name="idade" min="10" max="30" placeholder="Ex: 17">
+        </div>
+
+        <div class="form-group col-full">
+          <label class="checkbox-row" for="fez_enem">
+            <input type="checkbox" id="fez_enem" name="fez_enem" value="1">
+            <span>Já prestou o ENEM ao menos uma vez</span>
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Contato -->
+    <div class="form-section">
+      <p class="form-section-title">Contato & Localização</p>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label for="whatsapp">WhatsApp</label>
+          <input type="text" id="whatsapp" name="whatsapp" placeholder="(XX) XXXXX-XXXX">
+        </div>
+        <div class="form-group">
+          <label for="email">E-mail</label>
+          <input type="email" id="email" name="email" placeholder="joao@exemplo.com">
+        </div>
+        <div class="form-group">
+          <label for="cidade">Cidade</label>
+          <input type="text" id="cidade" name="cidade" placeholder="Ex: São Paulo">
+        </div>
+        <div class="form-group">
+          <label for="estado">Estado</label>
+          <input type="text" id="estado" name="estado" maxlength="2" placeholder="Ex: SP">
+        </div>
+      </div>
+    </div>
+
+    <!-- Objetivos -->
+    <div class="form-section">
+      <p class="form-section-title">Objetivos Acadêmicos</p>
+      <div class="form-group">
+        <label for="cursos_interesse">Cursos de interesse</label>
+        <textarea id="cursos_interesse" name="cursos_interesse"
+          placeholder="Ex: Medicina, Engenharia Civil, Direito..."></textarea>
+        <span class="help-text">Descreva os cursos ou áreas que o estudante tem interesse em seguir.</span>
+      </div>
+    </div>
+
+    <div class="form-footer-bar">
+      <a href="{% url 'tutorias:lista_tutorados' %}" class="btn btn-secondary">Cancelar</a>
+      <button type="submit" class="btn btn-success">✓ Cadastrar Tutorado</button>
+    </div>
+  </form>
+</div>
+
+{% block extra_scripts %}
+<script src="{% static 'js/tutorado_foto.js' %}"></script>
+{% endblock %}
+{% endblock %}

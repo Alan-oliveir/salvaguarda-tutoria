@@ -32,7 +32,7 @@ def lista_tutorados(request):
 @tutor_required
 def cadastrar_tutorado(request):
     if request.method == 'GET':
-        return render(request, 'tutorias/cadastrar_tutorado.html', {
+        return render(request, 'tutorias/cadastrar.html', {
             'series_choices': Tutorado.SERIE_CHOICES,
         })
 
@@ -82,7 +82,7 @@ def editar_tutorado(request, pk):
         raise Http404()
 
     if request.method == 'GET':
-        return render(request, 'tutorias/editar_tutorado.html', {
+        return render(request, 'tutorias/editar.html', {
             'tutorado': tutorado,
             'series_choices': Tutorado.SERIE_CHOICES,
         })
