@@ -73,9 +73,9 @@ a:hover { text-decoration: underline; }
 }
 
 .header-content {
-  max-width: 1200px;
+  max-width: 100%;
   margin: 0 auto;
-  padding: .75rem 1.5rem;
+  padding: .75rem 2rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -148,8 +148,8 @@ a:hover { text-decoration: underline; }
 .btn-danger { background: var(--sg-error); color: var(--sg-white); border-color: var(--sg-error); }
 .btn-danger:hover { background: #a93226; }
 
-.btn-logout { background: transparent; color: var(--sg-muted); border-color: var(--sg-border); }
-.btn-logout:hover { background: var(--sg-error-light); color: var(--sg-error); border-color: var(--sg-error); }
+.btn-logout { background: var(--sg-purple-light); color: var(--sg-purple); border-color: var(--sg-purple-light); }
+.btn-logout:hover { background: var(--sg-purple); color: var(--sg-white); border-color: var(--sg-purple); }
 
 /* ── Alertas ── */
 .alert {

@@ -9,7 +9,7 @@
 
 {% block content %}
 <div class="page-header">
-    <h1>Meu Perfil</h1>
+    <h1>Perfil</h1>
     <p class="page-subtitle">Gerencie suas informações pessoais</p>
 </div>
 
@@ -35,22 +35,25 @@
         <div class="perfil-body">
             <div class="info-section">
                 <h3>Informações Pessoais</h3>
-                <div class="info-grid">
-                    <div class="info-item"><label>Nome de usuário:</label> <span>{{ user.username }}</span></div>
-                    <div class="info-item"><label>Nome completo:</label> <span>{{ user.first_name }} {{ user.last_name }}</span></div>
-                    <div class="info-item"><label>E-mail:</label> <span>{{ user.email }}</span></div>
-                    <div class="info-item"><label>Tipo de usuário:</label>
-                        <span>
-                            {% if user.tipo == 'ADMIN' %}Administrador
-                            {% elif user.tipo == 'TUTOR' %}Tutor
-                            {% elif user.tipo == 'TUTORADO' %}Tutorado
-                            {% endif %}
-                        </span>
+                <div class="info-list">
+                    <div class="info-row">
+                        <span class="info-label">Usuário</span>
+                        <span class="info-value">{{ user.username }}</span>
                     </div>
-                    <div class="info-item"><label>Membro desde:</label> <span>{{ user.date_joined|date:"d/m/Y" }}</span></div>
-                    <div class="info-item"><label>Status:</label>
-                        <span class="status-badge {% if user.is_active %}active{% else %}inactive{% endif %}">
-                            {% if user.is_active %}Ativo{% else %}Inativo{% endif %}
+                    <div class="info-row">
+                        <span class="info-label">E-mail</span>
+                        <span class="info-value">{{ user.email }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Membro desde</span>
+                        <span class="info-value">{{ user.date_joined|date:"d/m/Y" }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Status</span>
+                        <span class="info-value">
+                            <span class="status-badge {% if user.is_active %}active{% else %}inactive{% endif %}">
+                                {% if user.is_active %}Ativo{% else %}Inativo{% endif %}
+                            </span>
                         </span>
                     </div>
                 </div>
