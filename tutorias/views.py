@@ -23,7 +23,7 @@ def tutor_required(view_func):
 def lista_tutorados(request):
     tutorados = Tutorado.objects.filter(tutor=request.user)
     series_choices = Tutorado.SERIE_CHOICES
-    return render(request, 'tutorias/lista_tutorados.html', {
+    return render(request, 'lista_tutorados.html', {
         'tutorados': tutorados,
         'series_choices': series_choices,
     })
@@ -32,7 +32,7 @@ def lista_tutorados(request):
 @tutor_required
 def cadastrar_tutorado(request):
     if request.method == 'GET':
-        return render(request, 'tutorias/cadastrar.html', {
+        return render(request, 'cadastrar.html', {
             'series_choices': Tutorado.SERIE_CHOICES,
         })
 
@@ -68,7 +68,7 @@ def detalhe_tutorado(request, pk):
         raise Http404()
 
     reunioes = tutorado.reunioes.order_by('-data', '-horario')
-    return render(request, 'tutorias/detalhe_tutorado.html', {
+    return render(request, 'detalhe_tutorado.html', {
         'tutorado': tutorado,
         'reunioes': reunioes,
         'materias_choices': Reuniao.MATERIA_CHOICES,
@@ -82,7 +82,7 @@ def editar_tutorado(request, pk):
         raise Http404()
 
     if request.method == 'GET':
-        return render(request, 'tutorias/editar.html', {
+        return render(request, 'editar.html', {
             'tutorado': tutorado,
             'series_choices': Tutorado.SERIE_CHOICES,
         })

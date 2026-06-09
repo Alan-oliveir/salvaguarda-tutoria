@@ -92,7 +92,7 @@
 .action-link.disabled { color: var(--sg-muted); cursor: default; pointer-events: none; }
 
 /* ── Perfil ── */
-.perfil-content { max-width: auto; }
+.perfil-content { max-width: stretch; }
 .perfil-card {
   background: var(--sg-white);
   border-radius: var(--radius-lg);

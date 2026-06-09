@@ -21,7 +21,7 @@
 .search-bar input,
 .search-bar select {
   padding: .6rem 1rem;
-  border: 1.5px solid var(--sg-border);
+  border: 1px solid var(--sg-border);
   border-radius: var(--radius-md);
   font-size: .9rem; font-family: inherit;
   outline: none; background: var(--sg-white);
@@ -130,7 +130,7 @@
 .token-box {
   display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
   margin-top: 1rem; padding: .75rem 1rem;
-  background: var(--sg-bg); border: 1.5px dashed var(--sg-border);
+  background: var(--sg-bg); border: 1px dashed var(--sg-border);
   border-radius: var(--radius-md); font-size: .85rem;
 }
 .token-label { color: var(--sg-muted); font-weight: 600; white-space: nowrap; }
