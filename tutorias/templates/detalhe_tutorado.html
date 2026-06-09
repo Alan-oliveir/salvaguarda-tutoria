@@ -1,0 +1,267 @@
+{% extends 'usuarios/base.html' %}
+{% load static %}
+
+{% block title %}{{ tutorado.nome }} — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<style>
+  :root {
+    --sg-green:   #1a7a4a;
+    --sg-green-l: #e8f5ee;
+    --sg-dark:    #12243a;
+    --sg-muted:   #6b7280;
+    --sg-border:  #e2e8f0;
+    --sg-bg:      #f8fafc;
+  }
+
+  .page-detalhe { padding: 2rem 0 4rem; }
+  .breadcrumb { font-size: .85rem; color: var(--sg-muted); margin-bottom: 1.25rem; }
+  .breadcrumb a { color: var(--sg-green); text-decoration: none; }
+  .breadcrumb a:hover { text-decoration: underline; }
+
+  /* Hero do tutorado */
+  .tutorado-hero {
+    background: #fff;
+    border: 1px solid var(--sg-border);
+    border-radius: 14px;
+    padding: 2rem;
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+  }
+  .hero-avatar {
+    width: 80px; height: 80px;
+    border-radius: 50%;
+    background: var(--sg-green-l);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; font-weight: 700; color: var(--sg-green);
+    flex-shrink: 0; overflow: hidden;
+  }
+  .hero-avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+  .hero-info { flex: 1; min-width: 200px; }
+  .hero-info h1 { font-size: 1.5rem; font-weight: 700; color: var(--sg-dark); margin: 0 0 .4rem; }
+  .hero-badges { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: .75rem; }
+  .badge {
+    font-size: .78rem; font-weight: 600; padding: .25rem .7rem;
+    border-radius: 20px; display: inline-block;
+  }
+  .badge-serie  { background: var(--sg-green-l); color: var(--sg-green); }
+  .badge-enem-s { background: #fef3c7; color: #92400e; }
+  .badge-enem-n { background: #f1f5f9; color: #64748b; }
+
+  .hero-contato { display: flex; flex-wrap: wrap; gap: 1rem; font-size: .88rem; color: var(--sg-muted); }
+  .hero-contato span { display: flex; align-items: center; gap: .3rem; }
+  .hero-contato strong { color: var(--sg-dark); }
+
+  .hero-actions { display: flex; gap: .5rem; flex-shrink: 0; }
+  .btn-action {
+    padding: .5rem 1rem;
+    border-radius: 8px;
+    font-size: .85rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1px solid var(--sg-border);
+    background: #fff;
+    color: var(--sg-dark);
+    cursor: pointer;
+    transition: background .15s;
+    white-space: nowrap;
+  }
+  .btn-action:hover { background: var(--sg-bg); }
+  .btn-action.primary { background: var(--sg-green); color: #fff; border-color: var(--sg-green); }
+  .btn-action.primary:hover { background: #155f39; }
+
+  /* Token */
+  .token-box {
+    background: var(--sg-bg);
+    border: 1px dashed var(--sg-border);
+    border-radius: 10px;
+    padding: .75rem 1.1rem;
+    margin-top: 1rem;
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    font-size: .85rem;
+    flex-wrap: wrap;
+  }
+  .token-label { color: var(--sg-muted); font-weight: 500; white-space: nowrap; }
+  .token-value {
+    font-family: monospace;
+    font-size: .95rem;
+    background: #fff;
+    border: 1px solid var(--sg-border);
+    padding: .2rem .65rem;
+    border-radius: 6px;
+    color: var(--sg-dark);
+    letter-spacing: .05em;
+  }
+  .btn-copiar {
+    background: var(--sg-green-l);
+    color: var(--sg-green);
+    border: none;
+    padding: .3rem .75rem;
+    border-radius: 6px;
+    font-size: .8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-copiar:hover { background: #c8edda; }
+
+  /* Objetivos */
+  .info-card {
+    background: #fff;
+    border: 1px solid var(--sg-border);
+    border-radius: 14px;
+    padding: 1.5rem 1.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .info-card h2 {
+    font-size: .8rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: .08em; color: var(--sg-green); margin: 0 0 1rem;
+  }
+  .info-card p { color: var(--sg-dark); font-size: .95rem; margin: 0; line-height: 1.6; }
+  .info-card .empty-info { color: var(--sg-muted); font-style: italic; }
+
+  /* Reuniões */
+  .reunioes-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 1rem; flex-wrap: wrap; gap: .75rem;
+  }
+  .reunioes-header h2 {
+    font-size: 1.1rem; font-weight: 700; color: var(--sg-dark); margin: 0;
+  }
+
+  .reuniao-item {
+    background: #fff;
+    border: 1px solid var(--sg-border);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: .75rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .reuniao-data {
+    text-align: center;
+    min-width: 52px;
+    background: var(--sg-green-l);
+    border-radius: 8px;
+    padding: .4rem .6rem;
+    flex-shrink: 0;
+  }
+  .reuniao-data .dia  { font-size: 1.3rem; font-weight: 700; color: var(--sg-green); line-height: 1; }
+  .reuniao-data .mes  { font-size: .7rem; text-transform: uppercase; color: var(--sg-green); font-weight: 600; }
+
+  .reuniao-info { flex: 1; min-width: 160px; }
+  .reuniao-materia {
+    font-size: .78rem; font-weight: 700; padding: .2rem .6rem;
+    border-radius: 20px; background: #f1f5f9; color: var(--sg-dark);
+    display: inline-block; margin-bottom: .35rem;
+  }
+  .reuniao-topicos { font-size: .88rem; color: var(--sg-muted); margin: 0; }
+
+  .reuniao-badges { display: flex; align-items: center; gap: .5rem; }
+  .badge-presenca-s { background: #dcfce7; color: #166534; font-size: .78rem; padding: .2rem .6rem; border-radius: 20px; font-weight: 600; }
+  .badge-presenca-n { background: #fee2e2; color: #991b1b; font-size: .78rem; padding: .2rem .6rem; border-radius: 20px; font-weight: 600; }
+
+  .empty-reunioes { text-align: center; padding: 2.5rem 1rem; color: var(--sg-muted); font-size: .95rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-detalhe">
+  <p class="breadcrumb"><a href="{% url 'tutorias:lista_tutorados' %}">← Meus Tutorados</a></p>
+
+  <!-- Hero -->
+  <div class="tutorado-hero">
+    <div class="hero-avatar">
+      {% if tutorado.foto %}<img src="{{ tutorado.foto.url }}" alt="{{ tutorado.nome }}">
+      {% else %}{{ tutorado.nome|slice:":1"|upper }}{% endif %}
+    </div>
+    <div class="hero-info">
+      <h1>{{ tutorado.nome }}</h1>
+      <div class="hero-badges">
+        <span class="badge badge-serie">{{ tutorado.get_serie_display }}</span>
+        {% if tutorado.fez_enem %}
+          <span class="badge badge-enem-s">✓ Já fez ENEM</span>
+        {% else %}
+          <span class="badge badge-enem-n">Ainda não fez ENEM</span>
+        {% endif %}
+        {% if tutorado.idade %}<span class="badge" style="background:#f1f5f9;color:#475569;">{{ tutorado.idade }} anos</span>{% endif %}
+      </div>
+      <div class="hero-contato">
+        {% if tutorado.cidade %}<span>📍 <strong>{{ tutorado.cidade }}{% if tutorado.estado %}/{{ tutorado.estado }}{% endif %}</strong></span>{% endif %}
+        {% if tutorado.whatsapp %}<span>📱 <strong>{{ tutorado.whatsapp }}</strong></span>{% endif %}
+        {% if tutorado.email %}<span>✉️ <strong>{{ tutorado.email }}</strong></span>{% endif %}
+      </div>
+
+      <div class="token-box">
+        <span class="token-label">🔑 Token de acesso:</span>
+        <span class="token-value" id="tokenVal">{{ tutorado.token }}</span>
+        <button class="btn-copiar" onclick="copiarToken()">Copiar</button>
+        <span id="copiadoMsg" style="color:var(--sg-green);font-size:.8rem;display:none;">✓ Copiado!</span>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <a href="{% url 'tutorias:editar_tutorado' tutorado.pk %}" class="btn-action">✏️ Editar</a>
+    </div>
+  </div>
+
+  <!-- Cursos de interesse -->
+  {% if tutorado.cursos_interesse %}
+  <div class="info-card">
+    <h2>🎯 Cursos de Interesse</h2>
+    <p>{{ tutorado.cursos_interesse }}</p>
+  </div>
+  {% endif %}
+
+  <!-- Reuniões -->
+  <div class="info-card">
+    <div class="reunioes-header">
+      <h2>📅 Histórico de Reuniões ({{ reunioes.count }})</h2>
+    </div>
+
+    {% for r in reunioes %}
+    <div class="reuniao-item">
+      <div class="reuniao-data">
+        <div class="dia">{{ r.data|date:"d" }}</div>
+        <div class="mes">{{ r.data|date:"M" }}</div>
+      </div>
+      <div class="reuniao-info">
+        <span class="reuniao-materia">{{ r.get_materia_display }}</span>
+        <p class="reuniao-topicos">
+          {{ r.data|date:"d/m/Y" }} às {{ r.horario|time:"H:i" }}
+          {% if r.duracao_minutos %} · {{ r.duracao_minutos }}min{% endif %}
+          {% if r.topicos %} · {{ r.topicos|truncatechars:60 }}{% endif %}
+        </p>
+      </div>
+      <div class="reuniao-badges">
+        {% if r.presenca %}
+          <span class="badge-presenca-s">✓ Presente</span>
+        {% else %}
+          <span class="badge-presenca-n">✗ Faltou</span>
+        {% endif %}
+      </div>
+    </div>
+    {% empty %}
+    <div class="empty-reunioes">
+      📅 Nenhuma reunião registrada ainda.
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+function copiarToken() {
+  navigator.clipboard.writeText(document.getElementById('tokenVal').textContent.trim());
+  const msg = document.getElementById('copiadoMsg');
+  msg.style.display = 'inline';
+  setTimeout(() => msg.style.display = 'none', 2000);
+}
+</script>
+{% endblock %}
