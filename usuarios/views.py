@@ -12,7 +12,7 @@ from .models import CustomUser
 
 
 class CustomLoginView(LoginView):
-    template_name = 'usuarios/templates/login.html'
+    template_name = 'login.html'
     redirect_authenticated_user = True
 
     def get_success_url(self):
@@ -24,7 +24,7 @@ class CustomLoginView(LoginView):
 
 
 class CustomLogoutView(LogoutView):
-    template_name = 'usuarios/templates/logout.html'
+    template_name = 'logout.html'
     next_page = reverse_lazy('usuarios:login')
     http_method_names = ['get', 'post']
 
@@ -40,7 +40,7 @@ class CustomLogoutView(LogoutView):
 class RegistroView(CreateView):
     model = CustomUser
     form_class = CustomUserCreationForm
-    template_name = 'usuarios/templates/registro.html'
+    template_name = 'registro.html'
     success_url = reverse_lazy('usuarios:login')
 
     def form_valid(self, form):
@@ -83,7 +83,7 @@ def painel_inicial(request):
             'materiais_novos': 0,
         })
 
-    return render(request, 'usuarios/templates/painel_inicial.html', context)
+    return render(request, 'painel_inicial.html', context)
 
 
 @login_required
@@ -94,7 +94,7 @@ def perfil_usuario(request):
         messages.success(request, 'Perfil atualizado com sucesso!')
         return redirect('perfil_usuario')
 
-    return render(request, 'usuarios/templates/perfil.html', {'user': request.user})
+    return render(request, 'perfil.html', {'user': request.user})
 
 
 def redirect_after_login(request):

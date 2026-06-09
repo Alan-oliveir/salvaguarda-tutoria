@@ -56,15 +56,27 @@
     <!-- Footer padrão -->
     <footer class="main-footer">
         <div class="container">
-            <p>&copy; 2024 Salvaguarda - Plataforma de Apoio Educacional</p>
+            <p>&copy; 2025-2026 Alan de O. Gonçalves - Plataforma de apoio para tutorias do Salvaguarda </p>
         </div>
     </footer>
 
     {% block extra_scripts %}{% endblock %}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            if (window.lucide && typeof lucide.replace === 'function') {
-                lucide.replace();
+            if (!window.lucide) return;
+            try {
+                if (typeof lucide.replace === 'function') {
+                    lucide.replace();
+                }
+            } catch (e) {
+                console.warn('lucide.replace failed:', e);
+            }
+            try {
+                if (typeof lucide.createIcons === 'function') {
+                    lucide.createIcons();
+                }
+            } catch (e) {
+                console.warn('lucide.createIcons failed:', e);
             }
         });
     </script>
