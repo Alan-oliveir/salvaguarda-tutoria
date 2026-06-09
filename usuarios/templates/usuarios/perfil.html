@@ -1,6 +1,11 @@
 {% extends 'usuarios/base.html' %}
+{% load static %}
 
 {% block title %}Meu Perfil{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="page-header">
@@ -85,20 +90,7 @@
     </div>
 </div>
 
-<script>
-    function toggleEditMode() {
-        const editSection = document.getElementById('editSection');
-        const editBtn = document.getElementById('editBtn');
-        if (editSection.style.display === 'none') {
-            editSection.style.display = 'block';
-            editBtn.textContent = '❌ Cancelar Edição';
-        } else {
-            editSection.style.display = 'none';
-            editBtn.textContent = '✏️ Editar Perfil';
-        }
-    }
-    function changePassword() {
-        alert('Funcionalidade de alteração de senha será implementada em breve!');
-    }
-</script>
+{% block extra_scripts %}
+<script src="{% static 'js/perfil.js' %}"></script>
+{% endblock %}
 {% endblock %}

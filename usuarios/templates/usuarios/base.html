@@ -5,8 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Salvaguarda{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
     {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -20,7 +21,10 @@
                     <span class="user-greeting">Olá, {{ user.first_name|default:user.username }}!</span>
                     <a href="{% url 'usuarios:painel_inicial' %}" class="btn">Painel</a>
                     <a href="{% url 'usuarios:perfil_usuario' %}" class="btn">Perfil</a>
-                    <a href="{% url 'usuarios:logout' %}" class="btn btn-logout">Sair</a>
+                    <form method="post" action="{% url 'usuarios:logout' %}" class="inline-form">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-logout">Sair</button>
+                    </form>
                 {% else %}
                     <a href="{% url 'usuarios:login' %}" class="btn">Login</a>
                 {% endif %}

@@ -1,0 +1,25 @@
+{% extends 'usuarios/base.html' %}
+{% load static %}
+
+{% block title %}Logout - Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Sair do Sistema</h1>
+</div>
+
+<div class="logout-container">
+    <div class="logout-card">
+        <p>Tem certeza que deseja sair?</p>
+        <form method="post" class="logout-form">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Sair do Sistema</button>
+            <a href="{% url 'usuarios:painel_inicial' %}" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

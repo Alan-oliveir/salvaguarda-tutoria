@@ -24,11 +24,17 @@ class CustomLoginView(LoginView):
 
 
 class CustomLogoutView(LogoutView):
+    template_name = 'usuarios/logout.html'
     next_page = reverse_lazy('usuarios:login')
+    http_method_names = ['get', 'post']
 
-    def dispatch(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
+        """Mostra a página de confirmação de logout"""
+        return self.render_to_response({})
+
+    def post(self, request, *args, **kwargs):
         messages.success(request, 'Logout realizado com sucesso!')
-        return super().dispatch(request, *args, **kwargs)
+        return super().post(request, *args, **kwargs)
 
 
 class RegistroView(CreateView):

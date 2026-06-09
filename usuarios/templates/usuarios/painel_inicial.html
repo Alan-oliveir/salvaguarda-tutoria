@@ -1,6 +1,11 @@
 {% extends 'usuarios/base.html' %}
+{% load static %}
 
 {% block title %}Painel Inicial{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="page-header">

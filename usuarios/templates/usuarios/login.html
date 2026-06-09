@@ -1,12 +1,17 @@
 {% extends 'usuarios/base.html' %}
+{% load static %}
 
 {% block title %}Login{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/auth.css' %}">
+{% endblock %}
 
 {% block content %}
 <div class="login-wrapper">
     <div class="login-left">
         <div class="login-overlay">
-            <img src="/static/img/logo.png" alt="Logo Salvaguarda" class="logo-sg">
+            <img src="{% static 'img/logo.png' %}" alt="Logo Salvaguarda" class="logo-sg">
             <h1>Bem-vindo(a)</h1>
             <p>Conecte-se e acompanhe a sua jornada no maior programa social do Brasil.</p>
         </div>
