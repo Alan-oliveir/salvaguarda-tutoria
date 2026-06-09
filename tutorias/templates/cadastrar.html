@@ -10,7 +10,7 @@
 
 {% block content %}
 <p class="breadcrumb">
-  <a href="{% url 'tutorias:lista_tutorados' %}">← Meus Tutorados</a>
+  <a href="{% url 'tutorias:lista_tutorados' %}"><i data-lucide="arrow-left" class="icon" aria-hidden="true"></i> Meus Tutorados</a>
 </p>
 
 <div class="page-hero">
@@ -32,9 +32,9 @@
         <div class="form-group col-full">
           <label for="foto">Foto</label>
           <div class="foto-upload-row">
-            <div class="foto-thumb" id="fotoPreview">🧑‍🎓</div>
+            <div class="foto-thumb" id="fotoPreview"><i data-lucide="graduation-cap" class="icon" aria-hidden="true"></i></div>
             <label class="foto-input-label">
-              📷 Clique para escolher uma foto (opcional)
+              <i data-lucide="camera" class="icon" aria-hidden="true"></i> Clique para escolher uma foto (opcional)
               <input type="file" name="foto" id="fotoInput" accept="image/*" onchange="previewFoto(this)">
             </label>
           </div>
@@ -105,7 +105,7 @@
 
     <div class="form-footer-bar">
       <a href="{% url 'tutorias:lista_tutorados' %}" class="btn btn-secondary">Cancelar</a>
-      <button type="submit" class="btn btn-success">✓ Cadastrar Tutorado</button>
+      <button type="submit" class="btn btn-success"><i data-lucide="check" class="icon" aria-hidden="true"></i> Cadastrar Tutorado</button>
     </div>
   </form>
 </div>

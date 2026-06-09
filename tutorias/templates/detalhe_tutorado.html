@@ -8,7 +8,7 @@
 {% endblock %}
 
 {% block content %}
-<p class="breadcrumb"><a href="{% url 'tutorias:lista_tutorados' %}">← Meus Tutorados</a></p>
+<p class="breadcrumb"><a href="{% url 'tutorias:lista_tutorados' %}"><i data-lucide="arrow-left" class="icon" aria-hidden="true"></i> Meus Tutorados</a></p>
 
 <!-- Hero -->
 <div class="tutorado-hero-card">
@@ -22,7 +22,7 @@
       <div class="hero-badges">
         <span class="badge badge-serie">{{ tutorado.get_serie_display }}</span>
         {% if tutorado.fez_enem %}
-          <span class="badge badge-enem-sim">✓ Já fez ENEM</span>
+          <span class="badge badge-enem-sim"><i data-lucide="check" class="icon" aria-hidden="true"></i> Já fez ENEM</span>
         {% else %}
           <span class="badge badge-enem-nao">Ainda não fez ENEM</span>
         {% endif %}
@@ -32,22 +32,22 @@
       </div>
     </div>
     <div class="hero-actions-top">
-      <a href="{% url 'tutorias:editar_tutorado' tutorado.pk %}" class="btn btn-secondary">✏️ Editar</a>
+      <a href="{% url 'tutorias:editar_tutorado' tutorado.pk %}" class="btn btn-secondary"><i data-lucide="edit-2" class="icon" aria-hidden="true"></i> Editar</a>
     </div>
   </div>
 
   <div class="tutorado-hero-body">
     <div class="contato-row">
-      {% if tutorado.cidade %}<span>📍 <strong>{{ tutorado.cidade }}{% if tutorado.estado %}/{{ tutorado.estado }}{% endif %}</strong></span>{% endif %}
-      {% if tutorado.whatsapp %}<span>📱 <strong>{{ tutorado.whatsapp }}</strong></span>{% endif %}
-      {% if tutorado.email %}<span>✉️ <strong>{{ tutorado.email }}</strong></span>{% endif %}
+      {% if tutorado.cidade %}<span><i data-lucide="map-pin" class="icon" aria-hidden="true"></i> <strong>{{ tutorado.cidade }}{% if tutorado.estado %}/{{ tutorado.estado }}{% endif %}</strong></span>{% endif %}
+      {% if tutorado.whatsapp %}<span><i data-lucide="smartphone" class="icon" aria-hidden="true"></i> <strong>{{ tutorado.whatsapp }}</strong></span>{% endif %}
+      {% if tutorado.email %}<span><i data-lucide="mail" class="icon" aria-hidden="true"></i> <strong>{{ tutorado.email }}</strong></span>{% endif %}
     </div>
 
     <div class="token-box">
-      <span class="token-label">🔑 Token de acesso:</span>
+      <span class="token-label"><i data-lucide="key" class="icon" aria-hidden="true"></i> Token de acesso:</span>
       <span class="token-value" id="tokenVal">{{ tutorado.token }}</span>
       <button class="btn-copiar" onclick="copiarToken()">Copiar</button>
-      <span id="copiadoMsg" class="copied-msg">✓ Copiado!</span>
+      <span id="copiadoMsg" class="copied-msg"><i data-lucide="check" class="icon" aria-hidden="true"></i> Copiado!</span>
     </div>
   </div>
 </div>
@@ -55,7 +55,7 @@
 <!-- Cursos de interesse -->
 {% if tutorado.cursos_interesse %}
 <div class="info-card">
-  <p class="info-card-title">🎯 Cursos de Interesse</p>
+  <p class="info-card-title"><i data-lucide="target" class="icon" aria-hidden="true"></i> Cursos de Interesse</p>
   <p>{{ tutorado.cursos_interesse }}</p>
 </div>
 {% endif %}
@@ -63,7 +63,7 @@
 <!-- Reuniões -->
 <div class="info-card">
   <div class="info-card-header">
-    <p class="info-card-title">📅 Histórico de Reuniões ({{ reunioes.count }})</p>
+    <p class="info-card-title"><i data-lucide="calendar" class="icon" aria-hidden="true"></i> Histórico de Reuniões ({{ reunioes.count }})</p>
   </div>
 
   {% for r in reunioes %}
@@ -82,14 +82,14 @@
     </div>
     <div>
       {% if r.presenca %}
-        <span class="badge badge-presenca-sim">✓ Presente</span>
+        <span class="badge badge-presenca-sim"><i data-lucide="check" class="icon" aria-hidden="true"></i> Presente</span>
       {% else %}
-        <span class="badge badge-presenca-nao">✗ Faltou</span>
+        <span class="badge badge-presenca-nao"><i data-lucide="x" class="icon" aria-hidden="true"></i> Faltou</span>
       {% endif %}
     </div>
   </div>
   {% empty %}
-  <p class="empty-section">📅 Nenhuma reunião registrada ainda.</p>
+  <p class="empty-section"><i data-lucide="calendar" class="icon" aria-hidden="true"></i> Nenhuma reunião registrada ainda.</p>
   {% endfor %}
 </div>
 

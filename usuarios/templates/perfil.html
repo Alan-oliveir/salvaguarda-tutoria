@@ -1,4 +1,4 @@
-{% extends 'usuarios/../base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Meu Perfil{% endblock %}
@@ -59,8 +59,8 @@
             <div class="actions-section">
                 <h3>Ações</h3>
                 <div class="action-buttons">
-                    <button class="btn btn-primary" onclick="toggleEditMode()" id="editBtn">✏️ Editar Perfil</button>
-                    <button class="btn btn-secondary" onclick="changePassword()">🔒 Alterar Senha</button>
+                    <button class="btn btn-primary" onclick="toggleEditMode()" id="editBtn"><i data-lucide="edit-2" class="icon" aria-hidden="true"></i> Editar Perfil</button>
+                    <button class="btn btn-secondary" onclick="changePassword()"><i data-lucide="lock" class="icon" aria-hidden="true"></i> Alterar Senha</button>
                 </div>
             </div>
 
@@ -81,8 +81,8 @@
                         <input type="email" id="email" name="email" value="{{ user.email }}" class="form-control">
                     </div>
                     <div class="form-actions">
-                        <button type="submit" class="btn btn-success">💾 Salvar Alterações</button>
-                        <button type="button" class="btn btn-secondary" onclick="toggleEditMode()">❌ Cancelar</button>
+                        <button type="submit" class="btn btn-success"><i data-lucide="save" class="icon" aria-hidden="true"></i> Salvar Alterações</button>
+                        <button type="button" class="btn btn-secondary" onclick="toggleEditMode()"><i data-lucide="x" class="icon" aria-hidden="true"></i> Cancelar</button>
                     </div>
                 </form>
             </div>

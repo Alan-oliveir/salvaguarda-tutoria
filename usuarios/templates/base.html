@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/forms.css' %}">
-    <script src="https://cdn.jsdelivr.net/npm/lucide@latest/dist/lucide.min.js" defer></script>
+    <script src="{% static 'vendor/lucide/lucide.min.js' %}" defer></script>
     {% block extra_head %}{% endblock %}
 </head>
 <body>
@@ -61,6 +61,13 @@
     </footer>
 
     {% block extra_scripts %}{% endblock %}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.lucide && typeof lucide.replace === 'function') {
+                lucide.replace();
+            }
+        });
+    </script>
 
 </body>
 </html>

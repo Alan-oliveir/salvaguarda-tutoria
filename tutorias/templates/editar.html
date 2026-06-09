@@ -10,7 +10,7 @@
 
 {% block content %}
 <p class="breadcrumb">
-  <a href="{% url 'tutorias:detalhe_tutorado' tutorado.pk %}">← {{ tutorado.nome }}</a>
+  <a href="{% url 'tutorias:detalhe_tutorado' tutorado.pk %}"><i data-lucide="arrow-left" class="icon" aria-hidden="true"></i> {{ tutorado.nome }}</a>
 </p>
 
 <div class="page-hero">
@@ -37,7 +37,7 @@
               {% else %}{{ tutorado.nome|slice:":1"|upper }}{% endif %}
             </div>
             <label class="foto-input-label">
-              📷 Alterar foto (opcional)
+              <i data-lucide="camera" class="icon" aria-hidden="true"></i> Alterar foto (opcional)
               <input type="file" name="foto" accept="image/*" onchange="previewFoto(this)">
             </label>
           </div>
@@ -106,7 +106,7 @@
 
     <div class="form-footer-bar">
       <a href="{% url 'tutorias:detalhe_tutorado' tutorado.pk %}" class="btn btn-secondary">Cancelar</a>
-      <button type="submit" class="btn btn-success">✓ Salvar Alterações</button>
+      <button type="submit" class="btn btn-success"><i data-lucide="check" class="icon" aria-hidden="true"></i> Salvar Alterações</button>
     </div>
   </form>
 </div>

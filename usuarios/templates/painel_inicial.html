@@ -1,4 +1,4 @@
-{% extends 'usuarios/../base.html' %}
+{% extends 'base.html' %}
 {% load static %}
 
 {% block title %}Painel Inicial{% endblock %}
@@ -22,7 +22,7 @@
     <!-- Painel Administrador -->
     <div class="dashboard-grid">
         <div class="dashboard-card">
-            <div class="card-icon admin-icon">👨‍💼</div>
+            <div class="card-icon admin-icon"><i data-lucide="users" class="icon" aria-hidden="true"></i></div>
             <div class="card-content">
                 <h3>Usuários</h3>
                 <p class="card-number">{{ total_usuarios }}</p>
@@ -30,7 +30,7 @@
             </div>
         </div>
         <div class="dashboard-card">
-            <div class="card-icon tutor-icon">👨‍🏫</div>
+            <div class="card-icon tutor-icon"><i data-lucide="user" class="icon" aria-hidden="true"></i></div>
             <div class="card-content">
                 <h3>Tutores</h3>
                 <p class="card-number">{{ total_tutores }}</p>
@@ -38,7 +38,7 @@
             </div>
         </div>
         <div class="dashboard-card">
-            <div class="card-icon student-icon">👨‍🎓</div>
+            <div class="card-icon student-icon"><i data-lucide="graduation-cap" class="icon" aria-hidden="true"></i></div>
             <div class="card-content">
                 <h3>Tutorados</h3>
                 <p class="card-number">{{ total_tutorados }}</p>
@@ -51,9 +51,9 @@
         <div class="action-card">
             <h3>Gerenciamento</h3>
             <ul class="action-list">
-                <li><a href="{% url 'admin:index' %}" class="action-link">🔧 Administração Django</a></li>
-                <li><a href="#" class="action-link disabled">📊 Relatórios Gerais (em breve)</a></li>
-                <li><a href="#" class="action-link disabled">⚙️ Configurações (em breve)</a></li>
+                <li><a href="{% url 'admin:index' %}" class="action-link"><i data-lucide="settings" class="icon" aria-hidden="true"></i> Administração Django</a></li>
+                <li><a href="#" class="action-link disabled"><i data-lucide="bar-chart-2" class="icon" aria-hidden="true"></i> Relatórios Gerais (em breve)</a></li>
+                <li><a href="#" class="action-link disabled"><i data-lucide="settings" class="icon" aria-hidden="true"></i> Configurações (em breve)</a></li>
             </ul>
         </div>
     </div>
@@ -62,7 +62,7 @@
     <!-- Painel Tutor -->
     <div class="dashboard-grid">
         <div class="dashboard-card">
-            <div class="card-icon student-icon">👥</div>
+            <div class="card-icon student-icon"><i data-lucide="users" class="icon" aria-hidden="true"></i></div>
             <div class="card-content">
                 <h3>Meus Tutorados</h3>
                 <p class="card-number">{{ meus_tutorados }}</p>
@@ -70,7 +70,7 @@
             </div>
         </div>
         <div class="dashboard-card">
-            <div class="card-icon meeting-icon">📅</div>
+            <div class="card-icon meeting-icon"><i data-lucide="calendar" class="icon" aria-hidden="true"></i></div>
             <div class="card-content">
                 <h3>Reuniões Pendentes</h3>
                 <p class="card-number">{{ reunioes_pendentes }}</p>
@@ -78,7 +78,7 @@
             </div>
         </div>
         <div class="dashboard-card">
-            <div class="card-icon task-icon">📝</div>
+            <div class="card-icon task-icon"><i data-lucide="clipboard" class="icon" aria-hidden="true"></i></div>
             <div class="card-content">
                 <h3>Tarefas Criadas</h3>
                 <p class="card-number">{{ tarefas_criadas }}</p>
@@ -91,16 +91,16 @@
         <div class="action-card">
             <h3>Gestão de Tutorados</h3>
             <ul class="action-list">
-                <li><a href="#" class="action-link disabled">👥 Meus Tutorados (em breve)</a></li>
-                <li><a href="#" class="action-link disabled">➕ Cadastrar Tutorado (em breve)</a></li>
+                <li><a href="#" class="action-link disabled"><i data-lucide="users" class="icon" aria-hidden="true"></i> Meus Tutorados (em breve)</a></li>
+                <li><a href="#" class="action-link disabled"><i data-lucide="plus-circle" class="icon" aria-hidden="true"></i> Cadastrar Tutorado (em breve)</a></li>
             </ul>
         </div>
         <div class="action-card">
             <h3>Atividades</h3>
             <ul class="action-list">
-                <li><a href="#" class="action-link disabled">📅 Agendar Reunião (em breve)</a></li>
-                <li><a href="#" class="action-link disabled">📝 Criar Tarefa (em breve)</a></li>
-                <li><a href="#" class="action-link disabled">📁 Enviar Material (em breve)</a></li>
+                <li><a href="#" class="action-link disabled"><i data-lucide="calendar" class="icon" aria-hidden="true"></i> Agendar Reunião (em breve)</a></li>
+                <li><a href="#" class="action-link disabled"><i data-lucide="clipboard" class="icon" aria-hidden="true"></i> Criar Tarefa (em breve)</a></li>
+                <li><a href="#" class="action-link disabled"><i data-lucide="folder" class="icon" aria-hidden="true"></i> Enviar Material (em breve)</a></li>
             </ul>
         </div>
     </div>
@@ -109,7 +109,7 @@
     <!-- Painel Tutorado -->
     <div class="dashboard-grid">
         <div class="dashboard-card">
-            <div class="card-icon task-icon">📝</div>
+            <div class="card-icon task-icon"><i data-lucide="clipboard" class="icon" aria-hidden="true"></i></div>
             <div class="card-content">
                 <h3>Tarefas Pendentes</h3>
                 <p class="card-number">{{ tarefas_pendentes }}</p>
@@ -117,7 +117,7 @@
             </div>
         </div>
         <div class="dashboard-card">
-            <div class="card-icon meeting-icon">📅</div>
+            <div class="card-icon meeting-icon"><i data-lucide="calendar" class="icon" aria-hidden="true"></i></div>
             <div class="card-content">
                 <h3>Próxima Reunião</h3>
                 <p class="card-text">
@@ -130,7 +130,7 @@
             </div>
         </div>
         <div class="dashboard-card">
-            <div class="card-icon material-icon">📚</div>
+            <div class="card-icon material-icon"><i data-lucide="book" class="icon" aria-hidden="true"></i></div>
             <div class="card-content">
                 <h3>Materiais Novos</h3>
                 <p class="card-number">{{ materiais_novos }}</p>
@@ -143,16 +143,16 @@
         <div class="action-card">
             <h3>Minhas Atividades</h3>
             <ul class="action-list">
-                <li><a href="#" class="action-link disabled">📝 Minhas Tarefas (em breve)</a></li>
-                <li><a href="#" class="action-link disabled">📅 Minhas Reuniões (em breve)</a></li>
-                <li><a href="#" class="action-link disabled">📈 Meu Progresso (em breve)</a></li>
+                <li><a href="#" class="action-link disabled"><i data-lucide="clipboard" class="icon" aria-hidden="true"></i> Minhas Tarefas (em breve)</a></li>
+                <li><a href="#" class="action-link disabled"><i data-lucide="calendar" class="icon" aria-hidden="true"></i> Minhas Reuniões (em breve)</a></li>
+                <li><a href="#" class="action-link disabled"><i data-lucide="bar-chart-2" class="icon" aria-hidden="true"></i> Meu Progresso (em breve)</a></li>
             </ul>
         </div>
         <div class="action-card">
             <h3>Recursos</h3>
             <ul class="action-list">
-                <li><a href="#" class="action-link disabled">📚 Materiais de Estudo (em breve)</a></li>
-                <li><a href="#" class="action-link disabled">💬 Mensagens (em breve)</a></li>
+                <li><a href="#" class="action-link disabled"><i data-lucide="book" class="icon" aria-hidden="true"></i> Materiais de Estudo (em breve)</a></li>
+                <li><a href="#" class="action-link disabled"><i data-lucide="message-square" class="icon" aria-hidden="true"></i> Mensagens (em breve)</a></li>
             </ul>
         </div>
     </div>
