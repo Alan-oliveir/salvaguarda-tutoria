@@ -1,0 +1,197 @@
+/* ============================================================
+   SALVAGUARDA — forms.css
+   Campos, layouts de formulário, upload de foto, checkbox
+   Depende de: base.css (variáveis CSS)
+   ============================================================ */
+
+/* ── Grupo de campo ── */
+.form-group {
+  margin-bottom: 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+}
+
+.form-group label,
+.form-group > label {
+  font-size: .85rem;
+  font-weight: 600;
+  color: var(--sg-dark);
+}
+
+/* ── Inputs, selects, textareas ── */
+.form-group input,
+.form-group select,
+.form-group textarea,
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+select,
+textarea {
+  width: 100%;
+  padding: .65rem .9rem;
+  border: 1.5px solid var(--sg-border);
+  border-radius: var(--radius-md);
+  font-size: .9rem;
+  font-family: inherit;
+  color: var(--sg-dark);
+  background: var(--sg-white);
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus,
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--sg-purple);
+  box-shadow: 0 0 0 3px rgba(123,47,190,.12);
+}
+
+/* ── Textos auxiliares ── */
+.error-message { color: var(--sg-error);   font-size: .8rem;  font-weight: 500; }
+.help-text     { color: var(--sg-muted);   font-size: .78rem; }
+
+/* ── Linha dupla (dois campos lado a lado) ── */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .75rem;
+}
+.form-row .form-group { margin-bottom: 0; }
+.half-width { width: 100%; }
+
+/* ── Opções do formulário (lembrar / esqueci senha) ── */
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .83rem;
+  margin-bottom: 1rem;
+  color: var(--sg-muted);
+}
+.form-options label          { display: flex; align-items: center; gap: .4rem; cursor: pointer; }
+.form-options input[type="checkbox"] { width: auto; }
+.forgot-password             { color: var(--sg-purple); font-weight: 600; }
+
+/* ── Página de formulário (wrapper de largura máxima) ── */
+.form-page { max-width: 720px; margin: 0 auto; }
+
+/* ── Card container do formulário ── */
+.form-card {
+  background: var(--sg-white);
+  border: 1px solid var(--sg-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Seção interna do formulário ── */
+.form-section {
+  padding: 1.5rem 1.75rem;
+  border-bottom: 1px solid var(--sg-border);
+}
+.form-section:last-of-type { border-bottom: none; }
+
+.form-section-title {
+  font-size: .78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--sg-purple);
+  margin: 0 0 1.25rem;
+  padding-bottom: .4rem;
+  border-bottom: 2px solid var(--sg-orange);
+  display: inline-block;
+}
+
+/* ── Grid de 2 colunas dentro do formulário ── */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.form-grid-2 .col-full { grid-column: 1 / -1; }
+
+/* ── Barra de ações (rodapé do formulário) ── */
+.form-footer-bar {
+  padding: 1.25rem 1.75rem;
+  background: var(--sg-bg);
+  border-top: 1px solid var(--sg-border);
+  display: flex;
+  gap: .75rem;
+  justify-content: flex-end;
+}
+
+/* ── Upload de foto ── */
+.foto-upload-row { display: flex; align-items: center; gap: 1rem; }
+
+.foto-thumb {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  background: var(--sg-purple-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; font-weight: 800; color: var(--sg-purple);
+  overflow: hidden; flex-shrink: 0;
+}
+.foto-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+.foto-input-label {
+  flex: 1;
+  padding: .65rem 1rem;
+  border: 2px dashed var(--sg-border);
+  border-radius: var(--radius-md);
+  text-align: center;
+  cursor: pointer;
+  font-size: .85rem;
+  color: var(--sg-muted);
+  transition: border-color .2s, color .2s;
+}
+.foto-input-label:hover { border-color: var(--sg-purple); color: var(--sg-purple); }
+.foto-input-label input { display: none; }
+
+/* ── Checkbox estilizado ── */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: .65rem;
+  padding: .75rem 1rem;
+  background: var(--sg-bg);
+  border: 1.5px solid var(--sg-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color .2s;
+}
+.checkbox-row:hover { border-color: var(--sg-purple); }
+.checkbox-row input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--sg-purple); cursor: pointer; }
+.checkbox-row span { font-size: .9rem; color: var(--sg-dark); font-weight: 500; }
+
+/* ── form-control (usado em perfil/edição inline) ── */
+.form-control {
+  width: 100%;
+  padding: .65rem .9rem;
+  border: 1.5px solid var(--sg-border);
+  border-radius: var(--radius-md);
+  font-size: .9rem;
+  font-family: inherit;
+  color: var(--sg-dark);
+  outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.form-control:focus {
+  border-color: var(--sg-purple);
+  box-shadow: 0 0 0 3px rgba(123,47,190,.12);
+}
+
+/* ── Responsivo ── */
+@media (max-width: 768px) {
+  .form-row { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 600px) {
+  .form-grid-2 { grid-template-columns: 1fr; }
+  .form-grid-2 .col-full { grid-column: 1; }
+}

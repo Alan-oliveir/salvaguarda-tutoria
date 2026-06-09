@@ -1,0 +1,196 @@
+/* ============================================================
+   SALVAGUARDA — tutorados.css
+   Lista, detalhe, badges, token box, reuniões
+   ============================================================ */
+
+/* ── Breadcrumb ── */
+.breadcrumb { font-size: .85rem; color: var(--sg-muted); margin-bottom: 1rem; }
+.breadcrumb a { color: var(--sg-purple); font-weight: 600; text-decoration: none; }
+.breadcrumb a:hover { text-decoration: underline; }
+
+/* ── Page hero (cabeçalho com botão de ação) ── */
+.page-hero {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;
+}
+.page-hero h1 { font-size: 1.75rem; font-weight: 800; color: var(--sg-dark); margin: 0; }
+.page-hero p  { color: var(--sg-muted); font-size: .95rem; margin: .25rem 0 0; }
+
+/* ── Busca / Filtro ── */
+.search-bar { display: flex; gap: .75rem; margin-bottom: 1.75rem; flex-wrap: wrap; }
+.search-bar input,
+.search-bar select {
+  padding: .6rem 1rem;
+  border: 1.5px solid var(--sg-border);
+  border-radius: var(--radius-md);
+  font-size: .9rem; font-family: inherit;
+  outline: none; background: var(--sg-white);
+  transition: border-color .2s;
+}
+.search-bar input { flex: 1; min-width: 200px; }
+.search-bar input:focus,
+.search-bar select:focus { border-color: var(--sg-purple); }
+
+/* ── Cards de tutorados ── */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+.tutorado-card {
+  background: var(--sg-white);
+  border: 1px solid var(--sg-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  position: relative; overflow: hidden;
+  transition: box-shadow .2s, transform .15s;
+  box-shadow: var(--shadow-sm);
+}
+.tutorado-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.tutorado-card::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 4px;
+  background: linear-gradient(90deg, var(--sg-purple), var(--sg-orange));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.card-avatar-tutorado {
+  width: 56px; height: 56px; border-radius: 50%;
+  background: var(--sg-purple-light);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; font-weight: 800; color: var(--sg-purple);
+  margin-bottom: 1rem; overflow: hidden; flex-shrink: 0;
+}
+.card-avatar-tutorado img { width: 100%; height: 100%; object-fit: cover; }
+.card-nome { font-size: 1.05rem; font-weight: 700; color: var(--sg-dark); margin: 0 0 .35rem; }
+
+/* ── Badges ── */
+.badge {
+  font-size: .78rem; font-weight: 600;
+  padding: .22rem .65rem;
+  border-radius: var(--radius-xl);
+  display: inline-block;
+}
+.badge-serie    { background: var(--sg-purple-light); color: var(--sg-purple); }
+.badge-enem-sim { background: var(--sg-orange-light); color: var(--sg-orange-dark); }
+.badge-enem-nao { background: var(--sg-bg); color: var(--sg-muted); border: 1px solid var(--sg-border); }
+.badge-presenca-sim { background: #dcfce7; color: #166534; }
+.badge-presenca-nao { background: var(--sg-error-light); color: var(--sg-error); }
+
+.card-info-row {
+  font-size: .85rem; color: var(--sg-muted);
+  margin-bottom: .2rem; display: flex; align-items: center; gap: .35rem;
+}
+.card-info-row strong { color: var(--sg-dark); font-weight: 500; }
+.card-badges { display: flex; flex-wrap: wrap; gap: .4rem; margin: .5rem 0 1.1rem; }
+.card-actions { display: flex; gap: .5rem; margin-top: 1rem; }
+.card-actions .btn { flex: 1; justify-content: center; font-size: .85rem; }
+.card-actions .btn-icon { padding: .45rem .7rem; flex: none; }
+
+/* ── Empty state ── */
+.empty-state {
+  text-align: center; padding: 4rem 2rem;
+  color: var(--sg-muted); grid-column: 1 / -1;
+}
+.empty-state .empty-icon { font-size: 3.5rem; margin-bottom: 1rem; display: block; }
+.empty-state h3 { color: var(--sg-dark); margin: 0 0 .5rem; font-size: 1.1rem; font-weight: 700; }
+.empty-state p  { margin: 0 0 1.5rem; font-size: .95rem; }
+
+/* ── Detalhe do tutorado ── */
+.tutorado-hero-card {
+  background: var(--sg-white);
+  border: 1px solid var(--sg-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden; margin-bottom: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+.tutorado-hero-banner {
+  background: linear-gradient(135deg, var(--sg-purple-dark) 0%, var(--sg-purple) 100%);
+  padding: 1.75rem 2rem;
+  display: flex; align-items: center; gap: 1.25rem; flex-wrap: wrap;
+}
+.hero-avatar-lg {
+  width: 76px; height: 76px; border-radius: 50%;
+  background: var(--sg-orange);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; font-weight: 800; color: var(--sg-white);
+  border: 3px solid rgba(255,255,255,.3);
+  overflow: hidden; flex-shrink: 0;
+}
+.hero-avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
+.hero-text { flex: 1; min-width: 180px; color: var(--sg-white); }
+.hero-text h1 { font-size: 1.4rem; font-weight: 800; margin: 0 0 .5rem; }
+.hero-text .hero-badges { display: flex; flex-wrap: wrap; gap: .4rem; }
+.hero-actions-top { display: flex; gap: .5rem; flex-shrink: 0; }
+.tutorado-hero-body { padding: 1.25rem 2rem; }
+.contato-row { display: flex; flex-wrap: wrap; gap: 1.25rem; font-size: .88rem; color: var(--sg-muted); }
+.contato-row span { display: flex; align-items: center; gap: .35rem; }
+.contato-row strong { color: var(--sg-dark); font-weight: 600; }
+
+/* ── Token box ── */
+.token-box {
+  display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+  margin-top: 1rem; padding: .75rem 1rem;
+  background: var(--sg-bg); border: 1.5px dashed var(--sg-border);
+  border-radius: var(--radius-md); font-size: .85rem;
+}
+.token-label { color: var(--sg-muted); font-weight: 600; white-space: nowrap; }
+.token-value {
+  font-family: monospace; font-size: .95rem;
+  background: var(--sg-white); border: 1px solid var(--sg-border);
+  padding: .2rem .65rem; border-radius: var(--radius-sm);
+  color: var(--sg-dark); letter-spacing: .05em;
+}
+.btn-copiar {
+  background: var(--sg-purple-light); color: var(--sg-purple);
+  border: none; padding: .3rem .75rem; border-radius: var(--radius-sm);
+  font-size: .8rem; font-weight: 600; cursor: pointer; transition: background .15s;
+}
+.btn-copiar:hover { background: #d8c5f0; }
+.copied-msg { color: var(--sg-success); font-size: .8rem; display: none; }
+
+/* ── Info card (seções internas) ── */
+.info-card {
+  background: var(--sg-white); border: 1px solid var(--sg-border);
+  border-radius: var(--radius-lg); padding: 1.5rem 1.75rem;
+  margin-bottom: 1.5rem; box-shadow: var(--shadow-sm);
+}
+.info-card-title {
+  font-size: .78rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .08em; color: var(--sg-purple); margin: 0 0 1rem;
+  padding-bottom: .5rem; border-bottom: 2px solid var(--sg-orange);
+  display: inline-block;
+}
+.info-card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: .75rem; margin-bottom: 1rem;
+}
+.info-card-header .info-card-title { margin-bottom: 0; }
+
+/* ── Reunião item ── */
+.reuniao-item {
+  display: flex; align-items: flex-start; gap: 1rem;
+  padding: 1rem; border: 1px solid var(--sg-border);
+  border-radius: var(--radius-md); margin-bottom: .75rem;
+  transition: background .15s;
+}
+.reuniao-item:hover { background: var(--sg-bg); }
+.reuniao-data-box {
+  text-align: center; min-width: 50px;
+  background: var(--sg-purple-light); border-radius: var(--radius-sm);
+  padding: .4rem .5rem; flex-shrink: 0;
+}
+.reuniao-data-box .rdb-dia { font-size: 1.3rem; font-weight: 800; color: var(--sg-purple); line-height: 1; }
+.reuniao-data-box .rdb-mes { font-size: .68rem; text-transform: uppercase; color: var(--sg-purple); font-weight: 700; }
+.reuniao-info-col { flex: 1; min-width: 140px; }
+.reuniao-meta { font-size: .83rem; color: var(--sg-muted); margin: .25rem 0 0; }
+
+.empty-section { text-align: center; padding: 2rem 1rem; color: var(--sg-muted); font-size: .9rem; }
+
+/* ── Responsivo ── */
+@media (max-width: 768px) {
+  .tutorado-hero-banner { flex-direction: column; text-align: center; }
+  .hero-actions-top { justify-content: center; width: 100%; }
+}
+@media (max-width: 480px) {
+  .cards-grid { grid-template-columns: 1fr; }
+}
