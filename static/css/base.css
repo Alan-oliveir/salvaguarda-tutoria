@@ -77,15 +77,15 @@ a:hover {
 .main-content {
   flex: 1;
   padding: 2rem 0 3rem;
-  display: flex;
-  flex-direction: column;
 }
 
 .main-content:has(.login-wrapper) {
   padding: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-.main-content:has(.login-wrapper) .container {
+.main-content:has(.login-wrapper) > .container {
   flex: 1;
   display: flex;
   flex-direction: column;
