@@ -8,8 +8,7 @@ body:has(.login-wrapper) { background: var(--sg-bg); }
 .login-wrapper {
   display: flex;
   flex: 1;
-  /* Ocupa a viewport inteira menos header (~67px) e footer (~52px) */
-  height: calc(100dvh - 119px);
+  height: var(--auth-content-height, calc(100dvh - 120px));
   min-height: 0;
   overflow: hidden;
 }

@@ -55,6 +55,19 @@
 
     {% block extra_scripts %}{% endblock %}
     <script>
+        // Define a altura disponível para páginas de auth com base no header/footer reais
+        function setAuthContentHeight() {
+            var header = document.querySelector('.main-header');
+            var footer = document.querySelector('.main-footer');
+            if (!header || !footer) return;
+            var h = header.getBoundingClientRect().height;
+            var f = footer.getBoundingClientRect().height;
+            document.documentElement.style.setProperty('--auth-content-height', 'calc(100dvh - ' + (h + f) + 'px)');
+        }
+        document.addEventListener('DOMContentLoaded', setAuthContentHeight);
+        window.addEventListener('resize', setAuthContentHeight);
+    </script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             if (!window.lucide) return;
             try {
