@@ -7,13 +7,14 @@
 <link rel="stylesheet" href="{% static 'css/auth.css' %}">
 {% endblock %}
 
+{% block hide_login_btn %}{% endblock %}
+
 {% block content %}
 <div class="login-wrapper">
     <div class="login-left">
         <div class="login-overlay">
             <img src="{% static 'img/logo.png' %}" alt="Logo Salvaguarda" class="logo-sg">
             <h1>Bem-vindo(a)</h1>
-            <p>Conecte-se e acompanhe a sua jornada.</p>
         </div>
     </div>
 

@@ -29,7 +29,9 @@
                         <button type="submit" class="btn btn-logout">Sair</button>
                     </form>
                 {% else %}
+                    {% block hide_login_btn %}
                     <a href="{% url 'usuarios:login' %}" class="btn">Login</a>
+                    {% endblock %}
                 {% endif %}
             </nav>
         </div>

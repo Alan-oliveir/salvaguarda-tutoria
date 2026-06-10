@@ -7,13 +7,14 @@
 <link rel="stylesheet" href="{% static 'css/auth.css' %}">
 {% endblock %}
 
+{% block hide_login_btn %}{% endblock %}
+
 {% block content %}
 <div class="login-wrapper">
     <div class="login-left">
         <div class="login-overlay">
             <img src="{% static 'img/logo.png' %}" alt="Logo Salvaguarda" class="logo-sg">
             <h1>Junte-se a nós</h1>
-            <p>Cadastre-se e faça parte do maior programa social do Brasil.</p>
         </div>
     </div>
 

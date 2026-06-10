@@ -5,14 +5,23 @@
 
 body:has(.login-wrapper) { background: var(--sg-bg); }
 
-.login-wrapper { display: flex; min-height: 100vh; }
+.login-wrapper {
+  display: flex;
+  flex: 1;
+  /* Ocupa a viewport inteira menos header (~67px) e footer (~52px) */
+  height: calc(100dvh - 119px);
+  min-height: 0;
+  overflow: hidden;
+}
 
 /* Painel esquerdo */
 .login-left {
   flex: 1.4;
+  height: 100%;
   background: url("../img/bg_image.png") no-repeat center center;
   background-size: cover;
   position: relative;
+  overflow: hidden;
 }
 
 .login-overlay {
@@ -53,6 +62,7 @@ body:has(.login-wrapper) { background: var(--sg-bg); }
   justify-content: center;
   align-items: center;
   padding: 2rem;
+  overflow-y: auto;
 }
 
 .login-form { width: 100%; max-width: 380px; }
@@ -167,9 +177,14 @@ input:focus, select:focus, textarea:focus {
 
 /* Responsivo */
 @media (max-width: 768px) {
-  .login-wrapper { flex-direction: column; min-height: 100vh; }
-  .login-left { flex: none; height: 220px; }
-  .login-right { padding: 1.5rem; }
+  .login-wrapper {
+    flex-direction: column;
+    height: auto;
+    min-height: calc(100dvh - 119px);
+    overflow: visible;
+  }
+  .login-left { flex: none; height: 220px; overflow: hidden; }
+  .login-right { padding: 1.5rem; overflow-y: visible; }
   .login-form { max-width: 100%; }
   .form-row { grid-template-columns: 1fr; }
 }
