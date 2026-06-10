@@ -8,6 +8,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{% static 'css/base.css' %}">
     <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js" defer></script>
     <script src="https://unpkg.com/lucide@1.17.0/dist/umd/lucide.min.js" defer></script>
     {% block extra_head %}{% endblock %}
 </head>
@@ -32,17 +34,6 @@
             </nav>
         </div>
     </header>
-
-    <!-- Mensagens do sistema -->
-    <div class="container">
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-{{ message.tags }}">
-                    {{ message }}
-                </div>
-            {% endfor %}
-        {% endif %}
-    </div>
 
     <!-- Conteúdo principal -->
     <main class="main-content">
@@ -78,6 +69,30 @@
             } catch (e) {
                 console.warn('lucide.createIcons failed:', e);
             }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof Toastify === 'undefined') return;
+            var rootStyle = getComputedStyle(document.documentElement);
+            function colorForTags(tags) {
+                tags = String(tags || '');
+                if (tags.indexOf('success') !== -1) return rootStyle.getPropertyValue('--sg-success') || '#1a7a4a';
+                if (tags.indexOf('error') !== -1 || tags.indexOf('danger') !== -1) return rootStyle.getPropertyValue('--sg-error') || '#C0392B';
+                if (tags.indexOf('warning') !== -1) return rootStyle.getPropertyValue('--sg-warning') || '#F39C12';
+                return rootStyle.getPropertyValue('--sg-purple') || '#7B2FBE';
+            }
+            {% if messages %}
+                {% for message in messages %}
+                    Toastify({
+                        text: "{{ message|escapejs }}",
+                        duration: 2000,
+                        close: false,
+                        gravity: "bottom",
+                        position: "right",
+                        style: { background: colorForTags("{{ message.tags|escapejs }}"), color: "#fff" }
+                    }).showToast();
+                {% endfor %}
+            {% endif %}
         });
     </script>
 
