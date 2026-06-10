@@ -148,7 +148,7 @@ input:focus, select:focus, textarea:focus {
 .login-footer { text-align: center; margin-top: 1.25rem; font-size: .88rem; color: var(--sg-muted); }
 .login-footer a { color: var(--sg-purple); font-weight: 600; }
 
-.error-message { color: var(--sg-error); font-size: .8rem; font-weight: 500; }
+
 .help-text { color: var(--sg-muted); font-size: .78rem; }
 
 /* Logout */

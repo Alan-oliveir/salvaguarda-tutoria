@@ -30,16 +30,12 @@
                 <div class="form-group">
                     {{ form.username.label_tag }}
                     {{ form.username }}
-                    {% if form.username.errors %}
-                        <div class="error-message">{{ form.username.errors.0 }}</div>
-                    {% endif %}
+
                 </div>
                 <div class="form-group">
                     {{ form.password.label_tag }}
                     {{ form.password }}
-                    {% if form.password.errors %}
-                        <div class="error-message">{{ form.password.errors.0 }}</div>
-                    {% endif %}
+
                 </div>
 
                 <div class="form-options">
@@ -56,4 +52,20 @@
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function(){
+    if (typeof Toastify === 'undefined') return;
+    {% if form.non_field_errors %}
+        Toastify({text: "{{ form.non_field_errors.0|escapejs }}", duration: 4000, gravity: "bottom", position: "right", style: { background: 'var(--sg-error, #C0392B)', color: '#fff' }}).showToast();
+    {% endif %}
+    {% for field in form %}
+        {% if field.errors %}
+            Toastify({text: "{{ field.errors.0|escapejs }}", duration: 4000, gravity: "bottom", position: "right", style: { background: 'var(--sg-error, #C0392B)', color: '#fff' }}).showToast();
+        {% endif %}
+    {% endfor %}
+});
+</script>
 {% endblock %}
