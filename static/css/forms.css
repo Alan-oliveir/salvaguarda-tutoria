@@ -52,7 +52,7 @@ textarea:focus {
 }
 
 /* ── Textos auxiliares ── */
-
+.error-message { color: var(--sg-error);   font-size: .8rem;  font-weight: 500; }
 .help-text     { color: var(--sg-muted);   font-size: .78rem; }
 
 /* ── Linha dupla (dois campos lado a lado) ── */
