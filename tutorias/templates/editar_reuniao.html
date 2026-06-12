@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Editar Reunião — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/reunioes.css' %}">
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'tutorias:lista_reunioes' %}">Reuniões</a> /
+  <a href="{% url 'tutorias:detalhe_reuniao' reuniao.pk %}">{{ reuniao.data|date:"d/m/Y" }}</a> /
+  Editar
+</p>
+
+<div class="page-hero">
+  <div class="page-hero-text">
+    <h1>Editar Reunião</h1>
+    <p>{{ reuniao.tutorado.nome }} · {{ reuniao.data|date:"d/m/Y" }}</p>
+  </div>
+</div>
+
+<div class="detalhe-card" style="max-width:640px;">
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="detalhe-body">
+      <div class="form-grid-2" style="margin-bottom:1rem;">
+
+        <div class="form-group col-full">
+          <label for="tutorado">Tutorado *</label>
+          <select name="tutorado" id="tutorado" required>
+            {% for t in tutorados %}
+              <option value="{{ t.pk }}" {% if t.pk == reuniao.tutorado.pk %}selected{% endif %}>
+                {{ t.nome }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="data">Data *</label>
+          <input type="date" name="data" id="data"
+                 value="{{ reuniao.data|date:'Y-m-d' }}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="horario">Horário *</label>
+          <input type="time" name="horario" id="horario"
+                 value="{{ reuniao.horario|time:'H:i' }}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="materia">Matéria</label>
+          <select name="materia" id="materia">
+            {% for val, label in materias_choices %}
+              <option value="{{ val }}" {% if reuniao.materia == val %}selected{% endif %}>
+                {{ label }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="duracao_minutos">Duração (min)</label>
+          <input type="number" name="duracao_minutos" id="duracao_minutos"
+                 value="{{ reuniao.duracao_minutos }}" min="15" max="480">
+        </div>
+
+        <div class="form-group col-full">
+          <label for="link">Link da reunião</label>
+          <input type="url" name="link" id="link"
+                 value="{{ reuniao.link }}"
+                 placeholder="https://meet.google.com/...">
+        </div>
+
+        <div class="form-group col-full">
+          <label for="topicos">Tópicos / pauta</label>
+          <textarea name="topicos" id="topicos" rows="3">{{ reuniao.topicos }}</textarea>
+        </div>
+
+        <div class="form-group col-full">
+          <label for="observacoes">Observações</label>
+          <textarea name="observacoes" id="observacoes" rows="3">{{ reuniao.observacoes }}</textarea>
+        </div>
+
+        <div class="form-group col-full">
+          <label class="checkbox-row" for="presenca">
+            <input type="checkbox" name="presenca" id="presenca" value="1"
+                   {% if reuniao.presenca %}checked{% endif %}>
+            <span>Tutorado compareceu à reunião</span>
+          </label>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <a href="{% url 'tutorias:detalhe_reuniao' reuniao.pk %}" class="btn btn-secondary">Cancelar</a>
+      <button type="submit" class="btn btn-primary">
+        <i data-lucide="check" style="width:15px;height:15px;"></i>
+        Salvar Alterações
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

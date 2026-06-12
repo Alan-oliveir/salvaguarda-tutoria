@@ -11,9 +11,11 @@
 <div class="page-hero">
   <div>
     <h1><i data-lucide="users" class="icon" aria-hidden="true"></i> Meus Tutorados</h1>
-    <p>{{ tutorados.count }} estudante{{ tutorados.count|pluralize }} cadastrado{{ tutorados.count|pluralize }}</p>
+    <p>{{ tutorados.count }} estudante{{ tutorados.count|pluralize }} vinculado{{ tutorados.count|pluralize }}</p>
   </div>
-  <a href="{% url 'tutorias:cadastrar_tutorado' %}" class="btn btn-success"><i data-lucide="plus" class="icon" aria-hidden="true"></i> Novo Tutorado</a>
+  <a href="{% url 'tutorias:vincular_tutorado' %}" class="btn btn-success">
+    <i data-lucide="user-plus" class="icon" aria-hidden="true"></i> Vincular Tutorado
+  </a>
 </div>
 
 {% if tutorados %}
@@ -29,48 +31,66 @@
 {% endif %}
 
 <div class="cards-grid" id="cardsGrid">
-  {% for t in tutorados %}
-  <div class="tutorado-card" data-nome="{{ t.nome|lower }}" data-serie="{{ t.serie }}">
+  {% for perfil in tutorados %}
+  <div class="tutorado-card"
+       data-nome="{{ perfil.usuario.get_nome_completo|lower }}"
+       data-serie="{{ perfil.serie }}">
+
     <div class="card-avatar-tutorado">
-      {% if t.foto %}
-        <img src="{{ t.foto.url }}" alt="{{ t.nome }}">
+      {% if perfil.usuario.foto_perfil %}
+        <img src="{{ perfil.usuario.foto_perfil.url }}" alt="{{ perfil.usuario.get_nome_completo }}">
       {% else %}
-        {{ t.nome|slice:":1"|upper }}
+        {{ perfil.usuario.get_iniciais }}
       {% endif %}
     </div>
 
-    <p class="card-nome">{{ t.nome }}</p>
+    <p class="card-nome">{{ perfil.usuario.get_nome_completo }}</p>
 
     <div class="card-badges">
-      <span class="badge badge-serie">{{ t.get_serie_display }}</span>
-      {% if t.fez_enem %}
-        <span class="badge badge-enem-sim"><i data-lucide="check" class="icon" aria-hidden="true"></i> Já fez ENEM</span>
+      <span class="badge badge-serie">{{ perfil.get_serie_display }}</span>
+      {% if perfil.fez_enem %}
+        <span class="badge badge-enem-sim">
+          <i data-lucide="check" class="icon" aria-hidden="true"></i> Já fez ENEM
+        </span>
       {% else %}
         <span class="badge badge-enem-nao">Ainda não fez ENEM</span>
       {% endif %}
     </div>
 
-    {% if t.cidade %}
-    <p class="card-info-row"><i data-lucide="map-pin" class="icon" aria-hidden="true"></i> <strong>{{ t.cidade }}{% if t.estado %}/{{ t.estado }}{% endif %}</strong></p>
+    {% if perfil.usuario.cidade %}
+    <p class="card-info-row">
+      <i data-lucide="map-pin" class="icon" aria-hidden="true"></i>
+      <strong>{{ perfil.usuario.cidade }}{% if perfil.usuario.estado %}/{{ perfil.usuario.estado }}{% endif %}</strong>
+    </p>
     {% endif %}
-    {% if t.whatsapp %}
-    <p class="card-info-row"><i data-lucide="smartphone" class="icon" aria-hidden="true"></i> <strong>{{ t.whatsapp }}</strong></p>
+    {% if perfil.whatsapp %}
+    <p class="card-info-row">
+      <i data-lucide="smartphone" class="icon" aria-hidden="true"></i>
+      <strong>{{ perfil.whatsapp }}</strong>
+    </p>
     {% endif %}
-    {% if t.cursos_interesse %}
-    <p class="card-info-row"><i data-lucide="target" class="icon" aria-hidden="true"></i> <strong>{{ t.cursos_interesse|truncatechars:40 }}</strong></p>
+    {% if perfil.cursos_interesse %}
+    <p class="card-info-row">
+      <i data-lucide="target" class="icon" aria-hidden="true"></i>
+      <strong>{{ perfil.cursos_interesse|truncatechars:40 }}</strong>
+    </p>
     {% endif %}
 
     <div class="card-actions">
-      <a href="{% url 'tutorias:detalhe_tutorado' t.pk %}" class="btn btn-primary">Ver detalhes</a>
-      <a href="{% url 'tutorias:editar_tutorado' t.pk %}" class="btn btn-secondary btn-icon"><i data-lucide="edit-2" class="icon" aria-hidden="true"></i></a>
+      <a href="{% url 'tutorias:detalhe_tutorado' perfil.pk %}" class="btn btn-primary">Ver detalhes</a>
+      <a href="{% url 'tutorias:editar_tutorado' perfil.pk %}" class="btn btn-secondary btn-icon">
+        <i data-lucide="edit-2" class="icon" aria-hidden="true"></i>
+      </a>
     </div>
   </div>
   {% empty %}
   <div class="empty-state">
     <i data-lucide="graduation-cap" class="empty-icon" aria-hidden="true"></i>
-    <h3>Nenhum tutorado ainda</h3>
-    <p>Cadastre seu primeiro tutorado para começar.</p>
-    <a href="{% url 'tutorias:cadastrar_tutorado' %}" class="btn btn-success"><i data-lucide="plus" class="icon" aria-hidden="true"></i> Cadastrar agora</a>
+    <h3>Nenhum tutorado vinculado</h3>
+    <p>Vincule um estudante cadastrado no app para começar.</p>
+    <a href="{% url 'tutorias:vincular_tutorado' %}" class="btn btn-success">
+      <i data-lucide="user-plus" class="icon" aria-hidden="true"></i> Vincular agora
+    </a>
   </div>
   {% endfor %}
 </div>

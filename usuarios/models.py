@@ -1,5 +1,7 @@
 # usuarios/models.py
 
+import secrets
+
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
@@ -12,137 +14,50 @@ class CustomUser(AbstractUser):
         ('TUTORADO', 'Tutorado'),
     ]
 
-    tipo = models.CharField(
-        max_length=10,
-        choices=TIPO_CHOICES,
-        help_text="Tipo de usuário no sistema"
-    )
-
-    # Campos adicionais
-    telefone = models.CharField(
-        max_length=15,
-        blank=True,
-        null=True,
-        help_text="Número de telefone para contato"
-    )
-
-    data_nascimento = models.DateField(
-        blank=True,
-        null=True,
-        help_text="Data de nascimento do usuário"
-    )
-
-    foto_perfil = models.ImageField(
-        upload_to='perfis/',
-        blank=True,
-        null=True,
-        help_text="Foto de perfil do usuário"
-    )
-
-    endereco = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Endereço completo do usuário"
-    )
-
-    cidade = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        help_text="Cidade onde reside"
-    )
-
-    estado = models.CharField(
-        max_length=2,
-        blank=True,
-        null=True,
-        help_text="Estado (sigla) onde reside"
-    )
-
-    # Campos específicos para tutorados
-    serie_escolar = models.CharField(
-        max_length=50,
-        blank=True,
-        null=True,
-        help_text="Série escolar atual (apenas para tutorados)"
-    )
-
-    ja_fez_enem = models.BooleanField(
-        default=False,
-        help_text="Indica se já fez o ENEM (apenas para tutorados)"
-    )
-
-    cursos_interesse = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Cursos de interesse (apenas para tutorados)"
-    )
-
-    # Campos de controle
-    data_ultimo_acesso = models.DateTimeField(
-        blank=True,
-        null=True,
-        help_text="Data e hora do último acesso"
-    )
-
-    ativo = models.BooleanField(
-        default=True,
-        help_text="Indica se o usuário está ativo no sistema"
-    )
-
-    observacoes = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Observações gerais sobre o usuário"
-    )
+    tipo = models.CharField(max_length=10, choices=TIPO_CHOICES)
+    telefone = models.CharField(max_length=15, blank=True, null=True)
+    data_nascimento = models.DateField(blank=True, null=True)
+    foto_perfil = models.ImageField(upload_to='perfis/', blank=True, null=True)
+    endereco = models.TextField(blank=True, null=True)
+    cidade = models.CharField(max_length=100, blank=True, null=True)
+    estado = models.CharField(max_length=2, blank=True, null=True)
+    data_ultimo_acesso = models.DateTimeField(blank=True, null=True)
+    ativo = models.BooleanField(default=True)
+    observacoes = models.TextField(blank=True, null=True)
 
     class Meta:
-        verbose_name = "Usuário"
-        verbose_name_plural = "Usuários"
+        verbose_name = 'Usuário'
+        verbose_name_plural = 'Usuários'
         ordering = ['first_name', 'last_name']
 
     def __str__(self):
-        nome_completo = f"{self.first_name} {self.last_name}".strip()
-        return nome_completo or self.username
+        return f"{self.first_name} {self.last_name}".strip() or self.username
 
     def get_nome_completo(self):
-        """Retorna o nome completo do usuário"""
         return f"{self.first_name} {self.last_name}".strip() or self.username
 
     def get_iniciais(self):
-        """Retorna as iniciais do nome do usuário"""
         if self.first_name and self.last_name:
             return f"{self.first_name[0]}{self.last_name[0]}".upper()
-        return self.username[0].upper() if self.username else "U"
+        return self.username[0].upper() if self.username else 'U'
 
     def is_admin(self):
-        """Verifica se o usuário é administrador"""
         return self.tipo == 'ADMIN'
 
     def is_tutor(self):
-        """Verifica se o usuário é tutor"""
         return self.tipo == 'TUTOR'
 
     def is_tutorado(self):
-        """Verifica se o usuário é tutorado"""
         return self.tipo == 'TUTORADO'
 
     def get_tipo_display_icon(self):
-        """Retorna um ícone para o tipo de usuário"""
-        icons = {
-            'ADMIN': '👨‍💼',
-            'TUTOR': '👨‍🏫',
-            'TUTORADO': '👨‍🎓'
-        }
-        return icons.get(self.tipo, '👤')
+        return {'ADMIN': '👨‍💼', 'TUTOR': '👨‍🏫', 'TUTORADO': '👨‍🎓'}.get(self.tipo, '👤')
 
     def atualizar_ultimo_acesso(self):
-        """Atualiza a data do último acesso"""
         self.data_ultimo_acesso = timezone.now()
         self.save(update_fields=['data_ultimo_acesso'])
 
     def get_idade(self):
-        """Calcula e retorna a idade do usuário"""
         if self.data_nascimento:
             today = timezone.now().date()
             return today.year - self.data_nascimento.year - (
@@ -151,111 +66,100 @@ class CustomUser(AbstractUser):
         return None
 
     def save(self, *args, **kwargs):
-        """Override do save para fazer validações adicionais"""
-        # Garantir que email seja único se fornecido
         if self.email:
             existing = CustomUser.objects.filter(email=self.email).exclude(pk=self.pk)
             if existing.exists():
-                raise ValueError("Este email já está em uso por outro usuário.")
-
-        # Primeira vez salvando - definir data de último acesso
+                raise ValueError('Este email já está em uso por outro usuário.')
         if not self.pk:
             self.data_ultimo_acesso = timezone.now()
-
         super().save(*args, **kwargs)
 
 
 class PerfilTutor(models.Model):
-    """Modelo para dados específicos de tutores"""
     usuario = models.OneToOneField(
-        CustomUser,
-        on_delete=models.CASCADE,
-        related_name='perfil_tutor'
+        CustomUser, on_delete=models.CASCADE, related_name='perfil_tutor'
     )
-
-    especialidade = models.CharField(
-        max_length=100,
-        blank=True,
-        null=True,
-        help_text="Área de especialidade do tutor"
-    )
-
-    experiencia = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Experiência profissional ou acadêmica"
-    )
-
-    disponibilidade = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Horários disponíveis para tutoria"
-    )
-
-    max_tutorados = models.PositiveIntegerField(
-        default=10,
-        help_text="Número máximo de tutorados que pode acompanhar"
-    )
+    especialidade = models.CharField(max_length=100, blank=True, null=True)
+    experiencia = models.TextField(blank=True, null=True)
+    disponibilidade = models.TextField(blank=True, null=True)
+    max_tutorados = models.PositiveIntegerField(default=10)
 
     class Meta:
-        verbose_name = "Perfil do Tutor"
-        verbose_name_plural = "Perfis dos Tutores"
+        verbose_name = 'Perfil do Tutor'
+        verbose_name_plural = 'Perfis dos Tutores'
 
     def __str__(self):
-        return f"Perfil de {self.usuario.get_nome_completo()}"
+        return f'Perfil de {self.usuario.get_nome_completo()}'
+
+    def tutorados_ativos(self):
+        """Retorna os PerfilTutorado vinculados a este tutor."""
+        return PerfilTutorado.objects.filter(tutor=self.usuario)
+
+
+def _gerar_token_unico():
+    while True:
+        token = secrets.token_urlsafe(8)
+        if not PerfilTutorado.objects.filter(token=token).exists():
+            return token
 
 
 class PerfilTutorado(models.Model):
-    """Modelo para dados específicos de tutorados"""
+    SERIE_CHOICES = [
+        ('1EM', '1º Ano do Ensino Médio'),
+        ('2EM', '2º Ano do Ensino Médio'),
+        ('3EM', '3º Ano do Ensino Médio'),
+        ('FORM', 'Já formado / Cursinho'),
+    ]
+
+    TURNO_CHOICES = [
+        ('MATUTINO', 'Matutino'),
+        ('VESPERTINO', 'Vespertino'),
+        ('NOTURNO', 'Noturno'),
+        ('INTEGRAL', 'Integral'),
+    ]
+
     usuario = models.OneToOneField(
+        CustomUser, on_delete=models.CASCADE, related_name='perfil_tutorado'
+    )
+
+    # Vínculo com tutor (null = ainda sem tutor atribuído)
+    tutor = models.ForeignKey(
         CustomUser,
-        on_delete=models.CASCADE,
-        related_name='perfil_tutorado'
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='tutorados',
+        limit_choices_to={'tipo': 'TUTOR'},
     )
 
-    escola = models.CharField(
-        max_length=200,
-        blank=True,
-        null=True,
-        help_text="Nome da escola onde estuda"
-    )
+    # Dados acadêmicos (antes viviam no model Tutorado)
+    serie = models.CharField(max_length=4, choices=SERIE_CHOICES, default='3EM')
+    fez_enem = models.BooleanField(default=False)
+    cursos_interesse = models.TextField(blank=True)
+    escola = models.CharField(max_length=200, blank=True, null=True)
+    turno_escolar = models.CharField(max_length=20, choices=TURNO_CHOICES, blank=True, null=True)
 
-    turno_escolar = models.CharField(
-        max_length=20,
-        choices=[
-            ('MATUTINO', 'Matutino'),
-            ('VESPERTINO', 'Vespertino'),
-            ('NOTURNO', 'Noturno'),
-            ('INTEGRAL', 'Integral'),
-        ],
-        blank=True,
-        null=True,
-        help_text="Turno que estuda"
-    )
+    # Dados de contato do aluno (complementam o CustomUser)
+    whatsapp = models.CharField(max_length=20, blank=True)
 
-    responsavel_nome = models.CharField(
-        max_length=200,
-        blank=True,
-        null=True,
-        help_text="Nome do responsável"
-    )
+    # Responsável
+    responsavel_nome = models.CharField(max_length=200, blank=True, null=True)
+    responsavel_telefone = models.CharField(max_length=15, blank=True, null=True)
 
-    responsavel_telefone = models.CharField(
-        max_length=15,
-        blank=True,
-        null=True,
-        help_text="Telefone do responsável"
-    )
+    # Objetivos
+    objetivo_principal = models.TextField(blank=True, null=True)
 
-    objetivo_principal = models.TextField(
-        blank=True,
-        null=True,
-        help_text="Principal objetivo com a tutoria"
-    )
+    # Token de acesso (para link direto futuro)
+    token = models.CharField(max_length=16, blank=True, unique=True)
 
     class Meta:
-        verbose_name = "Perfil do Tutorado"
-        verbose_name_plural = "Perfis dos Tutorados"
+        verbose_name = 'Perfil do Tutorado'
+        verbose_name_plural = 'Perfis dos Tutorados'
 
     def __str__(self):
-        return f"Perfil de {self.usuario.get_nome_completo()}"
+        return f'Perfil de {self.usuario.get_nome_completo()}'
+
+    def save(self, *args, **kwargs):
+        if not self.token:
+            self.token = _gerar_token_unico()
+        super().save(*args, **kwargs)

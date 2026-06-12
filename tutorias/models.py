@@ -1,55 +1,7 @@
 # tutorias/models.py
 
-import secrets
-from django.db import models
 from django.conf import settings
-
-
-def _gerar_token_unico():
-    while True:
-        token = secrets.token_urlsafe(8)
-        if not Tutorado.objects.filter(token=token).exists():
-            return token
-
-
-class Tutorado(models.Model):
-    SERIE_CHOICES = [
-        ('1EM', '1º Ano do Ensino Médio'),
-        ('2EM', '2º Ano do Ensino Médio'),
-        ('3EM', '3º Ano do Ensino Médio'),
-        ('FORM', 'Já formado / Cursinho'),
-    ]
-
-    tutor = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
-        related_name='tutorados'
-    )
-    nome = models.CharField(max_length=100)
-    foto = models.ImageField(upload_to='fotos_tutorados/', blank=True, null=True)
-    estado = models.CharField(max_length=50, blank=True)
-    cidade = models.CharField(max_length=50, blank=True)
-    serie = models.CharField(max_length=4, choices=SERIE_CHOICES, default='3EM')
-    idade = models.PositiveIntegerField(null=True, blank=True)
-    fez_enem = models.BooleanField(default=False)
-    cursos_interesse = models.TextField(blank=True)
-    whatsapp = models.CharField(max_length=20, blank=True)
-    email = models.EmailField(blank=True)
-    token = models.CharField(max_length=16, blank=True, unique=True)
-    criado_em = models.DateField(auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-        if not self.token:
-            self.token = _gerar_token_unico()
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return self.nome
-
-    class Meta:
-        verbose_name = 'Tutorado'
-        verbose_name_plural = 'Tutorados'
-        ordering = ['nome']
+from django.db import models
 
 
 class Reuniao(models.Model):
@@ -62,11 +14,22 @@ class Reuniao(models.Model):
         ('GER', 'Geral / Orientação'),
     ]
 
-    tutorado = models.ForeignKey(
-        Tutorado,
+    # tutor que criou a reunião
+    tutor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
-        related_name='reunioes'
+        related_name='reunioes_como_tutor',
+        limit_choices_to={'tipo': 'TUTOR'},
     )
+
+    # tutorado é agora um CustomUser real
+    tutorado = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='reunioes_como_tutorado',
+        limit_choices_to={'tipo': 'TUTORADO'},
+    )
+
     data = models.DateField()
     horario = models.TimeField()
     link = models.URLField(blank=True, help_text='Link do Google Meet, Zoom, etc.')
@@ -77,7 +40,7 @@ class Reuniao(models.Model):
     materia = models.CharField(max_length=3, choices=MATERIA_CHOICES, default='GER')
 
     def __str__(self):
-        return f'Reunião com {self.tutorado.nome} em {self.data}'
+        return f'Reunião com {self.tutorado.get_nome_completo()} em {self.data}'
 
     class Meta:
         verbose_name = 'Reunião'

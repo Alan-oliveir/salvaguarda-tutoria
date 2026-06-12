@@ -1,0 +1,234 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reuniões — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/reunioes.css' %}">
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'usuarios:painel_inicial' %}">Painel</a> /
+  Reuniões
+</p>
+
+<div class="page-hero">
+  <div class="page-hero-text">
+    <h1>Reuniões</h1>
+    <p>{{ reunioes.count }} reunião{% if reunioes.count != 1 %}ões{% endif %} registrada{% if reunioes.count != 1 %}s{% endif %}</p>
+  </div>
+  {% if tutorados %}
+  <button id="btnNovaReuniao" class="btn btn-primary">
+    <i data-lucide="plus" style="width:16px;height:16px;"></i>
+    Nova Reunião
+  </button>
+  {% endif %}
+</div>
+
+{% if tutorados %}
+<div class="filters-bar">
+  <select id="filtroTutorado">
+    <option value="">Todos os tutorados</option>
+    {% for t in tutorados %}
+      <option value="{{ t.pk }}" {% if filtro_tutorado == t.pk|stringformat:"s" %}selected{% endif %}>
+        {{ t.nome }}
+      </option>
+    {% endfor %}
+  </select>
+
+  <select id="filtroMateria">
+    <option value="">Todas as matérias</option>
+    {% for val, label in materias_choices %}
+      <option value="{{ val }}" {% if filtro_materia == val %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
+  </select>
+
+  <select id="filtroStatus">
+    <option value="">Todos os status</option>
+    <option value="futura">Futuras</option>
+    <option value="realizada">Realizadas (presente)</option>
+    <option value="faltou">Faltou</option>
+  </select>
+</div>
+{% endif %}
+
+<div class="reunioes-list">
+  {% for r in reunioes %}
+    {% if r.data >= hoje %}
+      {% with status="futura" %}
+      <div class="reuniao-card status-futura"
+           data-tutorado="{{ r.tutorado.pk }}"
+           data-materia="{{ r.materia }}"
+           data-status="futura">
+    {% endwith %}
+    {% elif r.presenca %}
+      <div class="reuniao-card status-realizada"
+           data-tutorado="{{ r.tutorado.pk }}"
+           data-materia="{{ r.materia }}"
+           data-status="realizada">
+    {% else %}
+      <div class="reuniao-card status-faltou"
+           data-tutorado="{{ r.tutorado.pk }}"
+           data-materia="{{ r.materia }}"
+           data-status="faltou">
+    {% endif %}
+
+      <div class="reuniao-data">
+        <div class="rd-dia">{{ r.data|date:"d" }}</div>
+        <div class="rd-mes">{{ r.data|date:"M" }}</div>
+        <div class="rd-hora">{{ r.horario|time:"H:i" }}</div>
+      </div>
+
+      <div class="reuniao-divider"></div>
+
+      <div class="reuniao-info">
+        <p class="reuniao-tutorado">{{ r.tutorado.nome }}</p>
+        <div class="reuniao-meta">
+          <span class="badge badge-materia">{{ r.get_materia_display }}</span>
+          {% if r.data >= hoje %}
+            <span class="badge badge-futura">
+              <i data-lucide="clock" style="width:11px;height:11px;"></i>
+              Agendada
+            </span>
+          {% elif r.presenca %}
+            <span class="badge badge-presenca">
+              <i data-lucide="check" style="width:11px;height:11px;"></i>
+              Presente
+            </span>
+          {% else %}
+            <span class="badge badge-faltou">
+              <i data-lucide="x" style="width:11px;height:11px;"></i>
+              Faltou
+            </span>
+          {% endif %}
+          {% if r.duracao_minutos %}<span>{{ r.duracao_minutos }}min</span>{% endif %}
+        </div>
+        {% if r.topicos %}
+          <p class="reuniao-topicos">{{ r.topicos|truncatechars:80 }}</p>
+        {% endif %}
+      </div>
+
+      <div class="reuniao-actions">
+        <a href="{% url 'tutorias:detalhe_reuniao' r.pk %}" class="btn-icon" title="Ver detalhes">
+          <i data-lucide="eye" style="width:15px;height:15px;"></i>
+        </a>
+        <a href="{% url 'tutorias:editar_reuniao' r.pk %}" class="btn-icon" title="Editar">
+          <i data-lucide="pencil" style="width:15px;height:15px;"></i>
+        </a>
+        <form method="post" action="{% url 'tutorias:deletar_reuniao' r.pk %}" style="display:contents;">
+          {% csrf_token %}
+          <button type="submit" class="btn-icon danger btn-deletar" title="Excluir">
+            <i data-lucide="trash-2" style="width:15px;height:15px;"></i>
+          </button>
+        </form>
+      </div>
+
+    </div>
+  {% empty %}
+    <div class="empty-state">
+      <span class="empty-icon">📅</span>
+      <h3>Nenhuma reunião registrada</h3>
+      <p>
+        {% if tutorados %}
+          Clique em "Nova Reunião" para registrar a primeira.
+        {% else %}
+          Cadastre um tutorado antes de registrar reuniões.
+        {% endif %}
+      </p>
+      {% if not tutorados %}
+        <a href="{% url 'tutorias:cadastrar_tutorado' %}" class="btn btn-primary">Cadastrar tutorado</a>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+
+<!-- Modal: Nova Reunião -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+    <div class="modal-header">
+      <h2 id="modalTitulo">Nova Reunião</h2>
+      <button class="modal-close" id="btnModalFechar" aria-label="Fechar">
+        <i data-lucide="x" style="width:18px;height:18px;"></i>
+      </button>
+    </div>
+
+    <form method="post" action="{% url 'tutorias:lista_reunioes' %}">
+      {% csrf_token %}
+      <div class="modal-body">
+        <div class="form-grid-2">
+
+          <div class="form-group col-full">
+            <label for="tutorado">Tutorado *</label>
+            <select name="tutorado" id="tutorado" required>
+              <option value="">Selecione...</option>
+              {% for t in tutorados %}
+                <option value="{{ t.pk }}">{{ t.nome }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="data">Data *</label>
+            <input type="date" name="data" id="data" required>
+          </div>
+
+          <div class="form-group">
+            <label for="horario">Horário *</label>
+            <input type="time" name="horario" id="horario" required>
+          </div>
+
+          <div class="form-group">
+            <label for="materia">Matéria</label>
+            <select name="materia" id="materia">
+              {% for val, label in materias_choices %}
+                <option value="{{ val }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="duracao_minutos">Duração (min)</label>
+            <input type="number" name="duracao_minutos" id="duracao_minutos" value="60" min="15" max="480">
+          </div>
+
+          <div class="form-group col-full">
+            <label for="link">Link da reunião</label>
+            <input type="url" name="link" id="link" placeholder="https://meet.google.com/...">
+          </div>
+
+          <div class="form-group col-full">
+            <label for="topicos">Tópicos / pauta</label>
+            <textarea name="topicos" id="topicos" rows="2" placeholder="Assuntos que serão abordados..."></textarea>
+          </div>
+
+          <div class="form-group col-full">
+            <label for="observacoes">Observações</label>
+            <textarea name="observacoes" id="observacoes" rows="2" placeholder="Anotações pós-reunião, evolução do aluno..."></textarea>
+          </div>
+
+          <div class="form-group col-full">
+            <label class="checkbox-row" for="presenca">
+              <input type="checkbox" name="presenca" id="presenca" value="1">
+              <span>Tutorado compareceu à reunião</span>
+            </label>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="btnModalCancelar" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" class="btn btn-primary">
+          <i data-lucide="check" style="width:15px;height:15px;"></i>
+          Salvar Reunião
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/lista_reunioes.js' %}"></script>
+{% endblock %}

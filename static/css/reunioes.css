@@ -1,0 +1,481 @@
+/* ============================================================
+   SALVAGUARDA — reunioes.css
+   Estilos para listagem, formulário e detalhe de reuniões
+   ============================================================ */
+
+/* ── Breadcrumb ── */
+.breadcrumb {
+  font-size: 0.85rem;
+  color: var(--sg-muted);
+  margin-bottom: 1rem;
+}
+.breadcrumb a {
+  color: var(--sg-purple);
+  font-weight: 600;
+}
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+/* ── Page hero (cabeçalho com ação) ── */
+.page-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+.page-hero-text h1 {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--sg-dark);
+  margin: 0 0 0.25rem;
+}
+.page-hero-text p {
+  color: var(--sg-muted);
+  font-size: 0.95rem;
+  margin: 0;
+}
+
+/* ── Filtros ── */
+.filters-bar {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.75rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.filters-bar select,
+.filters-bar input[type="text"] {
+  padding: 0.55rem 0.9rem;
+  border: 1.5px solid var(--sg-border);
+  border-radius: var(--radius-md);
+  font-size: 0.88rem;
+  font-family: inherit;
+  background: var(--sg-white);
+  color: var(--sg-dark);
+  outline: none;
+  transition: border-color 0.2s;
+  min-width: 160px;
+}
+.filters-bar select:focus,
+.filters-bar input[type="text"]:focus {
+  border-color: var(--sg-purple);
+  box-shadow: 0 0 0 3px rgba(123, 47, 190, 0.1);
+}
+
+/* ── Lista de reuniões ── */
+.reunioes-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reuniao-card {
+  background: var(--sg-white);
+  border: 1px solid var(--sg-border);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.4rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s, transform 0.15s;
+  position: relative;
+  overflow: hidden;
+}
+.reuniao-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+.reuniao-card::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  border-radius: var(--radius-lg) 0 0 var(--radius-lg);
+}
+.reuniao-card.status-futura::before  { background: var(--sg-purple); }
+.reuniao-card.status-realizada::before { background: var(--sg-success); }
+.reuniao-card.status-faltou::before  { background: var(--sg-error); }
+
+/* Bloco de data */
+.reuniao-data {
+  text-align: center;
+  min-width: 52px;
+  flex-shrink: 0;
+}
+.reuniao-data .rd-dia {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--sg-purple);
+  line-height: 1;
+}
+.reuniao-data .rd-mes {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--sg-muted);
+  letter-spacing: 0.05em;
+}
+.reuniao-data .rd-hora {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--sg-muted);
+  margin-top: 0.2rem;
+}
+
+/* Separador vertical */
+.reuniao-divider {
+  width: 1px;
+  height: 48px;
+  background: var(--sg-border);
+  flex-shrink: 0;
+}
+
+/* Info central */
+.reuniao-info {
+  flex: 1;
+  min-width: 0;
+}
+.reuniao-tutorado {
+  font-size: 0.98rem;
+  font-weight: 700;
+  color: var(--sg-dark);
+  margin: 0 0 0.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.reuniao-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.82rem;
+  color: var(--sg-muted);
+}
+.reuniao-topicos {
+  font-size: 0.83rem;
+  color: var(--sg-muted);
+  margin-top: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 400px;
+}
+
+/* Badges */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.18rem 0.6rem;
+  border-radius: var(--radius-xl);
+}
+.badge-materia   { background: var(--sg-purple-light); color: var(--sg-purple); }
+.badge-presenca  { background: var(--sg-success-light); color: var(--sg-success); }
+.badge-faltou    { background: var(--sg-error-light); color: var(--sg-error); }
+.badge-futura    { background: var(--sg-orange-light); color: var(--sg-orange-dark); }
+
+/* Ações do card */
+.reuniao-actions {
+  display: flex;
+  gap: 0.4rem;
+  flex-shrink: 0;
+}
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--sg-border);
+  background: var(--sg-white);
+  color: var(--sg-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  text-decoration: none;
+}
+.btn-icon:hover {
+  background: var(--sg-purple-light);
+  color: var(--sg-purple);
+  border-color: var(--sg-purple-light);
+  text-decoration: none;
+}
+.btn-icon.danger:hover {
+  background: var(--sg-error-light);
+  color: var(--sg-error);
+  border-color: var(--sg-error-light);
+}
+
+/* ── Modal de nova reunião ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 46, 0.5);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal {
+  background: var(--sg-white);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 540px;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(16px);
+  transition: transform 0.2s;
+}
+.modal-overlay.open .modal {
+  transform: translateY(0);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--sg-border);
+}
+.modal-header h2 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--sg-dark);
+  margin: 0;
+}
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--sg-muted);
+  display: flex;
+  align-items: center;
+  padding: 0.25rem;
+  border-radius: var(--radius-sm);
+  transition: color 0.15s, background 0.15s;
+}
+.modal-close:hover {
+  color: var(--sg-dark);
+  background: var(--sg-bg);
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--sg-border);
+  background: var(--sg-bg);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+/* Formulário dentro do modal */
+.form-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+.form-grid-2 .col-full {
+  grid-column: 1 / -1;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0;
+}
+.form-group label {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--sg-dark);
+}
+.form-group small {
+  font-size: 0.75rem;
+  color: var(--sg-muted);
+}
+
+/* Checkbox row */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.65rem 0.9rem;
+  background: var(--sg-bg);
+  border: 1.5px solid var(--sg-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+.checkbox-row:hover {
+  border-color: var(--sg-purple);
+}
+.checkbox-row input[type="checkbox"] {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--sg-purple);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.checkbox-row span {
+  font-size: 0.88rem;
+  color: var(--sg-dark);
+  font-weight: 500;
+}
+
+/* ── Detalhe de reunião ── */
+.detalhe-card {
+  background: var(--sg-white);
+  border: 1px solid var(--sg-border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.5rem;
+}
+
+.detalhe-banner {
+  background: linear-gradient(135deg, var(--sg-purple-dark) 0%, var(--sg-purple) 100%);
+  padding: 1.75rem 2rem;
+  color: var(--sg-white);
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.detalhe-banner h1 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  margin: 0 0 0.5rem;
+}
+.detalhe-banner .banner-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.badge-white {
+  background: rgba(255, 255, 255, 0.2);
+  color: var(--sg-white);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.detalhe-body {
+  padding: 1.75rem 2rem;
+}
+
+.detalhe-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem 2rem;
+  margin-bottom: 1.5rem;
+}
+.detalhe-item label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--sg-muted);
+  display: block;
+  margin-bottom: 0.2rem;
+}
+.detalhe-item span,
+.detalhe-item a {
+  font-size: 0.93rem;
+  font-weight: 500;
+  color: var(--sg-dark);
+}
+.detalhe-item a {
+  color: var(--sg-purple);
+}
+.detalhe-item a:hover {
+  text-decoration: underline;
+}
+
+.detalhe-section-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--sg-purple);
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--sg-orange);
+  display: inline-block;
+  margin-bottom: 0.75rem;
+}
+
+.detalhe-text {
+  font-size: 0.92rem;
+  color: var(--sg-dark);
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+.detalhe-text.empty {
+  color: var(--sg-muted);
+  font-style: italic;
+}
+
+/* ── Estado vazio ── */
+.empty-state {
+  text-align: center;
+  padding: 3.5rem 1.5rem;
+  color: var(--sg-muted);
+}
+.empty-state .empty-icon {
+  font-size: 3rem;
+  display: block;
+  margin-bottom: 1rem;
+}
+.empty-state h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--sg-dark);
+  margin: 0 0 0.4rem;
+}
+.empty-state p {
+  font-size: 0.9rem;
+  margin: 0 0 1.25rem;
+}
+
+/* ── Responsivo ── */
+@media (max-width: 640px) {
+  .reuniao-card {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+  .reuniao-divider {
+    display: none;
+  }
+  .detalhe-grid {
+    grid-template-columns: 1fr;
+  }
+  .form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .form-grid-2 .col-full {
+    grid-column: 1;
+  }
+  .detalhe-banner {
+    flex-direction: column;
+  }
+}

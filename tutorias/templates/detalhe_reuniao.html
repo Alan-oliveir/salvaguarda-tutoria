@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Reunião — {{ reuniao.tutorado.nome }} — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/reunioes.css' %}">
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'usuarios:painel_inicial' %}">Painel</a> /
+  <a href="{% url 'tutorias:lista_reunioes' %}">Reuniões</a> /
+  {{ reuniao.data|date:"d/m/Y" }} — {{ reuniao.tutorado.nome }}
+</p>
+
+<div class="detalhe-card">
+  <div class="detalhe-banner">
+    <div>
+      <h1>{{ reuniao.data|date:"d \d\e F \d\e Y" }} às {{ reuniao.horario|time:"H:i" }}</h1>
+      <div class="banner-meta">
+        <span class="badge badge-white">{{ reuniao.get_materia_display }}</span>
+        {% if reuniao.presenca %}
+          <span class="badge badge-white">
+            <i data-lucide="check" style="width:11px;height:11px;"></i> Presente
+          </span>
+        {% else %}
+          <span class="badge badge-white">
+            <i data-lucide="x" style="width:11px;height:11px;"></i> Faltou
+          </span>
+        {% endif %}
+        {% if reuniao.duracao_minutos %}
+          <span class="badge badge-white">
+            <i data-lucide="clock" style="width:11px;height:11px;"></i>
+            {{ reuniao.duracao_minutos }}min
+          </span>
+        {% endif %}
+      </div>
+    </div>
+    <div style="display:flex;gap:.5rem;flex-shrink:0;">
+      <a href="{% url 'tutorias:editar_reuniao' reuniao.pk %}" class="btn btn-secondary btn-sm">
+        <i data-lucide="pencil" style="width:14px;height:14px;"></i> Editar
+      </a>
+      <form method="post" action="{% url 'tutorias:deletar_reuniao' reuniao.pk %}" style="display:contents;">
+        {% csrf_token %}
+        <button type="submit" id="btnDeletarReuniao" class="btn btn-danger btn-sm">
+          <i data-lucide="trash-2" style="width:14px;height:14px;"></i> Excluir
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="detalhe-body">
+    <div class="detalhe-grid">
+      <div class="detalhe-item">
+        <label>Tutorado</label>
+        <span>
+          <a href="{% url 'tutorias:detalhe_tutorado' reuniao.tutorado.pk %}">
+            {{ reuniao.tutorado.nome }}
+          </a>
+        </span>
+      </div>
+      <div class="detalhe-item">
+        <label>Matéria</label>
+        <span>{{ reuniao.get_materia_display }}</span>
+      </div>
+      <div class="detalhe-item">
+        <label>Data</label>
+        <span>{{ reuniao.data|date:"d/m/Y" }}</span>
+      </div>
+      <div class="detalhe-item">
+        <label>Horário</label>
+        <span>{{ reuniao.horario|time:"H:i" }}</span>
+      </div>
+      <div class="detalhe-item">
+        <label>Duração</label>
+        <span>{% if reuniao.duracao_minutos %}{{ reuniao.duracao_minutos }} minutos{% else %}—{% endif %}</span>
+      </div>
+      <div class="detalhe-item">
+        <label>Presença</label>
+        <span>{% if reuniao.presenca %}✓ Compareceu{% else %}✗ Faltou{% endif %}</span>
+      </div>
+      {% if reuniao.link %}
+      <div class="detalhe-item" style="grid-column:1/-1;">
+        <label>Link</label>
+        <span>
+          <a href="{{ reuniao.link }}" target="_blank" rel="noopener">{{ reuniao.link }}</a>
+          <button
+            id="btnCopiarLink"
+            data-link="{{ reuniao.link }}"
+            class="btn-icon"
+            title="Copiar link"
+            style="margin-left:.5rem;vertical-align:middle;">
+            <i data-lucide="copy" style="width:13px;height:13px;"></i>
+          </button>
+        </span>
+      </div>
+      {% endif %}
+    </div>
+
+    {% if reuniao.topicos %}
+    <div style="margin-bottom:1.5rem;">
+      <p class="detalhe-section-title">Tópicos / Pauta</p>
+      <p class="detalhe-text">{{ reuniao.topicos }}</p>
+    </div>
+    {% endif %}
+
+    <div>
+      <p class="detalhe-section-title">Observações</p>
+      <p class="detalhe-text {% if not reuniao.observacoes %}empty{% endif %}">
+        {% if reuniao.observacoes %}{{ reuniao.observacoes }}{% else %}Nenhuma observação registrada.{% endif %}
+      </p>
+    </div>
+  </div>
+</div>
+
+<a href="{% url 'tutorias:lista_reunioes' %}" class="btn btn-secondary">
+  <i data-lucide="arrow-left" style="width:15px;height:15px;"></i>
+  Voltar para reuniões
+</a>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/detalhe_reuniao.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Vincular Tutorado — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/tutorados.css' %}">
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'tutorias:lista_tutorados' %}">
+    <i data-lucide="arrow-left" class="icon" aria-hidden="true"></i> Meus Tutorados
+  </a>
+</p>
+
+<div class="page-hero">
+  <div>
+    <h1><i data-lucide="user-plus" class="icon" aria-hidden="true"></i> Vincular Tutorado</h1>
+    <p>Selecione um estudante já cadastrado no app para vincular à sua tutoria.</p>
+  </div>
+</div>
+
+{% if disponiveis %}
+<div class="cards-grid">
+  {% for perfil in disponiveis %}
+  <div class="tutorado-card">
+    <div class="card-avatar-tutorado">
+      {% if perfil.usuario.foto_perfil %}
+        <img src="{{ perfil.usuario.foto_perfil.url }}" alt="{{ perfil.usuario.get_nome_completo }}">
+      {% else %}
+        {{ perfil.usuario.get_iniciais }}
+      {% endif %}
+    </div>
+
+    <p class="card-nome">{{ perfil.usuario.get_nome_completo }}</p>
+
+    <div class="card-badges">
+      <span class="badge badge-serie">{{ perfil.get_serie_display }}</span>
+      {% if perfil.fez_enem %}
+        <span class="badge badge-enem-sim">
+          <i data-lucide="check" class="icon" aria-hidden="true"></i> Já fez ENEM
+        </span>
+      {% else %}
+        <span class="badge badge-enem-nao">Ainda não fez ENEM</span>
+      {% endif %}
+    </div>
+
+    {% if perfil.usuario.cidade %}
+    <p class="card-info-row">
+      <i data-lucide="map-pin" class="icon" aria-hidden="true"></i>
+      <strong>{{ perfil.usuario.cidade }}{% if perfil.usuario.estado %}/{{ perfil.usuario.estado }}{% endif %}</strong>
+    </p>
+    {% endif %}
+
+    {% if perfil.cursos_interesse %}
+    <p class="card-info-row">
+      <i data-lucide="target" class="icon" aria-hidden="true"></i>
+      <strong>{{ perfil.cursos_interesse|truncatechars:40 }}</strong>
+    </p>
+    {% endif %}
+
+    <div class="card-actions">
+      <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="perfil_pk" value="{{ perfil.pk }}">
+        <button type="submit" class="btn btn-primary" style="width:100%;">
+          <i data-lucide="link" class="icon" aria-hidden="true"></i> Vincular
+        </button>
+      </form>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+{% else %}
+<div class="empty-state">
+  <i data-lucide="users" class="empty-icon" aria-hidden="true"></i>
+  <h3>Nenhum tutorado disponível</h3>
+  <p>
+    Todos os estudantes cadastrados já estão vinculados a um tutor,
+    ou ainda não há estudantes registrados no sistema.
+  </p>
+  <p style="font-size:.88rem;color:var(--sg-muted);margin-top:.5rem;">
+    Para entrar no sistema, o estudante precisa se registrar com o tipo <strong>Tutorado</strong>.
+  </p>
+</div>
+{% endif %}
+
+{% endblock %}

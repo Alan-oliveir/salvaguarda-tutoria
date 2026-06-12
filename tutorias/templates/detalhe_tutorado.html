@@ -1,69 +1,142 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ tutorado.nome }} — Salvaguarda{% endblock %}
+{% block title %}{{ usuario.get_nome_completo }} — Salvaguarda{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/tutorados.css' %}">
 {% endblock %}
 
 {% block content %}
-<p class="breadcrumb"><a href="{% url 'tutorias:lista_tutorados' %}"><i data-lucide="arrow-left" class="icon" aria-hidden="true"></i> Meus Tutorados</a></p>
+<p class="breadcrumb">
+  <a href="{% url 'tutorias:lista_tutorados' %}">
+    <i data-lucide="arrow-left" class="icon" aria-hidden="true"></i> Meus Tutorados
+  </a>
+</p>
 
 <!-- Hero -->
 <div class="tutorado-hero-card">
   <div class="tutorado-hero-banner">
     <div class="hero-avatar-lg">
-      {% if tutorado.foto %}<img src="{{ tutorado.foto.url }}" alt="{{ tutorado.nome }}">
-      {% else %}{{ tutorado.nome|slice:":1"|upper }}{% endif %}
+      {% if usuario.foto_perfil %}
+        <img src="{{ usuario.foto_perfil.url }}" alt="{{ usuario.get_nome_completo }}">
+      {% else %}
+        {{ usuario.get_iniciais }}
+      {% endif %}
     </div>
     <div class="hero-text">
-      <h1>{{ tutorado.nome }}</h1>
+      <h1>{{ usuario.get_nome_completo }}</h1>
       <div class="hero-badges">
         <span class="badge badge-serie">{{ tutorado.get_serie_display }}</span>
         {% if tutorado.fez_enem %}
-          <span class="badge badge-enem-sim"><i data-lucide="check" class="icon" aria-hidden="true"></i> Já fez ENEM</span>
+          <span class="badge badge-enem-sim">
+            <i data-lucide="check" class="icon" aria-hidden="true"></i> Já fez ENEM
+          </span>
         {% else %}
           <span class="badge badge-enem-nao">Ainda não fez ENEM</span>
         {% endif %}
-        {% if tutorado.idade %}
-          <span class="badge">{{ tutorado.idade }} anos</span>
+        {% if usuario.get_idade %}
+          <span class="badge">{{ usuario.get_idade }} anos</span>
         {% endif %}
       </div>
     </div>
     <div class="hero-actions-top">
-      <a href="{% url 'tutorias:editar_tutorado' tutorado.pk %}" class="btn btn-secondary"><i data-lucide="edit-2" class="icon" aria-hidden="true"></i> Editar</a>
+      <a href="{% url 'tutorias:editar_tutorado' tutorado.pk %}" class="btn btn-secondary">
+        <i data-lucide="edit-2" class="icon" aria-hidden="true"></i> Editar
+      </a>
+      <form method="post" action="{% url 'tutorias:desvincular_tutorado' tutorado.pk %}" class="inline-form">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger"
+                onclick="return confirm('Desvincular {{ usuario.get_nome_completo }}?')">
+          <i data-lucide="user-minus" class="icon" aria-hidden="true"></i> Desvincular
+        </button>
+      </form>
     </div>
   </div>
 
   <div class="tutorado-hero-body">
     <div class="contato-row">
-      {% if tutorado.cidade %}<span><i data-lucide="map-pin" class="icon" aria-hidden="true"></i> <strong>{{ tutorado.cidade }}{% if tutorado.estado %}/{{ tutorado.estado }}{% endif %}</strong></span>{% endif %}
-      {% if tutorado.whatsapp %}<span><i data-lucide="smartphone" class="icon" aria-hidden="true"></i> <strong>{{ tutorado.whatsapp }}</strong></span>{% endif %}
-      {% if tutorado.email %}<span><i data-lucide="mail" class="icon" aria-hidden="true"></i> <strong>{{ tutorado.email }}</strong></span>{% endif %}
+      {% if usuario.cidade %}
+        <span>
+          <i data-lucide="map-pin" class="icon" aria-hidden="true"></i>
+          <strong>{{ usuario.cidade }}{% if usuario.estado %}/{{ usuario.estado }}{% endif %}</strong>
+        </span>
+      {% endif %}
+      {% if tutorado.whatsapp %}
+        <span>
+          <i data-lucide="smartphone" class="icon" aria-hidden="true"></i>
+          <strong>{{ tutorado.whatsapp }}</strong>
+        </span>
+      {% endif %}
+      {% if usuario.email %}
+        <span>
+          <i data-lucide="mail" class="icon" aria-hidden="true"></i>
+          <strong>{{ usuario.email }}</strong>
+        </span>
+      {% endif %}
     </div>
 
+    {% if tutorado.escola %}
+    <div class="contato-row" style="margin-top:.75rem;">
+      <span>
+        <i data-lucide="building-2" class="icon" aria-hidden="true"></i>
+        <strong>{{ tutorado.escola }}</strong>
+        {% if tutorado.turno_escolar %} · {{ tutorado.get_turno_escolar_display }}{% endif %}
+      </span>
+    </div>
+    {% endif %}
+
     <div class="token-box">
-      <span class="token-label"><i data-lucide="key" class="icon" aria-hidden="true"></i> Token de acesso:</span>
+      <span class="token-label">
+        <i data-lucide="key" class="icon" aria-hidden="true"></i> Token de acesso:
+      </span>
       <span class="token-value" id="tokenVal">{{ tutorado.token }}</span>
-      <button class="btn-copiar" onclick="copiarToken()">Copiar</button>
-      <span id="copiadoMsg" class="copied-msg"><i data-lucide="check" class="icon" aria-hidden="true"></i> Copiado!</span>
+      <button class="btn btn-secondary" style="padding:.25rem .75rem;font-size:.8rem;"
+              onclick="copiarToken()">Copiar</button>
+      <span id="copiadoMsg" style="display:none;font-size:.8rem;color:var(--sg-success);">
+        <i data-lucide="check" class="icon" aria-hidden="true"></i> Copiado!
+      </span>
     </div>
   </div>
 </div>
 
-<!-- Cursos de interesse -->
-{% if tutorado.cursos_interesse %}
+<!-- Objetivos -->
+{% if tutorado.cursos_interesse or tutorado.objetivo_principal %}
 <div class="info-card">
-  <p class="info-card-title"><i data-lucide="target" class="icon" aria-hidden="true"></i> Cursos de Interesse</p>
-  <p>{{ tutorado.cursos_interesse }}</p>
+  <p class="info-card-title">
+    <i data-lucide="target" class="icon" aria-hidden="true"></i> Objetivos Acadêmicos
+  </p>
+  {% if tutorado.cursos_interesse %}
+    <p><strong>Cursos de interesse:</strong> {{ tutorado.cursos_interesse }}</p>
+  {% endif %}
+  {% if tutorado.objetivo_principal %}
+    <p style="margin-top:.5rem;"><strong>Objetivo principal:</strong> {{ tutorado.objetivo_principal }}</p>
+  {% endif %}
+</div>
+{% endif %}
+
+<!-- Responsável -->
+{% if tutorado.responsavel_nome %}
+<div class="info-card">
+  <p class="info-card-title">
+    <i data-lucide="user" class="icon" aria-hidden="true"></i> Responsável
+  </p>
+  <p>{{ tutorado.responsavel_nome }}
+    {% if tutorado.responsavel_telefone %} · {{ tutorado.responsavel_telefone }}{% endif %}
+  </p>
 </div>
 {% endif %}
 
 <!-- Reuniões -->
 <div class="info-card">
   <div class="info-card-header">
-    <p class="info-card-title"><i data-lucide="calendar" class="icon" aria-hidden="true"></i> Histórico de Reuniões ({{ reunioes.count }})</p>
+    <p class="info-card-title">
+      <i data-lucide="calendar" class="icon" aria-hidden="true"></i>
+      Histórico de Reuniões ({{ reunioes.count }})
+    </p>
+    <a href="{% url 'tutorias:lista_reunioes' %}" class="btn btn-secondary" style="font-size:.82rem;padding:.35rem .85rem;">
+      Ver todas
+    </a>
   </div>
 
   {% for r in reunioes %}
@@ -82,18 +155,33 @@
     </div>
     <div>
       {% if r.presenca %}
-        <span class="badge badge-presenca-sim"><i data-lucide="check" class="icon" aria-hidden="true"></i> Presente</span>
+        <span class="badge badge-presenca-sim">
+          <i data-lucide="check" class="icon" aria-hidden="true"></i> Presente
+        </span>
       {% else %}
-        <span class="badge badge-presenca-nao"><i data-lucide="x" class="icon" aria-hidden="true"></i> Faltou</span>
+        <span class="badge badge-presenca-nao">
+          <i data-lucide="x" class="icon" aria-hidden="true"></i> Faltou
+        </span>
       {% endif %}
     </div>
   </div>
   {% empty %}
-  <p class="empty-section"><i data-lucide="calendar" class="icon" aria-hidden="true"></i> Nenhuma reunião registrada ainda.</p>
+  <p class="empty-section">
+    <i data-lucide="calendar" class="icon" aria-hidden="true"></i>
+    Nenhuma reunião registrada ainda.
+  </p>
   {% endfor %}
 </div>
 
 {% block extra_scripts %}
 <script src="{% static 'js/tutorado_detalhe.js' %}"></script>
+<script>
+function copiarToken() {
+  navigator.clipboard.writeText(document.getElementById('tokenVal').textContent.trim());
+  const msg = document.getElementById('copiadoMsg');
+  msg.style.display = 'inline';
+  setTimeout(() => msg.style.display = 'none', 2000);
+}
+</script>
 {% endblock %}
 {% endblock %}
