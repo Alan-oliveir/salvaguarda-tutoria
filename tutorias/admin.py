@@ -2,19 +2,11 @@
 
 from django.contrib import admin
 
-from .models import Tutorado, Reuniao
-
-
-@admin.register(Tutorado)
-class TutoradoAdmin(admin.ModelAdmin):
-    list_display = ['nome', 'tutor', 'serie', 'cidade', 'estado', 'fez_enem', 'criado_em']
-    list_filter = ['serie', 'fez_enem', 'criado_em']
-    search_fields = ['nome', 'email', 'whatsapp']
-    raw_id_fields = ['tutor']
+from .models import Reuniao
 
 
 @admin.register(Reuniao)
 class ReuniaoAdmin(admin.ModelAdmin):
-    list_display = ['tutorado', 'data', 'horario', 'materia', 'presenca', 'duracao_minutos']
+    list_display = ['tutorado', 'tutor', 'data', 'horario', 'materia', 'presenca']
     list_filter = ['materia', 'presenca', 'data']
-    search_fields = ['tutorado__nome']
+    search_fields = ['tutorado__first_name', 'tutorado__last_name']

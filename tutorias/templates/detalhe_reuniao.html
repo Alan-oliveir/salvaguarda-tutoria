@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Reunião — {{ reuniao.tutorado.nome }} — Salvaguarda{% endblock %}
+{% block title %}Reunião — {{ reuniao.tutorado.get_nome_completo }} — Salvaguarda{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/reunioes.css' %}">
@@ -11,7 +11,7 @@
 <p class="breadcrumb">
   <a href="{% url 'usuarios:painel_inicial' %}">Painel</a> /
   <a href="{% url 'tutorias:lista_reunioes' %}">Reuniões</a> /
-  {{ reuniao.data|date:"d/m/Y" }} — {{ reuniao.tutorado.nome }}
+  {{ reuniao.data|date:"d/m/Y" }} — {{ reuniao.tutorado.get_nome_completo }}
 </p>
 
 <div class="detalhe-card">
@@ -38,12 +38,12 @@
       </div>
     </div>
     <div style="display:flex;gap:.5rem;flex-shrink:0;">
-      <a href="{% url 'tutorias:editar_reuniao' reuniao.pk %}" class="btn btn-secondary btn-sm">
+      <a href="{% url 'tutorias:editar_reuniao' reuniao.pk %}" class="btn btn-secondary">
         <i data-lucide="pencil" style="width:14px;height:14px;"></i> Editar
       </a>
       <form method="post" action="{% url 'tutorias:deletar_reuniao' reuniao.pk %}" style="display:contents;">
         {% csrf_token %}
-        <button type="submit" id="btnDeletarReuniao" class="btn btn-danger btn-sm">
+        <button type="submit" id="btnDeletarReuniao" class="btn btn-danger">
           <i data-lucide="trash-2" style="width:14px;height:14px;"></i> Excluir
         </button>
       </form>
@@ -54,11 +54,8 @@
     <div class="detalhe-grid">
       <div class="detalhe-item">
         <label>Tutorado</label>
-        <span>
-          <a href="{% url 'tutorias:detalhe_tutorado' reuniao.tutorado.pk %}">
-            {{ reuniao.tutorado.nome }}
-          </a>
-        </span>
+        {# Link para detalhe via PerfilTutorado — buscamos pelo usuario #}
+        <span>{{ reuniao.tutorado.get_nome_completo }}</span>
       </div>
       <div class="detalhe-item">
         <label>Matéria</label>
@@ -85,12 +82,9 @@
         <label>Link</label>
         <span>
           <a href="{{ reuniao.link }}" target="_blank" rel="noopener">{{ reuniao.link }}</a>
-          <button
-            id="btnCopiarLink"
-            data-link="{{ reuniao.link }}"
-            class="btn-icon"
-            title="Copiar link"
-            style="margin-left:.5rem;vertical-align:middle;">
+          <button id="btnCopiarLink" data-link="{{ reuniao.link }}"
+                  class="btn-icon" title="Copiar link"
+                  style="margin-left:.5rem;vertical-align:middle;">
             <i data-lucide="copy" style="width:13px;height:13px;"></i>
           </button>
         </span>

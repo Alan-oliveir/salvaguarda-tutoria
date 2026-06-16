@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Editar {{ tutorado.nome }} — Salvaguarda{% endblock %}
+{% block title %}Editar {{ usuario.get_nome_completo }} — Salvaguarda{% endblock %}
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/tutorados.css' %}">
@@ -10,61 +10,61 @@
 
 {% block content %}
 <p class="breadcrumb">
-  <a href="{% url 'tutorias:detalhe_tutorado' tutorado.pk %}"><i data-lucide="arrow-left" class="icon" aria-hidden="true"></i> {{ tutorado.nome }}</a>
+  <a href="{% url 'tutorias:detalhe_tutorado' tutorado.pk %}">
+    <i data-lucide="arrow-left" class="icon" aria-hidden="true"></i> {{ usuario.get_nome_completo }}
+  </a>
 </p>
 
 <div class="page-hero">
   <div>
     <h1>Editar Tutorado</h1>
-    <p>Atualize as informações de {{ tutorado.nome }}.</p>
+    <p>Atualize os dados acadêmicos de {{ usuario.get_nome_completo }}.</p>
   </div>
 </div>
 
 <div class="form-page">
-  <form method="post" enctype="multipart/form-data" class="form-card">
+  <form method="post" class="form-card">
     {% csrf_token %}
 
-    <!-- Identificação -->
+    <!-- Dados Acadêmicos -->
     <div class="form-section">
-      <p class="form-section-title">Identificação</p>
+      <p class="form-section-title">Dados Acadêmicos</p>
       <div class="form-grid-2">
-
-        <div class="form-group col-full">
-          <label>Foto</label>
-          <div class="foto-upload-row">
-            <div class="foto-thumb" id="fotoPreview">
-              {% if tutorado.foto %}<img src="{{ tutorado.foto.url }}" id="fotoImg">
-              {% else %}{{ tutorado.nome|slice:":1"|upper }}{% endif %}
-            </div>
-            <label class="foto-input-label">
-              <i data-lucide="camera" class="icon" aria-hidden="true"></i> Alterar foto (opcional)
-              <input type="file" name="foto" accept="image/*" onchange="previewFoto(this)">
-            </label>
-          </div>
-        </div>
-
-        <div class="form-group col-full">
-          <label for="nome">Nome completo *</label>
-          <input type="text" id="nome" name="nome" value="{{ tutorado.nome }}" required>
-        </div>
 
         <div class="form-group">
           <label for="serie">Série</label>
           <select id="serie" name="serie">
             {% for val, label in series_choices %}
-              <option value="{{ val }}" {% if tutorado.serie == val %}selected{% endif %}>{{ label }}</option>
+              <option value="{{ val }}" {% if tutorado.serie == val %}selected{% endif %}>
+                {{ label }}
+              </option>
             {% endfor %}
           </select>
         </div>
 
         <div class="form-group">
-          <label for="idade">Idade</label>
-          <input type="number" id="idade" name="idade" value="{{ tutorado.idade|default:'' }}" min="10" max="30">
+          <label for="turno_escolar">Turno escolar</label>
+          <select id="turno_escolar" name="turno_escolar">
+            <option value="">Não informado</option>
+            {% for val, label in turno_choices %}
+              <option value="{{ val }}" {% if tutorado.turno_escolar == val %}selected{% endif %}>
+                {{ label }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="form-group col-full">
+          <label for="escola">Escola</label>
+          <input type="text" id="escola" name="escola"
+                 value="{{ tutorado.escola|default:'' }}"
+                 placeholder="Ex: Escola Estadual João da Silva">
         </div>
 
         <div class="form-group col-full">
           <label class="checkbox-row" for="fez_enem">
-            <input type="checkbox" id="fez_enem" name="fez_enem" value="1" {% if tutorado.fez_enem %}checked{% endif %}>
+            <input type="checkbox" id="fez_enem" name="fez_enem" value="1"
+                   {% if tutorado.fez_enem %}checked{% endif %}>
             <span>Já prestou o ENEM ao menos uma vez</span>
           </label>
         </div>
@@ -72,46 +72,59 @@
       </div>
     </div>
 
+    <!-- Objetivos -->
+    <div class="form-section">
+      <p class="form-section-title">Objetivos Acadêmicos</p>
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label for="cursos_interesse">Cursos de interesse</label>
+        <textarea id="cursos_interesse" name="cursos_interesse"
+                  placeholder="Ex: Medicina, Engenharia Civil, Direito...">{{ tutorado.cursos_interesse }}</textarea>
+      </div>
+      <div class="form-group">
+        <label for="objetivo_principal">Objetivo principal com a tutoria</label>
+        <textarea id="objetivo_principal" name="objetivo_principal"
+                  placeholder="Ex: Passar em medicina na USP em 2026.">{{ tutorado.objetivo_principal|default:'' }}</textarea>
+      </div>
+    </div>
+
     <!-- Contato -->
     <div class="form-section">
-      <p class="form-section-title">Contato & Localização</p>
+      <p class="form-section-title">Contato</p>
       <div class="form-grid-2">
-        <div class="form-group">
+        <div class="form-group col-full">
           <label for="whatsapp">WhatsApp</label>
-          <input type="text" id="whatsapp" name="whatsapp" value="{{ tutorado.whatsapp }}">
-        </div>
-        <div class="form-group">
-          <label for="email">E-mail</label>
-          <input type="email" id="email" name="email" value="{{ tutorado.email }}">
-        </div>
-        <div class="form-group">
-          <label for="cidade">Cidade</label>
-          <input type="text" id="cidade" name="cidade" value="{{ tutorado.cidade }}">
-        </div>
-        <div class="form-group">
-          <label for="estado">Estado</label>
-          <input type="text" id="estado" name="estado" maxlength="2" value="{{ tutorado.estado }}">
+          <input type="text" id="whatsapp" name="whatsapp"
+                 value="{{ tutorado.whatsapp }}"
+                 placeholder="(XX) XXXXX-XXXX">
         </div>
       </div>
     </div>
 
-    <!-- Objetivos -->
+    <!-- Responsável -->
     <div class="form-section">
-      <p class="form-section-title">Objetivos Acadêmicos</p>
-      <div class="form-group">
-        <label for="cursos_interesse">Cursos de interesse</label>
-        <textarea id="cursos_interesse" name="cursos_interesse">{{ tutorado.cursos_interesse }}</textarea>
+      <p class="form-section-title">Responsável</p>
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label for="responsavel_nome">Nome do responsável</label>
+          <input type="text" id="responsavel_nome" name="responsavel_nome"
+                 value="{{ tutorado.responsavel_nome|default:'' }}"
+                 placeholder="Ex: Maria da Silva">
+        </div>
+        <div class="form-group">
+          <label for="responsavel_telefone">Telefone do responsável</label>
+          <input type="text" id="responsavel_telefone" name="responsavel_telefone"
+                 value="{{ tutorado.responsavel_telefone|default:'' }}"
+                 placeholder="(XX) XXXXX-XXXX">
+        </div>
       </div>
     </div>
 
     <div class="form-footer-bar">
       <a href="{% url 'tutorias:detalhe_tutorado' tutorado.pk %}" class="btn btn-secondary">Cancelar</a>
-      <button type="submit" class="btn btn-success"><i data-lucide="check" class="icon" aria-hidden="true"></i> Salvar Alterações</button>
+      <button type="submit" class="btn btn-success">
+        <i data-lucide="check" class="icon" aria-hidden="true"></i> Salvar Alterações
+      </button>
     </div>
   </form>
 </div>
-
-{% block extra_scripts %}
-<script src="{% static 'js/tutorado_foto.js' %}"></script>
-{% endblock %}
 {% endblock %}

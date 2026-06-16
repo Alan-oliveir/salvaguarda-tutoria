@@ -30,9 +30,10 @@
 <div class="filters-bar">
   <select id="filtroTutorado">
     <option value="">Todos os tutorados</option>
-    {% for t in tutorados %}
-      <option value="{{ t.pk }}" {% if filtro_tutorado == t.pk|stringformat:"s" %}selected{% endif %}>
-        {{ t.nome }}
+    {% for perfil in tutorados %}
+      <option value="{{ perfil.usuario.pk }}"
+        {% if filtro_tutorado == perfil.usuario.pk|stringformat:"s" %}selected{% endif %}>
+        {{ perfil.usuario.get_nome_completo }}
       </option>
     {% endfor %}
   </select>
@@ -56,12 +57,10 @@
 <div class="reunioes-list">
   {% for r in reunioes %}
     {% if r.data >= hoje %}
-      {% with status="futura" %}
       <div class="reuniao-card status-futura"
            data-tutorado="{{ r.tutorado.pk }}"
            data-materia="{{ r.materia }}"
            data-status="futura">
-    {% endwith %}
     {% elif r.presenca %}
       <div class="reuniao-card status-realizada"
            data-tutorado="{{ r.tutorado.pk }}"
@@ -83,23 +82,20 @@
       <div class="reuniao-divider"></div>
 
       <div class="reuniao-info">
-        <p class="reuniao-tutorado">{{ r.tutorado.nome }}</p>
+        <p class="reuniao-tutorado">{{ r.tutorado.get_nome_completo }}</p>
         <div class="reuniao-meta">
           <span class="badge badge-materia">{{ r.get_materia_display }}</span>
           {% if r.data >= hoje %}
             <span class="badge badge-futura">
-              <i data-lucide="clock" style="width:11px;height:11px;"></i>
-              Agendada
+              <i data-lucide="clock" style="width:11px;height:11px;"></i> Agendada
             </span>
           {% elif r.presenca %}
             <span class="badge badge-presenca">
-              <i data-lucide="check" style="width:11px;height:11px;"></i>
-              Presente
+              <i data-lucide="check" style="width:11px;height:11px;"></i> Presente
             </span>
           {% else %}
             <span class="badge badge-faltou">
-              <i data-lucide="x" style="width:11px;height:11px;"></i>
-              Faltou
+              <i data-lucide="x" style="width:11px;height:11px;"></i> Faltou
             </span>
           {% endif %}
           {% if r.duracao_minutos %}<span>{{ r.duracao_minutos }}min</span>{% endif %}
@@ -133,11 +129,11 @@
         {% if tutorados %}
           Clique em "Nova Reunião" para registrar a primeira.
         {% else %}
-          Cadastre um tutorado antes de registrar reuniões.
+          Vincule um tutorado antes de registrar reuniões.
         {% endif %}
       </p>
       {% if not tutorados %}
-        <a href="{% url 'tutorias:cadastrar_tutorado' %}" class="btn btn-primary">Cadastrar tutorado</a>
+        <a href="{% url 'tutorias:vincular_tutorado' %}" class="btn btn-primary">Vincular tutorado</a>
       {% endif %}
     </div>
   {% endfor %}
@@ -162,8 +158,9 @@
             <label for="tutorado">Tutorado *</label>
             <select name="tutorado" id="tutorado" required>
               <option value="">Selecione...</option>
-              {% for t in tutorados %}
-                <option value="{{ t.pk }}">{{ t.nome }}</option>
+              {% for perfil in tutorados %}
+                {# value = pk do CustomUser do tutorado, conforme _criar_reuniao espera #}
+                <option value="{{ perfil.usuario.pk }}">{{ perfil.usuario.get_nome_completo }}</option>
               {% endfor %}
             </select>
           </div>
@@ -189,7 +186,8 @@
 
           <div class="form-group">
             <label for="duracao_minutos">Duração (min)</label>
-            <input type="number" name="duracao_minutos" id="duracao_minutos" value="60" min="15" max="480">
+            <input type="number" name="duracao_minutos" id="duracao_minutos"
+                   value="60" min="15" max="480">
           </div>
 
           <div class="form-group col-full">
@@ -199,12 +197,14 @@
 
           <div class="form-group col-full">
             <label for="topicos">Tópicos / pauta</label>
-            <textarea name="topicos" id="topicos" rows="2" placeholder="Assuntos que serão abordados..."></textarea>
+            <textarea name="topicos" id="topicos" rows="2"
+                      placeholder="Assuntos que serão abordados..."></textarea>
           </div>
 
           <div class="form-group col-full">
             <label for="observacoes">Observações</label>
-            <textarea name="observacoes" id="observacoes" rows="2" placeholder="Anotações pós-reunião, evolução do aluno..."></textarea>
+            <textarea name="observacoes" id="observacoes" rows="2"
+                      placeholder="Anotações pós-reunião, evolução do aluno..."></textarea>
           </div>
 
           <div class="form-group col-full">

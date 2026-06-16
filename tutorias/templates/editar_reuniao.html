@@ -17,23 +17,24 @@
 <div class="page-hero">
   <div class="page-hero-text">
     <h1>Editar Reunião</h1>
-    <p>{{ reuniao.tutorado.nome }} · {{ reuniao.data|date:"d/m/Y" }}</p>
+    <p>{{ reuniao.tutorado.get_nome_completo }} · {{ reuniao.data|date:"d/m/Y" }}</p>
   </div>
 </div>
 
 <div class="detalhe-card" style="max-width:640px;">
   <form method="post">
     {% csrf_token %}
-
     <div class="detalhe-body">
       <div class="form-grid-2" style="margin-bottom:1rem;">
 
         <div class="form-group col-full">
           <label for="tutorado">Tutorado *</label>
           <select name="tutorado" id="tutorado" required>
-            {% for t in tutorados %}
-              <option value="{{ t.pk }}" {% if t.pk == reuniao.tutorado.pk %}selected{% endif %}>
-                {{ t.nome }}
+            {% for perfil in tutorados %}
+              {# value = pk do CustomUser, conforme a view editar_reuniao espera #}
+              <option value="{{ perfil.usuario.pk }}"
+                {% if perfil.usuario.pk == reuniao.tutorado.pk %}selected{% endif %}>
+                {{ perfil.usuario.get_nome_completo }}
               </option>
             {% endfor %}
           </select>

@@ -1,0 +1,298 @@
+/* ============================================================
+   SALVAGUARDA — calendario.css
+   Estilos para o calendário FullCalendar e gestão de disponibilidade
+   ============================================================ */
+
+/* ── Wrapper do calendário ── */
+.calendario-wrapper {
+  background: var(--sg-white);
+  border: 1px solid var(--sg-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 1.5rem;
+}
+
+/* ── Legenda ── */
+.calendario-legenda {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--sg-border);
+  font-size: 0.83rem;
+}
+.legenda-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  color: var(--sg-muted);
+  font-weight: 500;
+}
+.legenda-dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+  flex-shrink: 0;
+}
+.legenda-dot.disponivel  { background: #ede5f8; border: 2px solid #7b2fbe33; }
+.legenda-dot.confirmada  { background: #7b2fbe; }
+.legenda-dot.realizada   { background: #1a7a4a; }
+
+/* ── FullCalendar overrides ── */
+.fc {
+  font-family: "Segoe UI", system-ui, sans-serif;
+  font-size: 0.88rem;
+}
+.fc .fc-toolbar-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--sg-dark);
+}
+.fc .fc-button {
+  background: var(--sg-purple-light);
+  border-color: transparent;
+  color: var(--sg-purple);
+  font-weight: 600;
+  font-size: 0.82rem;
+  border-radius: var(--radius-md) !important;
+  transition: background 0.15s, color 0.15s;
+}
+.fc .fc-button:hover {
+  background: var(--sg-purple);
+  color: var(--sg-white);
+}
+.fc .fc-button-active,
+.fc .fc-button:not(:disabled).fc-button-active {
+  background: var(--sg-purple) !important;
+  color: var(--sg-white) !important;
+  border-color: var(--sg-purple) !important;
+}
+.fc .fc-button:focus {
+  box-shadow: 0 0 0 3px rgba(123, 47, 190, 0.2);
+}
+.fc .fc-today-button {
+  background: var(--sg-orange-light);
+  color: var(--sg-orange-dark);
+}
+.fc .fc-today-button:hover {
+  background: var(--sg-orange);
+  color: var(--sg-white);
+}
+.fc .fc-col-header-cell {
+  background: var(--sg-bg);
+  font-weight: 700;
+  font-size: 0.82rem;
+  color: var(--sg-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.5rem 0;
+}
+.fc .fc-timegrid-slot {
+  height: 2.5rem;
+}
+.fc .fc-timegrid-slot-label {
+  font-size: 0.78rem;
+  color: var(--sg-muted);
+  font-weight: 500;
+}
+.fc .fc-day-today {
+  background: rgba(123, 47, 190, 0.04) !important;
+}
+.fc .fc-highlight {
+  background: rgba(123, 47, 190, 0.12) !important;
+  border-radius: var(--radius-sm);
+}
+.fc-event {
+  border-radius: var(--radius-sm) !important;
+  border: none !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  cursor: pointer;
+}
+.fc-bg-event {
+  opacity: 0.35 !important;
+}
+
+/* ── Dica de interação ── */
+.calendario-hint {
+  text-align: center;
+  font-size: 0.82rem;
+  color: var(--sg-muted);
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--sg-border);
+}
+
+/* ── Modal de agendamento ── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(26, 26, 46, 0.5);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.modal-overlay.open {
+  opacity: 1;
+  pointer-events: all;
+}
+.modal {
+  background: var(--sg-white);
+  border-radius: var(--radius-lg);
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 20px 60px rgba(61, 20, 115, 0.2);
+  transform: translateY(16px);
+  transition: transform 0.2s;
+}
+.modal-overlay.open .modal {
+  transform: translateY(0);
+}
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--sg-border);
+}
+.modal-header h2 {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--sg-dark);
+  margin: 0;
+}
+.modal-header-meta {
+  font-size: 0.82rem;
+  color: var(--sg-muted);
+  margin-top: 0.15rem;
+}
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--sg-muted);
+  padding: 0.25rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  transition: color 0.15s, background 0.15s;
+}
+.modal-close:hover {
+  color: var(--sg-dark);
+  background: var(--sg-bg);
+}
+.modal-body   { padding: 1.5rem; }
+.modal-footer {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--sg-border);
+  background: var(--sg-bg);
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+}
+
+/* ── Disponibilidade — página do tutor ── */
+.disponibilidade-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.disp-card {
+  background: var(--sg-white);
+  border: 1px solid var(--sg-border);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.75rem;
+  box-shadow: var(--shadow-sm);
+}
+.disp-card-title {
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--sg-purple);
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid var(--sg-orange);
+  display: inline-block;
+  margin-bottom: 1.25rem;
+}
+
+.disp-bloco {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 0.9rem;
+  border: 1px solid var(--sg-border);
+  border-radius: var(--radius-md);
+  margin-bottom: 0.5rem;
+  background: var(--sg-bg);
+  gap: 1rem;
+}
+.disp-bloco-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+.disp-bloco-dia {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--sg-dark);
+}
+.disp-bloco-horario {
+  font-size: 0.8rem;
+  color: var(--sg-muted);
+}
+
+.dias-grupo + .dias-grupo { margin-top: 1rem; }
+.dias-grupo-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--sg-purple);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.5rem;
+}
+
+/* ── Badge de status da reunião ── */
+.badge-status-confirmada { background: var(--sg-purple-light); color: var(--sg-purple); }
+.badge-status-cancelada  { background: var(--sg-error-light);  color: var(--sg-error); }
+.badge-status-realizada  { background: var(--sg-success-light); color: var(--sg-success); }
+
+/* ── Realização inline ── */
+.realizar-form {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--sg-success-light);
+  border: 1.5px solid var(--sg-success);
+  border-radius: var(--radius-md);
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+.realizar-form span {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--sg-success);
+  flex: 1;
+}
+
+/* ── Responsivo ── */
+@media (max-width: 768px) {
+  .disponibilidade-grid {
+    grid-template-columns: 1fr;
+  }
+  .calendario-wrapper {
+    padding: 0.75rem;
+  }
+}
