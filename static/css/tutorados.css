@@ -186,6 +186,11 @@
 
 .empty-section { text-align: center; padding: 2rem 1rem; color: var(--sg-muted); font-size: .9rem; }
 
+/* ── Utilitários ── */
+.mt-sm { margin-top: .5rem; }
+.mt-md { margin-top: .75rem; }
+.btn-full { width: 100%; justify-content: center; }
+
 /* ── Responsivo ── */
 @media (max-width: 768px) {
   .tutorado-hero-banner { flex-direction: column; text-align: center; }

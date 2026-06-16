@@ -1,12 +1,18 @@
-// static/js/tutorado_detalhe.js
-// Copia o token de acesso do tutorado para a área de transferência
+/* static/js/tutorado_detalhe.js */
 
-function copiarToken() {
-  const token = document.getElementById('tokenVal').textContent.trim();
-  const msg   = document.getElementById('copiadoMsg');
+document.addEventListener('DOMContentLoaded', function () {
+  const btnCopiar  = document.querySelector('.btn-copiar');
+  const tokenVal   = document.getElementById('tokenVal');
+  const copiadoMsg = document.getElementById('copiadoMsg');
 
-  navigator.clipboard.writeText(token).then(() => {
-    msg.style.display = 'inline';
-    setTimeout(() => msg.style.display = 'none', 2000);
-  });
-}
+  if (btnCopiar && tokenVal) {
+    btnCopiar.addEventListener('click', function () {
+      navigator.clipboard.writeText(tokenVal.textContent.trim()).then(() => {
+        if (copiadoMsg) {
+          copiadoMsg.style.display = 'inline';
+          setTimeout(() => copiadoMsg.style.display = 'none', 2000);
+        }
+      });
+    });
+  }
+});

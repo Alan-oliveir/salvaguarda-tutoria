@@ -20,8 +20,8 @@
 
 {% if tutorados %}
 <div class="search-bar">
-  <input type="text" id="buscaNome" placeholder="Buscar por nome..." oninput="filtrar()">
-  <select id="filtreSerie" onchange="filtrar()">
+  <input type="text" id="buscaNome" placeholder="Buscar por nome...">
+  <select id="filtreSerie">
     <option value="">Todas as séries</option>
     {% for val, label in series_choices %}
       <option value="{{ val }}">{{ label }}</option>

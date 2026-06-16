@@ -5,7 +5,6 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/tutorados.css' %}">
-<link rel="stylesheet" href="{% static 'css/forms.css' %}">
 {% endblock %}
 
 {% block content %}
@@ -35,7 +34,7 @@
             <div class="foto-thumb" id="fotoPreview"><i data-lucide="graduation-cap" class="icon" aria-hidden="true"></i></div>
             <label class="foto-input-label">
               <i data-lucide="camera" class="icon" aria-hidden="true"></i> Clique para escolher uma foto (opcional)
-              <input type="file" name="foto" id="fotoInput" accept="image/*" onchange="previewFoto(this)">
+              <input type="file" name="foto" id="fotoInput" accept="image/*">
             </label>
           </div>
         </div>

@@ -1,14 +1,18 @@
-// static/js/tutorado_foto.js
-// Preview da foto antes do upload — compartilhado entre cadastrar e editar tutorado
+/* static/js/tutorado_foto.js */
 
-function previewFoto(input) {
-  const preview = document.getElementById('fotoPreview');
+document.addEventListener('DOMContentLoaded', function () {
+  const fotoInput = document.getElementById('fotoInput');
 
-  if (input.files && input.files[0]) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      preview.innerHTML = `<img src="${e.target.result}" alt="preview">`;
-    };
-    reader.readAsDataURL(input.files[0]);
+  if (fotoInput) {
+    fotoInput.addEventListener('change', function () {
+      const preview = document.getElementById('fotoPreview');
+      if (!preview || !this.files || !this.files[0]) return;
+
+      const reader = new FileReader();
+      reader.onload = e => {
+        preview.innerHTML = `<img src="${e.target.result}" alt="preview">`;
+      };
+      reader.readAsDataURL(this.files[0]);
+    });
   }
-}
+});

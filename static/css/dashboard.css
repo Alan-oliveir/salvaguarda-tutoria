@@ -185,6 +185,9 @@
   box-shadow: 0 0 0 3px rgba(123,47,190,.12);
 }
 
+/* ── Utilitários ── */
+.mb-section { margin-bottom: 1.5rem; }
+
 /* ── Responsivo ── */
 @media (max-width: 768px) {
   .dashboard-grid { grid-template-columns: 1fr 1fr; }

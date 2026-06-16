@@ -1,20 +1,30 @@
-// static/js/perfil.js
-// Controla a visibilidade da seção de edição e o botão correspondente
+/* static/js/perfil.js */
 
-function toggleEditMode() {
-    const editSection = document.getElementById('editSection');
-    const editBtn = document.getElementById('editBtn');
+document.addEventListener("DOMContentLoaded", function () {
+  const editSection = document.getElementById("editSection");
+  const editBtn = document.getElementById("editBtn");
+  const cancelBtn = document.getElementById("cancelEditBtn");
+  const btnSenha = document.querySelector(".btn-change-password");
 
-    if (editSection.style.display === 'none') {
-        editSection.style.display = 'block';
-        editBtn.textContent = '❌ Cancelar Edição';
-    } else {
-        editSection.style.display = 'none';
-        editBtn.textContent = '✏️ Editar Perfil';
-    }
-}
+  if (editBtn && editSection) {
+    editBtn.addEventListener("click", function () {
+      const aberto = editSection.style.display !== "none";
+      editSection.style.display = aberto ? "none" : "block";
+      editBtn.textContent = aberto ? "✏️ Editar Perfil" : "❌ Cancelar Edição";
+    });
+  }
 
-function changePassword() {
-    // TODO: implementar modal ou redirect para página de troca de senha
-    alert('Funcionalidade de alteração de senha será implementada em breve!');
-}
+  if (btnSenha) {
+    btnSenha.addEventListener("click", function () {
+      alert("Funcionalidade de alteração de senha será implementada em breve!");
+    });
+  }
+
+  function toggleEdit() {
+    const aberto = editSection.style.display !== "none";
+    editSection.style.display = aberto ? "none" : "block";
+  }
+
+  if (editBtn) editBtn.addEventListener("click", toggleEdit);
+  if (cancelBtn) cancelBtn.addEventListener("click", toggleEdit);
+});

@@ -1,99 +1,121 @@
-{% extends 'base.html' %}
-{% load static %}
-
-{% block title %}Meu Perfil{% endblock %}
-
-{% block extra_head %}
-<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
-{% endblock %}
-
-{% block content %}
+{% extends 'base.html' %} {% load static %} {% block title %}Meu Perfil{%
+endblock %} {% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
+{% endblock %} {% block content %}
 <div class="page-header">
-    <h1>Perfil</h1>
-    <p class="page-subtitle">Gerencie suas informações pessoais</p>
+  <h1>Perfil</h1>
+  <p class="page-subtitle">Gerencie suas informações pessoais</p>
 </div>
 
 <div class="perfil-content">
-    <div class="perfil-card">
-        <div class="perfil-header">
-            <div class="perfil-avatar">
-                <div class="avatar-placeholder">
-                    {{ user.first_name.0|default:user.username.0|upper }}
-                </div>
-            </div>
-            <div class="perfil-info">
-                <h2>{{ user.first_name }} {{ user.last_name }}</h2>
-                <p class="perfil-role">
-                    {% if user.tipo == 'ADMIN' %}Administrador
-                    {% elif user.tipo == 'TUTOR' %}Tutor
-                    {% elif user.tipo == 'TUTORADO' %}Tutorado
-                    {% endif %}
-                </p>
-            </div>
+  <div class="perfil-card">
+    <div class="perfil-header">
+      <div class="perfil-avatar">
+        <div class="avatar-placeholder">
+          {{ user.first_name.0|default:user.username.0|upper }}
         </div>
-
-        <div class="perfil-body">
-            <div class="info-section">
-                <h3>Informações Pessoais</h3>
-                <div class="info-list">
-                    <div class="info-row">
-                        <span class="info-label">Usuário</span>
-                        <span class="info-value">{{ user.username }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">E-mail</span>
-                        <span class="info-value">{{ user.email }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Membro desde</span>
-                        <span class="info-value">{{ user.date_joined|date:"d/m/Y" }}</span>
-                    </div>
-                    <div class="info-row">
-                        <span class="info-label">Status</span>
-                        <span class="info-value">
-                            <span class="status-badge {% if user.is_active %}active{% else %}inactive{% endif %}">
-                                {% if user.is_active %}Ativo{% else %}Inativo{% endif %}
-                            </span>
-                        </span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="actions-section">
-                <h3>Ações</h3>
-                <div class="action-buttons">
-                    <button class="btn btn-primary" onclick="toggleEditMode()" id="editBtn"><i data-lucide="edit-2" class="icon" aria-hidden="true"></i> Editar Perfil</button>
-                    <button class="btn btn-secondary" onclick="changePassword()"><i data-lucide="lock" class="icon" aria-hidden="true"></i> Alterar Senha</button>
-                </div>
-            </div>
-
-            <div class="edit-section" id="editSection" style="display: none;">
-                <h3>Editar Informações</h3>
-                <form method="post" class="edit-form">
-                    {% csrf_token %}
-                    <div class="form-group">
-                        <label for="first_name">Nome:</label>
-                        <input type="text" id="first_name" name="first_name" value="{{ user.first_name }}" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="last_name">Sobrenome:</label>
-                        <input type="text" id="last_name" name="last_name" value="{{ user.last_name }}" class="form-control">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">E-mail:</label>
-                        <input type="email" id="email" name="email" value="{{ user.email }}" class="form-control">
-                    </div>
-                    <div class="form-actions">
-                        <button type="submit" class="btn btn-success"><i data-lucide="save" class="icon" aria-hidden="true"></i> Salvar Alterações</button>
-                        <button type="button" class="btn btn-secondary" onclick="toggleEditMode()"><i data-lucide="x" class="icon" aria-hidden="true"></i> Cancelar</button>
-                    </div>
-                </form>
-            </div>
-        </div>
+      </div>
+      <div class="perfil-info">
+        <h2>{{ user.first_name }} {{ user.last_name }}</h2>
+        <p class="perfil-role">
+          {% if user.tipo == 'ADMIN' %}Administrador {% elif user.tipo ==
+          'TUTOR' %}Tutor {% elif user.tipo == 'TUTORADO' %}Tutorado {% endif %}
+        </p>
+      </div>
     </div>
+
+    <div class="perfil-body">
+      <div class="info-section">
+        <h3>Informações Pessoais</h3>
+        <div class="info-list">
+          <div class="info-row">
+            <span class="info-label">Usuário</span>
+            <span class="info-value">{{ user.username }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">E-mail</span>
+            <span class="info-value">{{ user.email }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Membro desde</span>
+            <span class="info-value">{{ user.date_joined|date:"d/m/Y" }}</span>
+          </div>
+          <div class="info-row">
+            <span class="info-label">Status</span>
+            <span class="info-value">
+              <span
+                class="status-badge {% if user.is_active %}active{% else %}inactive{% endif %}"
+              >
+                {% if user.is_active %}Ativo{% else %}Inativo{% endif %}
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions-section">
+        <h3>Ações</h3>
+        <div class="action-buttons">
+          <button class="btn btn-primary" id="editBtn">
+            <i data-lucide="edit-2" class="icon" aria-hidden="true"></i> Editar
+            Perfil
+          </button>
+          <button class="btn btn-secondary btn-change-password">
+            <i data-lucide="lock" class="icon" aria-hidden="true"></i> Alterar
+            Senha
+          </button>
+        </div>
+      </div>
+
+      <div class="edit-section" id="editSection" style="display: none">
+        <h3>Editar Informações</h3>
+        <form method="post" class="edit-form">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="first_name">Nome:</label>
+            <input
+              type="text"
+              id="first_name"
+              name="first_name"
+              value="{{ user.first_name }}"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label for="last_name">Sobrenome:</label>
+            <input
+              type="text"
+              id="last_name"
+              name="last_name"
+              value="{{ user.last_name }}"
+              class="form-control"
+            />
+          </div>
+          <div class="form-group">
+            <label for="email">E-mail:</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value="{{ user.email }}"
+              class="form-control"
+            />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-success">
+              <i data-lucide="save" class="icon" aria-hidden="true"></i> Salvar
+              Alterações
+            </button>
+            <button type="button" class="btn btn-secondary" id="cancelEditBtn">
+              <i data-lucide="x" class="icon" aria-hidden="true"></i> Cancelar
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% block extra_scripts %}
 <script src="{% static 'js/perfil.js' %}"></script>
-{% endblock %}
-{% endblock %}
+{% endblock %} {% endblock %}
