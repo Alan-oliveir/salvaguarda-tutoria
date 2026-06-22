@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Minhas Reuniões — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/reunioes.css' %}">
+<link rel="stylesheet" href="{% static 'css/calendario.css' %}">
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'usuarios:painel_inicial' %}">Painel</a> / Minhas Reuniões
+</p>
+
+<div class="page-hero">
+  <div class="page-hero-text">
+    <h1><i data-lucide="calendar" class="icon" aria-hidden="true"></i> Minhas Reuniões</h1>
+    <p>{{ reunioes.count }} reunião{% if reunioes.count != 1 %}ões{% endif %} registrada{% if reunioes.count != 1 %}s{% endif %}</p>
+  </div>
+  <a href="{% url 'tutorias:calendario' %}" class="btn btn-primary">
+    <i data-lucide="plus" class="icon" aria-hidden="true"></i> Agendar Nova Reunião
+  </a>
+</div>
+
+<div class="reunioes-list">
+  {% for r in reunioes %}
+    <div class="reuniao-card status-{{ r.status|lower }}"
+         data-status="{{ r.status|lower }}">
+
+      <div class="reuniao-data">
+        <div class="rd-dia">{{ r.data|date:"d" }}</div>
+        <div class="rd-mes">{{ r.data|date:"M" }}</div>
+        <div class="rd-hora">{{ r.horario|time:"H:i" }}</div>
+      </div>
+
+      <div class="reuniao-divider"></div>
+
+      <div class="reuniao-info">
+        <p class="reuniao-tutorado">{{ r.tutor.get_nome_completo }}</p>
+        <div class="reuniao-meta">
+          <span class="badge badge-materia">{{ r.get_materia_display }}</span>
+
+          {% if r.status == 'CONFIRMADA' %}
+            {% if r.data >= hoje %}
+              <span class="badge badge-futura">
+                <i data-lucide="clock" style="width:11px;height:11px;"></i> Agendada
+              </span>
+            {% else %}
+              <span class="badge" style="background:var(--sg-warning-light);color:var(--sg-warning);">
+                Aguardando conclusão
+              </span>
+            {% endif %}
+          {% elif r.status == 'REALIZADA' %}
+            <span class="badge badge-presenca">
+              <i data-lucide="check-circle" style="width:11px;height:11px;"></i> Realizada
+            </span>
+          {% elif r.status == 'CANCELADA' %}
+            <span class="badge badge-faltou">
+              <i data-lucide="x-circle" style="width:11px;height:11px;"></i> Cancelada
+            </span>
+          {% endif %}
+
+          {% if r.duracao_minutos %}<span>{{ r.duracao_minutos }}min</span>{% endif %}
+        </div>
+        {% if r.topicos %}
+          <p class="reuniao-topicos">{{ r.topicos|truncatechars:80 }}</p>
+        {% endif %}
+      </div>
+
+      <!-- Ações -->
+      <div class="reuniao-actions">
+        <a href="{% url 'tutorias:detalhe_reuniao' r.pk %}" class="btn-icon" title="Ver detalhes">
+          <i data-lucide="eye" style="width:15px;height:15px;"></i>
+        </a>
+
+        {% if r.pode_realizar %}
+          <form method="post" action="{% url 'tutorias:realizar_reuniao' r.pk %}" style="display:contents;">
+            {% csrf_token %}
+            <input type="hidden" name="presenca" value="1">
+            <button type="submit" class="btn-icon" title="Marcar como realizada"
+                    style="color:var(--sg-success);">
+              <i data-lucide="check-circle" style="width:15px;height:15px;"></i>
+            </button>
+          </form>
+        {% endif %}
+
+        {% if r.pode_cancelar %}
+          <form method="post" action="{% url 'tutorias:cancelar_reuniao' r.pk %}" style="display:contents;">
+            {% csrf_token %}
+            <button type="submit" class="btn-icon danger btn-confirmar-cancelamento"
+                    title="Cancelar reunião">
+              <i data-lucide="x" style="width:15px;height:15px;"></i>
+            </button>
+          </form>
+        {% endif %}
+      </div>
+
+    </div>
+  {% empty %}
+    <div class="empty-state">
+      <span class="empty-icon">📅</span>
+      <h3>Nenhuma reunião ainda</h3>
+      <p>Acesse o calendário para agendar sua primeira reunião com o tutor.</p>
+      <a href="{% url 'tutorias:calendario' %}" class="btn btn-primary">
+        <i data-lucide="calendar" class="icon" aria-hidden="true"></i> Abrir Calendário
+      </a>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.btn-confirmar-cancelamento').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+      if (!confirm('Tem certeza que deseja cancelar esta reunião?')) {
+        e.preventDefault();
+      }
+    });
+  });
+});
+</script>
+{% endblock %}

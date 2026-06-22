@@ -1,7 +1,13 @@
-{% extends 'base.html' %} {% load static %} {% block title %}{{
-usuario.get_nome_completo }} — Salvaguarda{% endblock %} {% block extra_head %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ usuario.get_nome_completo }} — Salvaguarda{% endblock %}
+
+{% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/tutorados.css' %}" />
-{% endblock %} {% block content %}
+{% endblock %}
+
+{% block content %}
 <p class="breadcrumb">
   <a href="{% url 'tutorias:lista_tutorados' %}">
     <i data-lucide="arrow-left" class="icon" aria-hidden="true"></i> Meus
@@ -18,7 +24,9 @@ usuario.get_nome_completo }} — Salvaguarda{% endblock %} {% block extra_head %
         src="{{ usuario.foto_perfil.url }}"
         alt="{{ usuario.get_nome_completo }}"
       />
-      {% else %} {{ usuario.get_iniciais }} {% endif %}
+      {% else %}
+      {{ usuario.get_iniciais }}
+      {% endif %}
     </div>
     <div class="hero-text">
       <h1>{{ usuario.get_nome_completo }}</h1>
@@ -31,7 +39,8 @@ usuario.get_nome_completo }} — Salvaguarda{% endblock %} {% block extra_head %
         </span>
         {% else %}
         <span class="badge badge-enem-nao">Ainda não fez ENEM</span>
-        {% endif %} {% if usuario.get_idade %}
+        {% endif %}
+        {% if usuario.get_idade %}
         <span class="badge">{{ usuario.get_idade }} anos</span>
         {% endif %}
       </div>
@@ -66,17 +75,19 @@ usuario.get_nome_completo }} — Salvaguarda{% endblock %} {% block extra_head %
       {% if usuario.cidade %}
       <span>
         <i data-lucide="map-pin" class="icon" aria-hidden="true"></i>
-        <strong
-          >{{ usuario.cidade }}{% if usuario.estado %}/{{ usuario.estado }}{%
-          endif %}</strong
-        >
+        <strong>
+          {{ usuario.cidade }}
+          {% if usuario.estado %}/{{ usuario.estado }}{% endif %}
+        </strong>
       </span>
-      {% endif %} {% if tutorado.whatsapp %}
+      {% endif %}
+      {% if tutorado.whatsapp %}
       <span>
         <i data-lucide="smartphone" class="icon" aria-hidden="true"></i>
         <strong>{{ tutorado.whatsapp }}</strong>
       </span>
-      {% endif %} {% if usuario.email %}
+      {% endif %}
+      {% if usuario.email %}
       <span>
         <i data-lucide="mail" class="icon" aria-hidden="true"></i>
         <strong>{{ usuario.email }}</strong>
@@ -88,9 +99,9 @@ usuario.get_nome_completo }} — Salvaguarda{% endblock %} {% block extra_head %
     <div class="contato-row mt-sm">
       <span>
         <i data-lucide="building-2" class="icon" aria-hidden="true"></i>
-        <strong>{{ tutorado.escola }}</strong>
-        {% if tutorado.turno_escolar %} · {{ tutorado.get_turno_escolar_display
-        }}{% endif %}
+        <strong>{{ tutorado.escola }}
+          {% if tutorado.turno_escolar %} · {{ tutorado.get_turno_escolar_display }}{% endif %}
+        </strong>
       </span>
     </div>
     {% endif %}
@@ -118,7 +129,8 @@ usuario.get_nome_completo }} — Salvaguarda{% endblock %} {% block extra_head %
   </p>
   {% if tutorado.cursos_interesse %}
   <p><strong>Cursos de interesse:</strong> {{ tutorado.cursos_interesse }}</p>
-  {% endif %} {% if tutorado.objetivo_principal %}
+  {% endif %}
+  {% if tutorado.objetivo_principal %}
   <p class="mt-sm">
     <strong>Objetivo principal:</strong> {{ tutorado.objetivo_principal }}
   </p>
@@ -133,8 +145,10 @@ usuario.get_nome_completo }} — Salvaguarda{% endblock %} {% block extra_head %
     <i data-lucide="user" class="icon" aria-hidden="true"></i> Responsável
   </p>
   <p>
-    {{ tutorado.responsavel_nome }} {% if tutorado.responsavel_telefone %} · {{
-    tutorado.responsavel_telefone }}{% endif %}
+    {{ tutorado.responsavel_nome }}
+    {% if tutorado.responsavel_telefone %}
+      · {{ tutorado.responsavel_telefone }}
+    {% endif %}
   </p>
 </div>
 {% endif %}
@@ -164,9 +178,13 @@ usuario.get_nome_completo }} — Salvaguarda{% endblock %} {% block extra_head %
     <div class="reuniao-info-col">
       <span class="badge">{{ r.get_materia_display }}</span>
       <p class="reuniao-meta">
-        {{ r.data|date:"d/m/Y" }} às {{ r.horario|time:"H:i" }} {% if
-        r.duracao_minutos %} · {{ r.duracao_minutos }}min{% endif %} {% if
-        r.topicos %} · {{ r.topicos|truncatechars:60 }}{% endif %}
+        {{ r.data|date:"d/m/Y" }} às {{ r.horario|time:"H:i" }}
+        {% if r.duracao_minutos %}
+          · {{ r.duracao_minutos }}min
+        {% endif %}
+        {% if r.topicos %}
+          · {{ r.topicos|truncatechars:60 }}
+        {% endif %}
       </p>
     </div>
     <div>
@@ -188,12 +206,14 @@ usuario.get_nome_completo }} — Salvaguarda{% endblock %} {% block extra_head %
   </p>
   {% endfor %}
 </div>
-{% endblock %} {% block extra_scripts %}
+{% endblock %}
+
+{% block extra_scripts %}
 <script src="{% static 'js/tutorado_detalhe.js' %}"></script>
 <script>
   function copiarToken() {
     navigator.clipboard.writeText(
-      document.getElementById("tokenVal").textContent.trim(),
+      document.getElementById("tokenVal").textContent.trim()
     );
     const msg = document.getElementById("copiadoMsg");
     msg.style.display = "inline";

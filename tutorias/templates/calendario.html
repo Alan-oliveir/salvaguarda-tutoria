@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Calendário — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/calendario.css' %}">
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'usuarios:painel_inicial' %}">Painel</a> / Calendário
+</p>
+
+<div class="page-hero">
+  <div class="page-hero-text">
+    <h1><i data-lucide="calendar" class="icon" aria-hidden="true"></i> Agendar Reunião</h1>
+    <p>Tutor: <strong>{{ tutor.get_nome_completo }}</strong> — clique em um horário disponível para agendar.</p>
+  </div>
+  <a href="{% url 'tutorias:minhas_reunioes' %}" class="btn btn-secondary">
+    <i data-lucide="list" class="icon" aria-hidden="true"></i> Minhas Reuniões
+  </a>
+</div>
+
+<!-- Legenda -->
+<div class="calendario-wrapper">
+  <div class="calendario-legenda">
+    <div class="legenda-item">
+      <span class="legenda-dot disponivel"></span> Disponível (clique para agendar)
+    </div>
+    <div class="legenda-item">
+      <span class="legenda-dot confirmada"></span> Reunião agendada
+    </div>
+    <div class="legenda-item">
+      <span class="legenda-dot realizada"></span> Reunião realizada
+    </div>
+  </div>
+
+  <!-- FullCalendar -->
+  <div id="calendar"
+       data-slots-url="{% url 'tutorias:slots_json' %}"
+       data-detalhe-base="/tutorados/reunioes/"></div>
+
+  <p class="calendario-hint">
+    <i data-lucide="info" style="width:13px;height:13px;vertical-align:middle;"></i>
+    Clique num horário em área disponível (fundo lilás) para abrir o formulário de agendamento.
+  </p>
+</div>
+
+<!-- Modal de agendamento -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
+
+    <div class="modal-header">
+      <div>
+        <h2 id="modalTitulo">Agendar Reunião</h2>
+        <p class="modal-header-meta" id="modalDataLabel"></p>
+      </div>
+      <button class="modal-close" id="btnModalFechar" aria-label="Fechar">
+        <i data-lucide="x" style="width:18px;height:18px;"></i>
+      </button>
+    </div>
+
+    <form method="post" action="{% url 'tutorias:solicitar_reuniao' %}">
+      {% csrf_token %}
+
+      {# Campos ocultos preenchidos pelo JS ao clicar no calendário #}
+      <input type="hidden" name="data"    id="inputData">
+      <input type="hidden" name="horario" id="inputHorario">
+
+      <div class="modal-body">
+        <div class="form-grid-2">
+
+          <div class="form-group">
+            <label for="materia">Matéria *</label>
+            <select name="materia" id="materia" required>
+              {% for val, label in materias_choices %}
+                <option value="{{ val }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="duracao_minutos">Duração (min)</label>
+            <select name="duracao_minutos" id="duracao_minutos">
+              <option value="30">30 min</option>
+              <option value="60" selected>1 hora</option>
+              <option value="90">1h30</option>
+              <option value="120">2 horas</option>
+            </select>
+          </div>
+
+          <div class="form-group col-full">
+            <label for="topicos">Tópicos / o que quer estudar</label>
+            <textarea name="topicos" id="topicos" rows="2"
+                      placeholder="Ex: Funções do 2º grau, Redação dissertativa..."></textarea>
+          </div>
+
+          <div class="form-group col-full">
+            <label for="observacoes">Observações (opcional)</label>
+            <textarea name="observacoes" id="observacoes" rows="2"
+                      placeholder="Dúvidas específicas, materiais que precisa..."></textarea>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" id="btnModalCancelar" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" class="btn btn-primary">
+          <i data-lucide="check" style="width:15px;height:15px;"></i>
+          Confirmar Agendamento
+        </button>
+      </div>
+    </form>
+
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script src="{% static 'js/calendario_tutorado.js' %}"></script>
+{% endblock %}

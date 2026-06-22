@@ -1,0 +1,116 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Disponibilidade — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/calendario.css' %}">
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'usuarios:painel_inicial' %}">Painel</a> / Disponibilidade
+</p>
+
+<div class="page-hero">
+  <div class="page-hero-text">
+    <h1><i data-lucide="clock" class="icon" aria-hidden="true"></i> Minha Disponibilidade</h1>
+    <p>Defina os dias e horários semanais em que você está disponível para reuniões.</p>
+  </div>
+</div>
+
+<div class="disponibilidade-grid">
+
+  <!-- Blocos existentes -->
+  <div class="disp-card">
+    <p class="disp-card-title">Horários cadastrados</p>
+
+    {% if dias_agrupados %}
+      {% for dia, blocos_dia in dias_agrupados.items %}
+      <div class="dias-grupo">
+        <p class="dias-grupo-label">{{ dia }}</p>
+        {% for bloco in blocos_dia %}
+        <div class="disp-bloco">
+          <div class="disp-bloco-info">
+            <span class="disp-bloco-dia">{{ bloco.get_dia_semana_display }}</span>
+            <span class="disp-bloco-horario">
+              {{ bloco.hora_inicio|time:"H:i" }} – {{ bloco.hora_fim|time:"H:i" }}
+            </span>
+          </div>
+          <form method="post" action="{% url 'tutorias:deletar_disponibilidade' bloco.pk %}">
+            {% csrf_token %}
+            <button type="submit"
+                    class="btn-icon danger btn-deletar-disp"
+                    title="Remover este bloco"
+                    style="width:32px;height:32px;">
+              <i data-lucide="trash-2" style="width:14px;height:14px;"></i>
+            </button>
+          </form>
+        </div>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    {% else %}
+      <div class="empty-state" style="padding:2rem 1rem;">
+        <i data-lucide="calendar-x" class="empty-icon" aria-hidden="true"></i>
+        <h3>Nenhum horário cadastrado</h3>
+        <p>Adicione seus blocos de disponibilidade ao lado.</p>
+      </div>
+    {% endif %}
+  </div>
+
+  <!-- Formulário de novo bloco -->
+  <div class="disp-card">
+    <p class="disp-card-title">Adicionar horário</p>
+
+    <form method="post" id="formNovaDisponibilidade">
+      {% csrf_token %}
+
+      <div class="form-group" style="margin-bottom:1rem;">
+        <label for="dia_semana">Dia da semana *</label>
+        <select name="dia_semana" id="dia_semana" required>
+          <option value="">Selecione...</option>
+          {% for val, label in dias_choices %}
+            <option value="{{ val }}">{{ label }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="form-grid-2" style="margin-bottom:1rem;">
+        <div class="form-group">
+          <label for="hora_inicio">Início *</label>
+          <input type="time" name="hora_inicio" id="hora_inicio" required>
+        </div>
+        <div class="form-group">
+          <label for="hora_fim">Fim *</label>
+          <input type="time" name="hora_fim" id="hora_fim" required>
+        </div>
+      </div>
+
+      <p class="help-text" style="margin-bottom:1.25rem;font-size:.82rem;color:var(--sg-muted);">
+        <i data-lucide="info" style="width:13px;height:13px;vertical-align:middle;"></i>
+        Este bloco se repetirá toda semana no dia e horário definidos.
+      </p>
+
+      <button type="submit" class="btn btn-primary" style="width:100%;">
+        <i data-lucide="plus" class="icon" aria-hidden="true"></i>
+        Adicionar Disponibilidade
+      </button>
+    </form>
+  </div>
+
+</div>
+
+<!-- Link para lista de reuniões -->
+<div style="margin-top:1rem;">
+  <a href="{% url 'tutorias:lista_reunioes' %}" class="btn btn-secondary">
+    <i data-lucide="list" class="icon" aria-hidden="true"></i>
+    Ver Reuniões Agendadas
+  </a>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{% static 'js/disponibilidade.js' %}"></script>
+{% endblock %}

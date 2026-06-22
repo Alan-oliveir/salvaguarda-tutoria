@@ -5,27 +5,28 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/reunioes.css' %}">
+<link rel="stylesheet" href="{% static 'css/calendario.css' %}">
 {% endblock %}
 
 {% block content %}
 <p class="breadcrumb">
-  <a href="{% url 'usuarios:painel_inicial' %}">Painel</a> /
-  Reuniões
+  <a href="{% url 'usuarios:painel_inicial' %}">Painel</a> / Reuniões
 </p>
 
 <div class="page-hero">
   <div class="page-hero-text">
     <h1>Reuniões</h1>
-    <p>{{ reunioes.count }} reunião{% if reunioes.count != 1 %}ões{% endif %} registrada{% if reunioes.count != 1 %}s{% endif %}</p>
+    <p>{{ reunioes.count }} reunião{% if reunioes.count != 1 %}ões{% endif %} encontrada{% if reunioes.count != 1 %}s{% endif %}</p>
   </div>
   {% if tutorados %}
   <button id="btnNovaReuniao" class="btn btn-primary">
     <i data-lucide="plus" style="width:16px;height:16px;"></i>
-    Nova Reunião
+    Registrar Reunião
   </button>
   {% endif %}
 </div>
 
+<!-- Filtros -->
 {% if tutorados %}
 <div class="filters-bar">
   <select id="filtroTutorado">
@@ -47,31 +48,20 @@
 
   <select id="filtroStatus">
     <option value="">Todos os status</option>
-    <option value="futura">Futuras</option>
-    <option value="realizada">Realizadas (presente)</option>
-    <option value="faltou">Faltou</option>
+    {% for val, label in status_choices %}
+      <option value="{{ val }}" {% if filtro_status == val %}selected{% endif %}>{{ label }}</option>
+    {% endfor %}
   </select>
 </div>
 {% endif %}
 
+<!-- Lista -->
 <div class="reunioes-list">
   {% for r in reunioes %}
-    {% if r.data >= hoje %}
-      <div class="reuniao-card status-futura"
-           data-tutorado="{{ r.tutorado.pk }}"
-           data-materia="{{ r.materia }}"
-           data-status="futura">
-    {% elif r.presenca %}
-      <div class="reuniao-card status-realizada"
-           data-tutorado="{{ r.tutorado.pk }}"
-           data-materia="{{ r.materia }}"
-           data-status="realizada">
-    {% else %}
-      <div class="reuniao-card status-faltou"
-           data-tutorado="{{ r.tutorado.pk }}"
-           data-materia="{{ r.materia }}"
-           data-status="faltou">
-    {% endif %}
+    <div class="reuniao-card status-{{ r.status|lower }}"
+         data-tutorado="{{ r.tutorado.pk }}"
+         data-materia="{{ r.materia }}"
+         data-status="{{ r.status|lower }}">
 
       <div class="reuniao-data">
         <div class="rd-dia">{{ r.data|date:"d" }}</div>
@@ -85,19 +75,23 @@
         <p class="reuniao-tutorado">{{ r.tutorado.get_nome_completo }}</p>
         <div class="reuniao-meta">
           <span class="badge badge-materia">{{ r.get_materia_display }}</span>
-          {% if r.data >= hoje %}
-            <span class="badge badge-futura">
-              <i data-lucide="clock" style="width:11px;height:11px;"></i> Agendada
-            </span>
-          {% elif r.presenca %}
-            <span class="badge badge-presenca">
-              <i data-lucide="check" style="width:11px;height:11px;"></i> Presente
-            </span>
-          {% else %}
-            <span class="badge badge-faltou">
-              <i data-lucide="x" style="width:11px;height:11px;"></i> Faltou
+
+          <span class="badge badge-status-{{ r.status|lower }}">
+            {% if r.status == 'CONFIRMADA' %}
+              <i data-lucide="clock" style="width:10px;height:10px;"></i> Confirmada
+            {% elif r.status == 'REALIZADA' %}
+              <i data-lucide="check" style="width:10px;height:10px;"></i> Realizada
+            {% elif r.status == 'CANCELADA' %}
+              <i data-lucide="x" style="width:10px;height:10px;"></i> Cancelada
+            {% endif %}
+          </span>
+
+          {% if r.agendado_por == 'TUTORADO' %}
+            <span class="badge" style="background:var(--sg-orange-light);color:var(--sg-orange-dark);font-size:.7rem;">
+              Pelo aluno
             </span>
           {% endif %}
+
           {% if r.duracao_minutos %}<span>{{ r.duracao_minutos }}min</span>{% endif %}
         </div>
         {% if r.topicos %}
@@ -109,25 +103,39 @@
         <a href="{% url 'tutorias:detalhe_reuniao' r.pk %}" class="btn-icon" title="Ver detalhes">
           <i data-lucide="eye" style="width:15px;height:15px;"></i>
         </a>
-        <a href="{% url 'tutorias:editar_reuniao' r.pk %}" class="btn-icon" title="Editar">
-          <i data-lucide="pencil" style="width:15px;height:15px;"></i>
-        </a>
-        <form method="post" action="{% url 'tutorias:deletar_reuniao' r.pk %}" style="display:contents;">
-          {% csrf_token %}
-          <button type="submit" class="btn-icon danger btn-deletar" title="Excluir">
-            <i data-lucide="trash-2" style="width:15px;height:15px;"></i>
-          </button>
-        </form>
+        {% if r.status == 'CONFIRMADA' %}
+          <a href="{% url 'tutorias:editar_reuniao' r.pk %}" class="btn-icon" title="Editar">
+            <i data-lucide="pencil" style="width:15px;height:15px;"></i>
+          </a>
+        {% endif %}
+        {% if r.pode_realizar %}
+          <form method="post" action="{% url 'tutorias:realizar_reuniao' r.pk %}" style="display:contents;">
+            {% csrf_token %}
+            <input type="hidden" name="presenca" value="1">
+            <button type="submit" class="btn-icon" title="Marcar como realizada"
+                    style="color:var(--sg-success);">
+              <i data-lucide="check-circle" style="width:15px;height:15px;"></i>
+            </button>
+          </form>
+        {% endif %}
+        {% if r.pode_cancelar %}
+          <form method="post" action="{% url 'tutorias:cancelar_reuniao' r.pk %}" style="display:contents;">
+            {% csrf_token %}
+            <button type="submit" class="btn-icon danger btn-confirmar-cancelamento" title="Cancelar">
+              <i data-lucide="x" style="width:15px;height:15px;"></i>
+            </button>
+          </form>
+        {% endif %}
       </div>
 
     </div>
   {% empty %}
     <div class="empty-state">
       <span class="empty-icon">📅</span>
-      <h3>Nenhuma reunião registrada</h3>
+      <h3>Nenhuma reunião encontrada</h3>
       <p>
         {% if tutorados %}
-          Clique em "Nova Reunião" para registrar a primeira.
+          Registre uma reunião ou aguarde um tutorado agendar pelo calendário.
         {% else %}
           Vincule um tutorado antes de registrar reuniões.
         {% endif %}
@@ -139,11 +147,11 @@
   {% endfor %}
 </div>
 
-<!-- Modal: Nova Reunião -->
+<!-- Modal: Registrar Reunião (manual pelo tutor) -->
 <div class="modal-overlay" id="modalOverlay">
   <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitulo">
     <div class="modal-header">
-      <h2 id="modalTitulo">Nova Reunião</h2>
+      <h2 id="modalTitulo">Registrar Reunião</h2>
       <button class="modal-close" id="btnModalFechar" aria-label="Fechar">
         <i data-lucide="x" style="width:18px;height:18px;"></i>
       </button>
@@ -159,7 +167,6 @@
             <select name="tutorado" id="tutorado" required>
               <option value="">Selecione...</option>
               {% for perfil in tutorados %}
-                {# value = pk do CustomUser do tutorado, conforme _criar_reuniao espera #}
                 <option value="{{ perfil.usuario.pk }}">{{ perfil.usuario.get_nome_completo }}</option>
               {% endfor %}
             </select>
@@ -186,8 +193,7 @@
 
           <div class="form-group">
             <label for="duracao_minutos">Duração (min)</label>
-            <input type="number" name="duracao_minutos" id="duracao_minutos"
-                   value="60" min="15" max="480">
+            <input type="number" name="duracao_minutos" id="duracao_minutos" value="60" min="15" max="480">
           </div>
 
           <div class="form-group col-full">
@@ -203,8 +209,7 @@
 
           <div class="form-group col-full">
             <label for="observacoes">Observações</label>
-            <textarea name="observacoes" id="observacoes" rows="2"
-                      placeholder="Anotações pós-reunião, evolução do aluno..."></textarea>
+            <textarea name="observacoes" id="observacoes" rows="2"></textarea>
           </div>
 
           <div class="form-group col-full">
@@ -231,4 +236,15 @@
 
 {% block extra_scripts %}
 <script src="{% static 'js/lista_reunioes.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.btn-confirmar-cancelamento').forEach(btn => {
+    btn.addEventListener('click', function (e) {
+      if (!confirm('Tem certeza que deseja cancelar esta reunião?')) {
+        e.preventDefault();
+      }
+    });
+  });
+});
+</script>
 {% endblock %}

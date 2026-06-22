@@ -1,7 +1,13 @@
-{% extends 'base.html' %} {% load static %} {% block title %}Meu Perfil{%
-endblock %} {% block extra_head %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meu Perfil{% endblock %}
+
+{% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/dashboard.css' %}" />
-{% endblock %} {% block content %}
+{% endblock %}
+
+{% block content %}
 <div class="page-header">
   <h1>Perfil</h1>
   <p class="page-subtitle">Gerencie suas informações pessoais</p>
@@ -118,4 +124,5 @@ endblock %} {% block extra_head %}
 
 {% block extra_scripts %}
 <script src="{% static 'js/perfil.js' %}"></script>
-{% endblock %} {% endblock %}
+{% endblock %}
+{% endblock %}
