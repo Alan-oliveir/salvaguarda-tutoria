@@ -10,7 +10,8 @@ from .views import (
     CustomPasswordResetView,
     CustomPasswordResetDoneView,
     CustomPasswordResetConfirmView,
-    CustomPasswordResetCompleteView
+    CustomPasswordResetCompleteView,
+    CustomPasswordChangeView
 )
 
 app_name = 'usuarios'
@@ -28,4 +29,7 @@ urlpatterns = [
     path('recuperar-senha/enviado/', CustomPasswordResetDoneView.as_view(), name='password_reset_done'),
     path('recuperar-senha/<uidb64>/<token>/', CustomPasswordResetConfirmView.as_view(), name='password_reset_confirm'),
     path('recuperar-senha/concluido/', CustomPasswordResetCompleteView.as_view(), name='password_reset_complete'),
+
+    # Rota para alteração de senha:
+    path('perfil/alterar-senha/', CustomPasswordChangeView.as_view(), name='password_change'),
 ]

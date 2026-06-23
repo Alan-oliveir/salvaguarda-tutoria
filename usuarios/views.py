@@ -5,6 +5,7 @@ from datetime import date
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import PasswordChangeView
 from django.contrib.auth.views import (
     PasswordResetView, PasswordResetDoneView,
     PasswordResetConfirmView, PasswordResetCompleteView
@@ -13,6 +14,7 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 
+from .forms import CustomPasswordChangeForm
 from .forms import CustomPasswordResetForm, CustomSetPasswordForm
 from .forms import CustomUserCreationForm
 from .models import CustomUser, PerfilTutorado
@@ -152,3 +154,12 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
 class CustomPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'password_reset_complete.html'
+
+class CustomPasswordChangeView(PasswordChangeView):
+    form_class = CustomPasswordChangeForm
+    template_name = 'alterar_senha.html'
+    success_url = reverse_lazy('usuarios:perfil_usuario')
+
+    def form_valid(self, form):
+        messages.success(self.request, 'Sua senha foi alterada com sucesso!')
+        return super().form_valid(form)

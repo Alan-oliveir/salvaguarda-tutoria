@@ -1,5 +1,3 @@
-# usuarios/admin.py
-
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
@@ -100,7 +98,7 @@ class CustomUserAdmin(UserAdmin):
     list_per_page = 25
 
     # Ações personalizadas
-    actions = ['ativar_usuarios', 'desativar_usuarios', 'resetar_senha']
+    actions = ['ativar_usuarios', 'desativar_usuarios']
 
     def get_nome_completo(self, obj):
         """Retorna o nome completo formatado"""
@@ -148,16 +146,6 @@ class CustomUserAdmin(UserAdmin):
         )
 
     desativar_usuarios.short_description = "Desativar usuários selecionados"
-
-    def resetar_senha(self, request, queryset):
-        """Ação para resetar senha dos usuários selecionados"""
-        # Esta seria uma implementação mais complexa
-        self.message_user(
-            request,
-            'Funcionalidade de reset de senha em desenvolvimento.'
-        )
-
-    resetar_senha.short_description = "Resetar senha dos usuários"
 
     def get_queryset(self, request):
         """Otimiza consultas no admin"""
