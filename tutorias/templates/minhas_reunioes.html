@@ -77,7 +77,7 @@
         {% if r.pode_realizar %}
           <form method="post" action="{% url 'tutorias:realizar_reuniao' r.pk %}" style="display:contents;">
             {% csrf_token %}
-            <input type="hidden" name="presenca" value="1">
+            <input type="hidden" name="presenca" value="1" class="form-control">
             <button type="submit" class="btn-icon" title="Marcar como realizada"
                     style="color:var(--sg-success);">
               <i data-lucide="check-circle" style="width:15px;height:15px;"></i>

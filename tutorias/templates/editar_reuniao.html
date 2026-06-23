@@ -29,7 +29,7 @@
 
         <div class="form-group col-full">
           <label for="tutorado">Tutorado *</label>
-          <select name="tutorado" id="tutorado" required>
+          <select name="tutorado" id="tutorado" class="form-control" required>
             {% for perfil in tutorados %}
               {# value = pk do CustomUser, conforme a view editar_reuniao espera #}
               <option value="{{ perfil.usuario.pk }}"
@@ -42,19 +42,19 @@
 
         <div class="form-group">
           <label for="data">Data *</label>
-          <input type="date" name="data" id="data"
+          <input type="date" name="data" id="data" class="form-control"
                  value="{{ reuniao.data|date:'Y-m-d' }}" required>
         </div>
 
         <div class="form-group">
           <label for="horario">Horário *</label>
-          <input type="time" name="horario" id="horario"
+          <input type="time" name="horario" id="horario" class="form-control"
                  value="{{ reuniao.horario|time:'H:i' }}" required>
         </div>
 
         <div class="form-group">
           <label for="materia">Matéria</label>
-          <select name="materia" id="materia">
+          <select name="materia" id="materia" class="form-control">
             {% for val, label in materias_choices %}
               <option value="{{ val }}" {% if reuniao.materia == val %}selected{% endif %}>
                 {{ label }}
@@ -65,30 +65,30 @@
 
         <div class="form-group">
           <label for="duracao_minutos">Duração (min)</label>
-          <input type="number" name="duracao_minutos" id="duracao_minutos"
+          <input type="number" name="duracao_minutos" id="duracao_minutos" class="form-control"
                  value="{{ reuniao.duracao_minutos }}" min="15" max="480">
         </div>
 
         <div class="form-group col-full">
           <label for="link">Link da reunião</label>
-          <input type="url" name="link" id="link"
+          <input type="url" name="link" id="link" class="form-control"
                  value="{{ reuniao.link }}"
                  placeholder="https://meet.google.com/...">
         </div>
 
         <div class="form-group col-full">
           <label for="topicos">Tópicos / pauta</label>
-          <textarea name="topicos" id="topicos" rows="3">{{ reuniao.topicos }}</textarea>
+          <textarea name="topicos" id="topicos" rows="3" class="form-control">{{ reuniao.topicos }}</textarea>
         </div>
 
         <div class="form-group col-full">
           <label for="observacoes">Observações</label>
-          <textarea name="observacoes" id="observacoes" rows="3">{{ reuniao.observacoes }}</textarea>
+          <textarea name="observacoes" id="observacoes" rows="3" class="form-control">{{ reuniao.observacoes }}</textarea>
         </div>
 
         <div class="form-group col-full">
           <label class="checkbox-row" for="presenca">
-            <input type="checkbox" name="presenca" id="presenca" value="1"
+            <input type="checkbox" name="presenca" id="presenca" value="1" class="form-control"
                    {% if reuniao.presenca %}checked{% endif %}>
             <span>Tutorado compareceu à reunião</span>
           </label>

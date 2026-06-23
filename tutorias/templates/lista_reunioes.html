@@ -114,7 +114,7 @@
         {% if r.pode_realizar %}
           <form method="post" action="{% url 'tutorias:realizar_reuniao' r.pk %}" style="display:contents;">
             {% csrf_token %}
-            <input type="hidden" name="presenca" value="1">
+            <input type="hidden" name="presenca" value="1" class="form-control">
             <button type="submit" class="btn-icon" title="Marcar como realizada"
                     style="color:var(--sg-success);">
               <i data-lucide="check-circle" style="width:15px;height:15px;"></i>
@@ -177,12 +177,12 @@
 
           <div class="form-group">
             <label for="data">Data *</label>
-            <input type="date" name="data" id="data" required>
+            <input type="date" name="data" id="data" class="form-control" required>
           </div>
 
           <div class="form-group">
             <label for="horario">Horário *</label>
-            <input type="time" name="horario" id="horario" required>
+            <input type="time" name="horario" id="horario" class="form-control" required>
           </div>
 
           <div class="form-group">
@@ -196,28 +196,28 @@
 
           <div class="form-group">
             <label for="duracao_minutos">Duração (min)</label>
-            <input type="number" name="duracao_minutos" id="duracao_minutos" value="60" min="15" max="480">
+            <input type="number" name="duracao_minutos" id="duracao_minutos" value="60" min="15" max="480" class="form-control">
           </div>
 
           <div class="form-group col-full">
             <label for="link">Link da reunião</label>
-            <input type="url" name="link" id="link" placeholder="https://meet.google.com/...">
+            <input type="url" name="link" id="link" class="form-control" placeholder="https://meet.google.com/...">
           </div>
 
           <div class="form-group col-full">
             <label for="topicos">Tópicos / pauta</label>
-            <textarea name="topicos" id="topicos" rows="2"
+            <textarea name="topicos" id="topicos" rows="2" class="form-control"
                       placeholder="Assuntos que serão abordados..."></textarea>
           </div>
 
           <div class="form-group col-full">
             <label for="observacoes">Observações</label>
-            <textarea name="observacoes" id="observacoes" rows="2"></textarea>
+            <textarea name="observacoes" id="observacoes" rows="2" class="form-control"></textarea>
           </div>
 
           <div class="form-group col-full">
             <label class="checkbox-row" for="presenca">
-              <input type="checkbox" name="presenca" id="presenca" value="1">
+              <input type="checkbox" name="presenca" id="presenca" value="1" class="form-control">
               <span>Tutorado compareceu à reunião</span>
             </label>
           </div>

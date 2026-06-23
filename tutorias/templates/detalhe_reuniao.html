@@ -128,7 +128,7 @@
       <form method="post" action="{% url 'tutorias:realizar_reuniao' reuniao.pk %}" style="display:flex;gap:.5rem;align-items:center;">
         {% csrf_token %}
         <label class="checkbox-row" for="presenca_det" style="padding:.35rem .75rem;font-size:.82rem;">
-          <input type="checkbox" name="presenca" id="presenca_det" value="1" checked>
+          <input type="checkbox" name="presenca" id="presenca_det" value="1" class="form-control" checked>
           <span>{% if is_tutorado %}Eu compareci{% else %}Tutorado compareceu{% endif %}</span>
         </label>
         <button type="submit" class="btn btn-success" style="white-space:nowrap;">
