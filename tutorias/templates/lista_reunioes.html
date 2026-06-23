@@ -8,6 +8,9 @@
 <link rel="stylesheet" href="{% static 'css/calendario.css' %}">
 {% endblock %}
 
+{% block extra_scripts %}
+<script src="{% static 'js/lista_reunioes.js' %}"></script>
+{% endblock %}
 {% block content %}
 <p class="breadcrumb">
   <a href="{% url 'usuarios:painel_inicial' %}">Painel</a> / Reuniões
@@ -121,7 +124,7 @@
         {% if r.pode_cancelar %}
           <form method="post" action="{% url 'tutorias:cancelar_reuniao' r.pk %}" style="display:contents;">
             {% csrf_token %}
-            <button type="submit" class="btn-icon danger btn-confirmar-cancelamento" title="Cancelar">
+            <button type="submit" class="btn-icon danger btn-deletar" title="Cancelar">
               <i data-lucide="x" style="width:15px;height:15px;"></i>
             </button>
           </form>
@@ -232,19 +235,4 @@
     </form>
   </div>
 </div>
-{% endblock %}
-
-{% block extra_scripts %}
-<script src="{% static 'js/lista_reunioes.js' %}"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.btn-confirmar-cancelamento').forEach(btn => {
-    btn.addEventListener('click', function (e) {
-      if (!confirm('Tem certeza que deseja cancelar esta reunião?')) {
-        e.preventDefault();
-      }
-    });
-  });
-});
-</script>
 {% endblock %}

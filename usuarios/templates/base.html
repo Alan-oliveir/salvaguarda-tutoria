@@ -17,10 +17,15 @@
 <body>
 
     <!-- Header padrão -->
-    <header class="main-header">
-        <div class="header-content">
-            <img src="{% static 'img/logo.png' %}" alt="Logo Salvaguarda" class="logo-header">
-            <nav class="header-nav">
+        <header class="main-header">
+            <div class="header-content">
+
+                <a href="{% if user.is_authenticated %}{% url 'usuarios:painel_inicial' %}{% else %}#{% endif %}" class="header-brand">
+                    <img src="{% static 'img/logo.png' %}" alt="Logo Salvaguarda" class="logo-header">
+                    <h1 class="header-title">Salvaguarda</h1>
+                </a>
+
+                <nav class="header-nav">
                 {% if user.is_authenticated %}
                     <span class="user-greeting">Olá, {{ user.first_name|default:user.username }}!</span>
                     <a href="{% url 'usuarios:painel_inicial' %}" class="btn">Painel</a>
@@ -55,19 +60,7 @@
     </footer>
 
     {% block extra_scripts %}{% endblock %}
-    <script>
-        // Define a altura disponível para páginas de auth com base no header/footer reais
-        function setAuthContentHeight() {
-            var header = document.querySelector('.main-header');
-            var footer = document.querySelector('.main-footer');
-            if (!header || !footer) return;
-            var h = header.getBoundingClientRect().height;
-            var f = footer.getBoundingClientRect().height;
-            document.documentElement.style.setProperty('--auth-content-height', 'calc(100dvh - ' + (h + f) + 'px)');
-        }
-        document.addEventListener('DOMContentLoaded', setAuthContentHeight);
-        window.addEventListener('resize', setAuthContentHeight);
-    </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             if (!window.lucide) return;

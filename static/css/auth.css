@@ -3,12 +3,33 @@
    Login, registro e logout
    ============================================================ */
 
-body:has(.login-wrapper) { background: var(--sg-bg); }
+body:has(.login-wrapper) {
+  background: var(--sg-bg);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+body:has(.login-wrapper) .main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+body:has(.login-wrapper) .container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  margin: 0;
+  max-width: 100%;
+  width: 100%;
+}
 
 .login-wrapper {
   display: flex;
   flex: 1;
-  height: var(--auth-content-height, calc(100dvh - 120px));
   min-height: 0;
   overflow: hidden;
 }
@@ -16,17 +37,7 @@ body:has(.login-wrapper) { background: var(--sg-bg); }
 /* Painel esquerdo */
 .login-left {
   flex: 1.4;
-  height: 100%;
-  background: url("../img/bg_image.png") no-repeat center center;
-  background-size: cover;
-  position: relative;
-  overflow: hidden;
-}
-
-.login-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(61,20,115,.88) 0%, rgba(123,47,190,.75) 100%);
+  background: linear-gradient(135deg, #3d1473 0%, #7b2fbe 100%);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -37,21 +48,31 @@ body:has(.login-wrapper) { background: var(--sg-bg); }
 }
 
 .logo-sg {
-  max-width: 110px;
+  max-width: 120px;
   margin-bottom: 1.5rem;
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,.3));
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,.2));
 }
 
-.login-overlay h1 {
+.login-left h1 {
   font-size: 2.2rem;
   font-weight: 800;
   line-height: 1.2;
-  margin-bottom: .75rem;
-  text-shadow: 0 2px 8px rgba(0,0,0,.3);
+  margin-bottom: 1rem;
+  text-shadow: 0 2px 4px rgba(0,0,0,.2);
 }
-.login-overlay p { font-size: 1rem; opacity: .9; max-width: 340px; line-height: 1.6; }
-.login-overlay h1 em,
-.login-overlay strong { color: var(--sg-orange); font-style: normal; }
+
+.login-left p {
+  font-size: 1.1rem;
+  opacity: 0.95;
+  max-width: 360px;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.login-left p strong {
+  color: var(--sg-orange);
+  font-weight: 800;
+}
 
 /* Painel direito */
 .login-right {
@@ -179,7 +200,6 @@ input:focus, select:focus, textarea:focus {
   .login-wrapper {
     flex-direction: column;
     height: auto;
-    min-height: calc(100dvh - 119px);
     overflow: visible;
   }
   .login-left { flex: none; height: 220px; overflow: hidden; }

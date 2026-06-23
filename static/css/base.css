@@ -135,6 +135,27 @@ a:hover {
   margin-right: 0.25rem;
 }
 
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+}
+
+.header-brand:hover {
+  text-decoration: none;
+}
+
+/* Estilização do Título do Header */
+.header-title {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: var(--sg-purple);
+  margin: 0;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
 /* ── Footer ── */
 .main-footer {
   background: var(--sg-purple-dark);
@@ -309,5 +330,8 @@ a:hover {
   }
   .main-content {
     padding: 1.25rem 0 2rem;
+  }
+  .header-title {
+    font-size: 1.2rem;
   }
 }
