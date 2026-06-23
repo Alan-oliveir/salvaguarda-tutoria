@@ -5,10 +5,15 @@ from datetime import date
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import (
+    PasswordResetView, PasswordResetDoneView,
+    PasswordResetConfirmView, PasswordResetCompleteView
+)
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 
+from .forms import CustomPasswordResetForm, CustomSetPasswordForm
 from .forms import CustomUserCreationForm
 from .models import CustomUser, PerfilTutorado
 
@@ -26,9 +31,8 @@ class CustomLoginView(LoginView):
 
 
 class CustomLogoutView(LogoutView):
-    template_name = 'logout.html'
     next_page = reverse_lazy('usuarios:login')
-    http_method_names = ['get', 'post']
+    http_method_names = ['post']
 
     def get(self, request, *args, **kwargs):
         return self.render_to_response({})
@@ -127,3 +131,24 @@ def redirect_after_login(request):
     if request.user.is_authenticated:
         return redirect('usuarios:painel_inicial')
     return redirect('usuarios:login')
+
+
+class CustomPasswordResetView(PasswordResetView):
+    template_name = 'password_reset.html'
+    form_class = CustomPasswordResetForm
+    success_url = reverse_lazy('usuarios:password_reset_done')
+    email_template_name = 'password_reset_email.html'
+
+
+class CustomPasswordResetDoneView(PasswordResetDoneView):
+    template_name = 'password_reset_done.html'
+
+
+class CustomPasswordResetConfirmView(PasswordResetConfirmView):
+    template_name = 'password_reset_confirm.html'
+    form_class = CustomSetPasswordForm
+    success_url = reverse_lazy('usuarios:password_reset_complete')
+
+
+class CustomPasswordResetCompleteView(PasswordResetCompleteView):
+    template_name = 'password_reset_complete.html'

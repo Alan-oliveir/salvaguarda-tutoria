@@ -8,23 +8,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
   if (editBtn && editSection) {
     editBtn.addEventListener("click", function () {
-      const aberto = editSection.style.display !== "none";
-      editSection.style.display = aberto ? "none" : "block";
-      editBtn.textContent = aberto ? "✏️ Editar Perfil" : "❌ Cancelar Edição";
+      editSection.style.display = "block";
+      editSection.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  if (cancelBtn && editSection) {
+    cancelBtn.addEventListener("click", function () {
+      editSection.style.display = "none";
     });
   }
 
   if (btnSenha) {
     btnSenha.addEventListener("click", function () {
-      alert("Funcionalidade de alteração de senha será implementada em breve!");
+      alert("A funcionalidade de alteração de senha já será configurada na próxima etapa!");
     });
   }
-
-  function toggleEdit() {
-    const aberto = editSection.style.display !== "none";
-    editSection.style.display = aberto ? "none" : "block";
-  }
-
-  if (editBtn) editBtn.addEventListener("click", toggleEdit);
-  if (cancelBtn) cancelBtn.addEventListener("click", toggleEdit);
 });

@@ -44,7 +44,7 @@
 
                 <div class="form-options">
                     <label><input type="checkbox" name="remember_me"> Lembrar-me</label>
-                    <a href="#" class="forgot-password">Esqueceu a senha?</a>
+                    <a href="{% url 'usuarios:password_reset' %}" class="forgot-password">Esqueceu a senha?</a>
                 </div>
 
                 <button type="submit">Entrar</button>

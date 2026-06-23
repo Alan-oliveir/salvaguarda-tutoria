@@ -1,8 +1,10 @@
 # usuarios/forms.py
 
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import authenticate
+from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
+from django.contrib.auth.forms import UserCreationForm
+
 from .models import CustomUser
 
 
@@ -118,3 +120,20 @@ class PerfilForm(forms.ModelForm):
             'last_name': 'Sobrenome',
             'email': 'E-mail',
         }
+
+
+class CustomPasswordResetForm(PasswordResetForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
+            if field_name == 'email':
+                field.label = 'E-mail cadastrado'
+                field.widget.attrs['placeholder'] = 'Digite seu e-mail'
+
+
+class CustomSetPasswordForm(SetPasswordForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for field_name, field in self.fields.items():
+            field.widget.attrs['class'] = 'form-control'
