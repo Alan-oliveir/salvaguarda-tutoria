@@ -1,5 +1,3 @@
-# tutorias/models.py
-
 from django.conf import settings
 from django.db import models
 
@@ -55,8 +53,8 @@ class Reuniao(models.Model):
 
     STATUS_CHOICES = [
         ('CONFIRMADA', 'Confirmada'),
-        ('CANCELADA',  'Cancelada'),
-        ('REALIZADA',  'Realizada'),
+        ('CANCELADA', 'Cancelada'),
+        ('REALIZADA', 'Realizada'),
     ]
 
     tutor = models.ForeignKey(
@@ -72,15 +70,15 @@ class Reuniao(models.Model):
         limit_choices_to={'tipo': 'TUTORADO'},
     )
 
-    data            = models.DateField()
-    horario         = models.TimeField()
+    data = models.DateField()
+    horario = models.TimeField()
     duracao_minutos = models.PositiveIntegerField(default=60)
-    materia         = models.CharField(max_length=3, choices=MATERIA_CHOICES, default='GER')
-    link            = models.URLField(blank=True)
-    topicos         = models.TextField(blank=True)
-    observacoes     = models.TextField(blank=True)
-    presenca        = models.BooleanField(default=False)
-    status          = models.CharField(max_length=12, choices=STATUS_CHOICES, default='CONFIRMADA')
+    materia = models.CharField(max_length=3, choices=MATERIA_CHOICES, default='GER')
+    link = models.URLField(blank=True)
+    topicos = models.TextField(blank=True)
+    observacoes = models.TextField(blank=True)
+    presenca = models.BooleanField(default=False)
+    status = models.CharField(max_length=12, choices=STATUS_CHOICES, default='CONFIRMADA')
 
     agendado_por = models.CharField(
         max_length=10,

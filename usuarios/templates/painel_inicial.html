@@ -19,7 +19,6 @@
 </div>
 
 {% if tipo == "ADMIN" %}
-  <!-- ── Painel Admin ── -->
   <div class="dashboard-grid">
     <div class="dashboard-card">
       <div class="card-icon admin-icon">👨‍💼</div>
@@ -58,7 +57,6 @@
   </div>
 
 {% elif tipo == "TUTOR" %}
-  <!-- ── Painel Tutor ── -->
   <div class="dashboard-grid">
     <div class="dashboard-card">
       <div class="card-icon student-icon">👥</div>
@@ -76,6 +74,14 @@
         <small>Reuniões agendadas</small>
       </div>
     </div>
+    <div class="dashboard-card">
+      <div class="card-icon material-icon">📚</div>
+      <div class="card-content">
+        <h3>Materiais</h3>
+        <p class="card-number">{{ total_materiais }}</p>
+        <small>Compartilhados por você</small>
+      </div>
+    </div>
   </div>
 
   {% if proximas_reunioes %}
@@ -85,8 +91,7 @@
       {% for r in proximas_reunioes %}
       <li>
         <a href="{% url 'tutorias:detalhe_reuniao' r.pk %}" class="action-link">
-          📅 {{ r.data|date:"d/m/Y" }} às {{ r.horario|time:"H:i" }}
-          — {{ r.tutorado.get_nome_completo }}
+          📅 {{ r.data|date:"d/m/Y" }} às {{ r.horario|time:"H:i" }} — {{ r.tutorado.get_nome_completo }}
           <span style="font-size:.78rem;color:var(--sg-muted);">({{ r.get_materia_display }})</span>
         </a>
       </li>
@@ -112,22 +117,17 @@
       </ul>
     </div>
     <div class="action-card">
-      <h3>Reuniões</h3>
+      <h3>Reuniões & Acompanhamento</h3>
       <ul class="action-list">
-        <li>
-          <a href="{% url 'tutorias:lista_reunioes' %}" class="action-link">
-            📅 Ver Reuniões
-          </a>
-        </li>
+        <li><a href="{% url 'tutorias:lista_reunioes' %}" class="action-link">📅 Ver Reuniões</a></li>
         <li><a href="{% url 'tutorias:disponibilidade' %}" class="action-link">🕐 Minha Disponibilidade</a></li>
-        <li><a href="#" class="action-link disabled">📝 Tarefas (em breve)</a></li>
-        <li><a href="{% url 'materiais:lista_materiais' %}" class="action-link">📁 Materiais</a></li>
+        <li><a href="{% url 'tarefas:lista_tarefas' %}" class="action-link">📝 Gerenciar Tarefas</a></li>
+        <li><a href="{% url 'materiais:lista_materiais' %}" class="action-link">📁 Repositório de Materiais</a></li>
       </ul>
     </div>
   </div>
 
 {% elif tipo == "TUTORADO" %}
-  <!-- ── Painel Tutorado ── -->
   {% if not tem_tutor %}
   <div class="alert alert-warning" style="margin-bottom:1.5rem;">
     Você ainda não está vinculado a nenhum tutor. Aguarde seu tutor te adicionar ao sistema.
@@ -147,16 +147,16 @@
       <div class="card-icon task-icon">📝</div>
       <div class="card-content">
         <h3>Tarefas Pendentes</h3>
-        <p class="card-number">0</p>
-        <small>Em breve</small>
+        <p class="card-number">{{ tarefas_pendentes }}</p>
+        <small>Exercícios e metas</small>
       </div>
     </div>
     <div class="dashboard-card">
       <div class="card-icon material-icon">📚</div>
       <div class="card-content">
         <h3>Materiais</h3>
-        <p class="card-number">0</p>
-        <small>Em breve</small>
+        <p class="card-number">{{ total_materiais }}</p>
+        <small>Arquivos e links disponíveis</small>
       </div>
     </div>
   </div>
@@ -167,10 +167,9 @@
     <ul class="action-list">
       {% for r in proximas_reunioes %}
       <li class="action-link" style="cursor:default;">
-        📅 {{ r.data|date:"d/m/Y" }} às {{ r.horario|time:"H:i" }}
-        — {{ r.get_materia_display }}
+        📅 {{ r.data|date:"d/m/Y" }} às {{ r.horario|time:"H:i" }} — {{ r.get_materia_display }}
         {% if r.link %}
-          · <a href="{{ r.link }}" target="_blank" rel="noopener">Entrar na reunião</a>
+          · <a href="{{ r.link }}" target="_blank" rel="noopener" style="color: var(--sg-purple); font-weight: 600;">Entrar na reunião</a>
         {% endif %}
       </li>
       {% endfor %}
@@ -182,8 +181,7 @@
     <div class="action-card">
       <h3>Minhas Atividades</h3>
       <ul class="action-list">
-        <li><a href="#" class="action-link disabled">📝 Minhas Tarefas (em breve)</a></li>
-        <li><a href="#" class="action-link disabled">📈 Meu Progresso (em breve)</a></li>
+        <li><a href="{% url 'tarefas:lista_tarefas' %}" class="action-link">📝 Minhas Tarefas</a></li>
         <li><a href="{% url 'materiais:lista_materiais' %}" class="action-link">📚 Materiais de Estudo</a></li>
         <li><a href="{% url 'tutorias:calendario' %}" class="action-link">📅 Agendar Reunião</a></li>
         <li><a href="{% url 'tutorias:minhas_reunioes' %}" class="action-link">📋 Minhas Reuniões</a></li>

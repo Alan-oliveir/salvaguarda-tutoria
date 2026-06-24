@@ -1,5 +1,3 @@
-# usuarios/views.py
-
 from datetime import date
 
 from django.contrib import messages
@@ -14,6 +12,8 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
 
+from materiais.models import Material
+from tarefas.models import Tarefa
 from .forms import CustomPasswordChangeForm
 from .forms import CustomPasswordResetForm, CustomSetPasswordForm
 from .forms import CustomUserCreationForm
@@ -82,6 +82,8 @@ def painel_inicial(request):
             'proximas_reunioes': reunioes_futuras[:3],
         })
 
+        context['total_materiais'] = Material.objects.filter(enviado_por=request.user).count()
+
     elif tipo == 'TUTORADO':
         # Tutorado vê suas próprias reuniões
         reunioes_futuras = Reuniao.objects.filter(
@@ -102,6 +104,9 @@ def painel_inicial(request):
             'perfil': perfil,
             'tem_tutor': tem_tutor,
         })
+
+        context['tarefas_pendentes'] = Tarefa.objects.filter(tutorado=request.user, status='PENDENTE').count()
+        context['total_materiais'] = Material.objects.filter(tutorado=request.user).count()
 
     return render(request, 'painel_inicial.html', context)
 
@@ -154,6 +159,7 @@ class CustomPasswordResetConfirmView(PasswordResetConfirmView):
 
 class CustomPasswordResetCompleteView(PasswordResetCompleteView):
     template_name = 'password_reset_complete.html'
+
 
 class CustomPasswordChangeView(PasswordChangeView):
     form_class = CustomPasswordChangeForm

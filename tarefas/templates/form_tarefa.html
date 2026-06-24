@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ acao }} — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'tarefas:lista_tarefas' %}"><i data-lucide="arrow-left" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;"></i> Tarefas</a>
+</p>
+
+<div class="page-hero" style="margin-bottom: 2rem;">
+  <div>
+    <h1><i data-lucide="clipboard-list" style="width: 26px; height: 26px; vertical-align: middle; margin-right: 8px;"></i> {{ acao }}</h1>
+    <p style="margin-top: 0.5rem;">Atribua metas, redações ou exercícios ao seu tutorado.</p>
+  </div>
+</div>
+
+<div class="form-page">
+  <form method="post" class="form-card">
+    {% csrf_token %}
+    <div class="form-section">
+      <div class="form-grid-2" style="gap: 1.5rem;">
+
+        <div class="form-group col-full">
+          <label for="{{ form.tutorado.id_for_label }}" style="margin-bottom: 0.35rem;">Aluno (Destinatário) *</label>
+          {{ form.tutorado }}
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.categoria.id_for_label }}" style="margin-bottom: 0.35rem;">Categoria *</label>
+          {{ form.categoria }}
+        </div>
+
+        <div class="form-group">
+          <label for="{{ form.data_limite.id_for_label }}" style="margin-bottom: 0.35rem;">Prazo final (Opcional)</label>
+          {{ form.data_limite }}
+        </div>
+
+        <div class="form-group col-full">
+          <label for="{{ form.titulo.id_for_label }}" style="margin-bottom: 0.35rem;">Título da Tarefa *</label>
+          {{ form.titulo }}
+        </div>
+
+        <div class="form-group col-full">
+          <label for="{{ form.descricao.id_for_label }}" style="margin-bottom: 0.35rem;">Descrição (Opcional)</label>
+          {{ form.descricao }}
+        </div>
+
+        <div class="form-group col-full">
+          <label for="{{ form.link_externo.id_for_label }}" style="margin-bottom: 0.35rem;">Link Externo (Opcional)</label>
+          {{ form.link_externo }}
+          <span class="help-text" style="display: block; margin-top: 0.5rem; line-height: 1.4;">
+            Cole o link da página de disciplinas, Drive ou TRIEduc, se aplicável.
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="form-footer-bar">
+      <a href="{% url 'tarefas:lista_tarefas' %}" class="btn btn-secondary">Cancelar</a>
+      <button type="submit" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+        <i data-lucide="save" style="width: 16px; height: 16px;"></i> Salvar Tarefa
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
