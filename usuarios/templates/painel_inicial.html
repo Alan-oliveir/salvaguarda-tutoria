@@ -121,7 +121,7 @@
         </li>
         <li><a href="{% url 'tutorias:disponibilidade' %}" class="action-link">🕐 Minha Disponibilidade</a></li>
         <li><a href="#" class="action-link disabled">📝 Tarefas (em breve)</a></li>
-        <li><a href="#" class="action-link disabled">📁 Materiais (em breve)</a></li>
+        <li><a href="{% url 'materiais:lista_materiais' %}" class="action-link">📁 Materiais</a></li>
       </ul>
     </div>
   </div>
@@ -184,7 +184,7 @@
       <ul class="action-list">
         <li><a href="#" class="action-link disabled">📝 Minhas Tarefas (em breve)</a></li>
         <li><a href="#" class="action-link disabled">📈 Meu Progresso (em breve)</a></li>
-        <li><a href="#" class="action-link disabled">📚 Materiais de Estudo (em breve)</a></li>
+        <li><a href="{% url 'materiais:lista_materiais' %}" class="action-link">📚 Materiais de Estudo</a></li>
         <li><a href="{% url 'tutorias:calendario' %}" class="action-link">📅 Agendar Reunião</a></li>
         <li><a href="{% url 'tutorias:minhas_reunioes' %}" class="action-link">📋 Minhas Reuniões</a></li>
       </ul>

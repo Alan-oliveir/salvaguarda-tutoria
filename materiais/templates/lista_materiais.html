@@ -1,0 +1,103 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Materiais de Estudo — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+<style>
+  .material-card {
+    background: var(--sg-white); border: 1px solid var(--sg-border);
+    border-radius: var(--radius-lg); padding: 1.5rem;
+    box-shadow: var(--shadow-sm); transition: transform 0.2s;
+    display: flex; flex-direction: column; height: 100%;
+  }
+  .material-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .material-header { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1.25rem; }
+  .material-icon { width: 48px; height: 48px; border-radius: var(--radius-sm); display: flex; align-items: center; justify-content: center; background: var(--sg-purple-light); color: var(--sg-purple); flex-shrink: 0; }
+  .material-info h3 { font-size: 1.05rem; font-weight: 700; color: var(--sg-dark); margin-bottom: 0.25rem; }
+  .material-meta { font-size: 0.82rem; color: var(--sg-muted); line-height: 1.4; }
+  .material-desc { font-size: 0.9rem; color: var(--sg-dark); margin-bottom: 1.5rem; flex-grow: 1; line-height: 1.6; }
+  .material-actions { display: flex; gap: 0.75rem; border-top: 1px solid var(--sg-border); padding-top: 1.25rem; align-items: center; justify-content: space-between; }
+
+  /* Ajustes para o bloco de estado vazio */
+  .empty-state { text-align: center; padding: 4rem 1rem; background: var(--sg-white); border: 1px dashed var(--sg-border); border-radius: var(--radius-lg); }
+  .empty-state h3 { font-size: 1.2rem; color: var(--sg-dark); margin: 1rem 0 0.5rem; }
+  .empty-state p { color: var(--sg-muted); font-size: 0.95rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'usuarios:painel_inicial' %}">Painel</a> / Materiais
+</p>
+
+<div class="page-hero" style="margin-bottom: 2rem;">
+  <div>
+    <h1>
+      <i data-lucide="book-open" style="width: 24px; height: 24px; vertical-align: middle; margin-right: 8px;"></i>
+      Materiais de Estudo
+    </h1>
+    <p style="margin-top: 0.5rem;">Acesse arquivos e links compartilhados na tutoria.</p>
+  </div>
+  <a href="{% url 'materiais:enviar_material' %}" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; margin-top: 10px;">
+    <i data-lucide="plus" style="width: 18px; height: 18px;"></i> Adicionar Material
+  </a>
+</div>
+
+<div class="dashboard-grid">
+  {% for material in materiais %}
+  <div class="material-card">
+    <div class="material-header">
+      <div class="material-icon">
+        {% if material.tipo == 'ARQUIVO' %}
+          <i data-lucide="file-text"></i>
+        {% else %}
+          <i data-lucide="link"></i>
+        {% endif %}
+      </div>
+      <div class="material-info">
+        <h3>{{ material.titulo }}</h3>
+        <p class="material-meta">
+          Por: {{ material.enviado_por.first_name }} • {{ material.data_envio|date:"d/m/Y" }}
+          {% if user.tipo == 'TUTOR' %}<br>Para: {{ material.tutorado.first_name }}{% endif %}
+        </p>
+      </div>
+    </div>
+
+    <div class="material-desc">
+      {% if material.descricao %}
+        {{ material.descricao }}
+      {% else %}
+        <span style="color:var(--sg-muted); font-style:italic;">Sem descrição</span>
+      {% endif %}
+    </div>
+
+    <div class="material-actions">
+      {% if material.tipo == 'ARQUIVO' and material.arquivo %}
+        <a href="{{ material.arquivo.url }}" class="btn btn-success" target="_blank" download style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; font-size: 0.85rem;">
+          <i data-lucide="download" style="width: 15px; height: 15px;"></i> Baixar Arquivo
+        </a>
+      {% elif material.tipo == 'LINK' and material.url %}
+        <a href="{{ material.url }}" class="btn btn-primary" target="_blank" rel="noopener" style="display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1rem; font-size: 0.85rem;">
+          <i data-lucide="external-link" style="width: 15px; height: 15px;"></i> Acessar Link
+        </a>
+      {% endif %}
+
+      <form method="post" action="{% url 'materiais:deletar_material' material.pk %}">
+        {% csrf_token %}
+        <button type="submit" class="btn-icon danger" onclick="return confirm('Deseja excluir este material?');" title="Excluir">
+          <i data-lucide="trash-2" style="width: 16px; height: 16px;"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+  {% empty %}
+  <div class="empty-state" style="grid-column: 1/-1;">
+    <i data-lucide="library" style="width: 48px; height: 48px; color: var(--sg-muted);"></i>
+    <h3>Nenhum material encontrado</h3>
+    <p>O repositório de estudos está vazio. Adicione um arquivo ou link útil para começar!</p>
+  </div>
+  {% endfor %}
+</div>
+{% endblock %}

@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Enviar Material — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'materiais:lista_materiais' %}">
+    <i data-lucide="arrow-left" style="width: 16px; height: 16px; vertical-align: middle; margin-right: 4px;"></i> Materiais
+  </a>
+</p>
+
+<div class="page-hero" style="margin-bottom: 2rem;">
+  <div>
+    <h1>
+      <i data-lucide="upload-cloud" style="width: 26px; height: 26px; vertical-align: middle; margin-right: 8px;"></i>
+      Adicionar Material
+    </h1>
+    <p style="margin-top: 0.5rem;">Envie um arquivo PDF/Imagem ou compartilhe um link útil de estudo.</p>
+  </div>
+</div>
+
+<div class="form-page">
+  <form method="post" enctype="multipart/form-data" class="form-card">
+    {% csrf_token %}
+
+    <div class="form-section">
+      <div class="form-grid-2" style="gap: 1.5rem;">
+
+        <div class="form-group col-full">
+          <label for="{{ form.tipo.id_for_label }}" style="margin-bottom: 0.35rem;">Tipo de Material *</label>
+          {{ form.tipo }}
+        </div>
+
+        {% if form.tutorado.is_hidden %}
+          {{ form.tutorado }}
+        {% else %}
+          <div class="form-group col-full">
+            <label for="{{ form.tutorado.id_for_label }}" style="margin-bottom: 0.35rem;">Aluno (Destinatário) *</label>
+            {{ form.tutorado }}
+          </div>
+        {% endif %}
+
+        <div class="form-group col-full">
+          <label for="{{ form.titulo.id_for_label }}" style="margin-bottom: 0.35rem;">Título *</label>
+          {{ form.titulo }}
+        </div>
+
+        <div class="form-group col-full" id="div_arquivo">
+          <label for="{{ form.arquivo.id_for_label }}" style="margin-bottom: 0.35rem;">Selecione o Arquivo</label>
+          {{ form.arquivo }}
+        </div>
+
+        <div class="form-group col-full" id="div_url">
+          <label for="{{ form.url.id_for_label }}" style="margin-bottom: 0.35rem;">Link (URL)</label>
+          {{ form.url }}
+        </div>
+
+        <div class="form-group col-full">
+          <label for="{{ form.descricao.id_for_label }}" style="margin-bottom: 0.35rem;">Descrição (Opcional)</label>
+          {{ form.descricao }}
+          <span class="help-text" style="display: block; margin-top: 0.5rem; line-height: 1.4;">
+            Instruções, resumo ou comentários sobre este material.
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="form-footer-bar">
+      <a href="{% url 'materiais:lista_materiais' %}" class="btn btn-secondary">Cancelar</a>
+      <button type="submit" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+        <i data-lucide="save" style="width: 16px; height: 16px;"></i> Salvar Material
+      </button>
+    </div>
+  </form>
+</div>
+
+{% block extra_scripts %}
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const tipoSelect = document.getElementById('id_tipo');
+    const divArquivo = document.getElementById('div_arquivo');
+    const divUrl = document.getElementById('div_url');
+
+    function toggleCampos() {
+      if (tipoSelect.value === 'ARQUIVO') {
+        divArquivo.style.display = 'block';
+        divUrl.style.display = 'none';
+      } else {
+        divArquivo.style.display = 'none';
+        divUrl.style.display = 'block';
+      }
+    }
+
+    if (tipoSelect) {
+      tipoSelect.addEventListener('change', toggleCampos);
+      toggleCampos();
+    }
+  });
+</script>
+{% endblock %}
+{% endblock %}
