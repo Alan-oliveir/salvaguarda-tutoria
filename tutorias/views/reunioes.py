@@ -1,4 +1,4 @@
-from datetime import date, datetime, timedelta
+from datetime import date, datetime
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
@@ -6,7 +6,9 @@ from django.http import Http404
 from django.shortcuts import render, redirect, get_object_or_404
 
 from tutorias.decorators import tutor_required, tutorado_required
-from tutorias.models import Reuniao, DisponibilidadeRecorrente
+from tutorias.emails import notificar_agendamento, notificar_cancelamento
+from tutorias.models import Reuniao
+from tutorias.utils import validar_horario_reuniao
 from usuarios.models import PerfilTutorado
 
 
@@ -39,33 +41,12 @@ def solicitar_reuniao(request):
         messages.error(request, 'Data ou horário inválidos.')
         return redirect('tutorias:calendario')
 
-    dia_semana = data.weekday()
-    hora_fim_reuniao = (datetime.combine(data, horario) + timedelta(minutes=duracao)).time()
-
-    disponivel = DisponibilidadeRecorrente.objects.filter(
-        tutor=tutor,
-        dia_semana=dia_semana,
-        hora_inicio__lte=horario,
-        hora_fim__gte=hora_fim_reuniao,
-        ativo=True,
-    ).exists()
-
-    if not disponivel:
-        messages.error(request, 'O horário escolhido está fora da disponibilidade do tutor.')
+    valido, msg_erro = validar_horario_reuniao(tutor, data, horario, duracao, validar_disponibilidade=True)
+    if not valido:
+        messages.error(request, msg_erro)
         return redirect('tutorias:calendario')
 
-    conflito = Reuniao.objects.filter(
-        tutor=tutor,
-        data=data,
-        horario__gte=horario,
-        horario__lt=hora_fim_reuniao,
-    ).exclude(status='CANCELADA').exists()
-
-    if conflito:
-        messages.error(request, 'Já existe uma reunião neste horário. Escolha outro.')
-        return redirect('tutorias:calendario')
-
-    Reuniao.objects.create(
+    reuniao = Reuniao.objects.create(
         tutor=tutor,
         tutorado=request.user,
         data=data,
@@ -77,6 +58,8 @@ def solicitar_reuniao(request):
         status='CONFIRMADA',
         agendado_por='TUTORADO',
     )
+
+    notificar_agendamento(reuniao)
 
     messages.success(request, 'Reunião agendada com sucesso!')
     return redirect('tutorias:minhas_reunioes')
@@ -141,11 +124,17 @@ def _criar_reuniao_manual(request):
     try:
         data = datetime.strptime(data_str, '%Y-%m-%d').date()
         horario = datetime.strptime(horario_str, '%H:%M').time()
+        duracao = int(request.POST.get('duracao_minutos', 60) or 60)
     except ValueError:
         messages.error(request, 'Data ou horário inválidos.')
         return redirect('tutorias:lista_reunioes')
 
-    Reuniao.objects.create(
+    valido, msg_erro = validar_horario_reuniao(request.user, data, horario, duracao, validar_disponibilidade=False)
+    if not valido:
+        messages.error(request, msg_erro)
+        return redirect('tutorias:lista_reunioes')
+
+    reuniao = Reuniao.objects.create(
         tutor=request.user,
         tutorado=perfil.usuario,
         data=data,
@@ -159,6 +148,9 @@ def _criar_reuniao_manual(request):
         status='CONFIRMADA',
         agendado_por='TUTOR',
     )
+
+    notificar_agendamento(reuniao)
+
     messages.success(request, 'Reunião registrada com sucesso!')
     return redirect('tutorias:lista_reunioes')
 
@@ -197,12 +189,28 @@ def editar_reuniao(request, pk):
         })
 
     try:
-        reuniao.data = datetime.strptime(request.POST.get('data', ''), '%Y-%m-%d').date()
-        reuniao.horario = datetime.strptime(request.POST.get('horario', ''), '%H:%M').time()
+        nova_data = datetime.strptime(request.POST.get('data', ''), '%Y-%m-%d').date()
+        novo_horario = datetime.strptime(request.POST.get('horario', ''), '%H:%M').time()
+        nova_duracao = int(request.POST.get('duracao_minutos', 60) or 60)
     except ValueError:
         messages.error(request, 'Data ou horário inválidos.')
         return redirect('tutorias:editar_reuniao', pk=pk)
 
+    valido, msg_erro = validar_horario_reuniao(
+        request.user, nova_data, novo_horario, nova_duracao,
+        validar_disponibilidade=False,
+        reuniao_ignorada_id=reuniao.pk
+    )
+
+    if not valido:
+        messages.error(request, msg_erro)
+        return redirect('tutorias:editar_reuniao', pk=pk)
+
+    link_antigo = reuniao.link
+
+    reuniao.data = nova_data
+    reuniao.horario = novo_horario
+    reuniao.duracao_minutos = nova_duracao
     reuniao.materia = request.POST.get('materia', reuniao.materia)
     reuniao.link = request.POST.get('link', '').strip()
     reuniao.topicos = request.POST.get('topicos', '').strip()
@@ -210,6 +218,10 @@ def editar_reuniao(request, pk):
     reuniao.observacoes = request.POST.get('observacoes', '').strip()
     reuniao.presenca = bool(request.POST.get('presenca'))
     reuniao.save()
+
+    if reuniao.link and reuniao.link != link_antigo:
+        from tutorias.emails import notificar_link_chamada
+        notificar_link_chamada(reuniao)
 
     messages.success(request, 'Reunião atualizada com sucesso!')
     return redirect('tutorias:detalhe_reuniao', pk=pk)
@@ -229,6 +241,7 @@ def cancelar_reuniao(request, pk):
     elif request.method == 'POST':
         reuniao.status = 'CANCELADA'
         reuniao.save(update_fields=['status'])
+        notificar_cancelamento(reuniao, request.user)
         messages.success(request, 'Reunião cancelada.')
 
     return redirect('tutorias:minhas_reunioes' if is_tutorado else 'tutorias:lista_reunioes')
@@ -252,3 +265,19 @@ def realizar_reuniao(request, pk):
         messages.success(request, 'Reunião marcada como realizada!')
 
     return redirect('tutorias:minhas_reunioes' if is_tutorado else 'tutorias:lista_reunioes')
+
+
+@tutor_required
+def enviar_email_link(request, pk):
+    """Dispara manualmente o e-mail com o link para o tutorado."""
+    reuniao = get_object_or_404(Reuniao, pk=pk, tutor=request.user)
+
+    if request.method == 'POST':
+        if not reuniao.link:
+            messages.error(request, 'Não há link salvo nesta reunião para enviar.')
+        else:
+            from tutorias.emails import notificar_link_chamada
+            notificar_link_chamada(reuniao)
+            messages.success(request, 'E-mail com o link enviado ao tutorado!')
+
+    return redirect('tutorias:detalhe_reuniao', pk=pk)

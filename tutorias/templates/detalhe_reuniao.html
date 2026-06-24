@@ -19,12 +19,14 @@
 </p>
 
 <div class="detalhe-card">
-  <!-- Banner com status -->
   <div class="detalhe-banner">
     <div>
-      <h1>{{ reuniao.data|date:"d \d\e F \d\e Y" }} às {{ reuniao.horario|time:"H:i" }}</h1>
+      <h1>
+        {{ reuniao.data|date:"d \d\e F \d\e Y" }} às {{ reuniao.horario|time:"H:i" }}
+      </h1>
       <div class="banner-meta">
         <span class="badge badge-white">{{ reuniao.get_materia_display }}</span>
+
         <span class="badge badge-white badge-status-{{ reuniao.status|lower }}">
           {% if reuniao.status == 'CONFIRMADA' %}
             <i data-lucide="clock" style="width:11px;height:11px;"></i> Confirmada
@@ -34,21 +36,21 @@
             <i data-lucide="x-circle" style="width:11px;height:11px;"></i> Cancelada
           {% endif %}
         </span>
+
         {% if reuniao.duracao_minutos %}
-          <span class="badge badge-white">
-            <i data-lucide="clock" style="width:11px;height:11px;"></i>
-            {{ reuniao.duracao_minutos }}min
-          </span>
+        <span class="badge badge-white">
+          <i data-lucide="clock" style="width:11px;height:11px;"></i> {{ reuniao.duracao_minutos }}min
+        </span>
         {% endif %}
+
         {% if reuniao.agendado_por == 'TUTORADO' %}
-          <span class="badge badge-white" style="font-size:.7rem;">Agendado pelo aluno</span>
+        <span class="badge badge-white" style="font-size:0.7rem;">Agendado pelo aluno</span>
         {% endif %}
       </div>
     </div>
 
-    <!-- Ações no banner (só tutor edita) -->
     {% if is_tutor and reuniao.status == 'CONFIRMADA' %}
-    <div style="display:flex;gap:.5rem;flex-shrink:0;">
+    <div style="display:flex; gap:0.5rem; flex-shrink:0;">
       <a href="{% url 'tutorias:editar_reuniao' reuniao.pk %}" class="btn btn-secondary">
         <i data-lucide="pencil" style="width:14px;height:14px;"></i> Editar
       </a>
@@ -57,7 +59,6 @@
   </div>
 
   <div class="detalhe-body">
-    <!-- Grid de informações -->
     <div class="detalhe-grid">
       <div class="detalhe-item">
         <label>Tutorado</label>
@@ -87,22 +88,37 @@
           {% else %}—{% endif %}
         </span>
       </div>
+
       {% if reuniao.link %}
-      <div class="detalhe-item" style="grid-column:1/-1;">
-        <label>Link</label>
-        <span>
-          <a href="{{ reuniao.link }}" target="_blank" rel="noopener">{{ reuniao.link }}</a>
-          <button id="btnCopiarLink" data-link="{{ reuniao.link }}"
-                  class="btn-icon" title="Copiar link"
-                  style="margin-left:.5rem;vertical-align:middle;">
-            <i data-lucide="copy" style="width:13px;height:13px;"></i>
+      <div class="detalhe-item" style="grid-column:1/-1; display:flex; justify-content:space-between; align-items:center; background:var(--sg-bg); padding:1rem; border-radius:var(--radius-md);">
+        <div>
+          <label>Link da Chamada</label>
+          <span>
+            <a href="{{ reuniao.link }}" target="_blank" rel="noopener" style="font-weight:600; color:var(--sg-purple);">{{ reuniao.link }}</a>
+            <button id="btnCopiarLink" data-link="{{ reuniao.link }}" class="btn-icon" title="Copiar link" style="margin-left:0.5rem; vertical-align:middle;">
+              <i data-lucide="copy" style="width:13px;height:13px;"></i>
+            </button>
+          </span>
+        </div>
+        {% if is_tutor and reuniao.status == 'CONFIRMADA' %}
+        <form method="post" action="{% url 'tutorias:enviar_email_link' reuniao.pk %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-secondary">
+            <i data-lucide="mail" style="width:14px;height:14px;"></i> Enviar ao Aluno
           </button>
-        </span>
+        </form>
+        {% endif %}
       </div>
+      {% else %}
+        {% if is_tutor and reuniao.status == 'CONFIRMADA' %}
+        <div class="detalhe-item" style="grid-column:1/-1;">
+          <label>Link da Chamada</label>
+          <span>Não definido. <a href="{% url 'tutorias:editar_reuniao' reuniao.pk %}" style="color:var(--sg-purple); font-weight:600;">Adicione um link</a> para notificar o aluno.</span>
+        </div>
+        {% endif %}
       {% endif %}
     </div>
 
-    <!-- Tópicos -->
     {% if reuniao.topicos %}
     <div style="margin-bottom:1.5rem;">
       <p class="detalhe-section-title">Tópicos / Pauta</p>
@@ -110,7 +126,6 @@
     </div>
     {% endif %}
 
-    <!-- Observações -->
     <div style="margin-bottom:1.5rem;">
       <p class="detalhe-section-title">Observações</p>
       <p class="detalhe-text {% if not reuniao.observacoes %}empty{% endif %}">
@@ -118,17 +133,16 @@
       </p>
     </div>
 
-    <!-- Ação: Marcar como realizada (após a data, para ambos) -->
     {% if reuniao.pode_realizar %}
     <div class="realizar-form">
       <span>
         <i data-lucide="check-circle" style="width:15px;height:15px;vertical-align:middle;"></i>
         A data desta reunião já passou. Marque como realizada:
       </span>
-      <form method="post" action="{% url 'tutorias:realizar_reuniao' reuniao.pk %}" style="display:flex;gap:.5rem;align-items:center;">
+      <form method="post" action="{% url 'tutorias:realizar_reuniao' reuniao.pk %}" style="display:flex; gap:0.5rem; align-items:center;">
         {% csrf_token %}
-        <label class="checkbox-row" for="presenca_det" style="padding:.35rem .75rem;font-size:.82rem;">
-          <input type="checkbox" name="presenca" id="presenca_det" value="1" class="form-control" checked>
+        <label class="checkbox-row" for="presenca_det" style="padding:0.35rem 0.75rem; font-size:0.82rem;">
+          <input type="checkbox" name="presenca" id="presenca_det" value="1" checked />
           <span>{% if is_tutorado %}Eu compareci{% else %}Tutorado compareceu{% endif %}</span>
         </label>
         <button type="submit" class="btn btn-success" style="white-space:nowrap;">
@@ -138,9 +152,8 @@
     </div>
     {% endif %}
 
-    <!-- Ação: Cancelar -->
     {% if reuniao.pode_cancelar %}
-    <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--sg-border);display:flex;justify-content:flex-end;">
+    <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--sg-border); display:flex; justify-content:flex-end;">
       <form method="post" action="{% url 'tutorias:cancelar_reuniao' reuniao.pk %}">
         {% csrf_token %}
         <button type="submit" id="btnDeletarReuniao" class="btn btn-danger">
@@ -149,14 +162,11 @@
       </form>
     </div>
     {% endif %}
-
   </div>
 </div>
 
-<a href="{% if is_tutorado %}{% url 'tutorias:minhas_reunioes' %}{% else %}{% url 'tutorias:lista_reunioes' %}{% endif %}"
-   class="btn btn-secondary">
-  <i data-lucide="arrow-left" style="width:15px;height:15px;"></i>
-  Voltar
+<a href="{% if is_tutorado %}{% url 'tutorias:minhas_reunioes' %}{% else %}{% url 'tutorias:lista_reunioes' %}{% endif %}" class="btn btn-secondary">
+  <i data-lucide="arrow-left" style="width:15px;height:15px;"></i> Voltar
 </a>
 {% endblock %}
 

@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ assunto }}</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f5f7; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
+        .wrapper { width: 100%; table-layout: fixed; background-color: #f4f5f7; padding-bottom: 40px; }
+        .main-card { max-width: 600px; margin: 30px auto; background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .header { background: linear-gradient(135deg, #321350 0%, #7b2fbe 100%); padding: 30px 20px; text-align: center; border-bottom: 4px solid #f5a623; }
+        .header h1 { color: #ffffff; margin: 0; font-size: 22px; font-weight: 700; letter-spacing: 0.5px; }
+        .body-content { padding: 30px 25px; color: #2d3748; line-height: 1.6; }
+        .body-content p { margin: 0 0 15px 0; font-size: 16px; }
+        .details-box { background-color: #ede5f8; border-left: 4px solid #7b2fbe; padding: 20px; border-radius: 6px; margin: 25px 0; }
+        .details-row { margin-bottom: 10px; font-size: 15px; }
+        .details-row:last-child { margin-bottom: 0; }
+        .details-label { font-weight: 700; color: #321350; min-width: 90px; display: inline-block; }
+        .btn-link { display: inline-block; background-color: #7b2fbe; color: #ffffff !important; padding: 12px 24px; font-weight: 700; text-decoration: none; border-radius: 6px; margin-top: 15px; text-align: center; transition: background-color 0.2s; }
+        .footer { text-align: center; padding: 20px; font-size: 12px; color: #718096; border-top: 1px solid #e2e8f0; background-color: #fafafa; }
+    </style>
+</head>
+<body>
+    <div class="wrapper">
+        <div class="main-card">
+            <div class="header">
+                <h1>Salvaguarda</h1>
+            </div>
+
+            <div class="body-content">
+                <p>Olá, <strong>{{ nome_destinatario }}</strong>,</p>
+                <p>{{ mensagem_principal }}</p>
+
+                <div class="details-box">
+                    <div class="details-row"><span class="details-label">Data:</span> {{ reuniao.data|date:"d/m/Y" }}</div>
+                    <div class="details-row"><span class="details-label">Horário:</span> {{ reuniao.horario|time:"H:i" }} ({% if reuniao.duracao_minutos %}{{ reuniao.duracao_minutos }}min{% else %}1 hora{% endif %})</div>
+                    <div class="details-row"><span class="details-label">Matéria:</span> {{ reuniao.get_materia_display }}</div>
+                    {% if not eh_cancelamento %}
+                        <div class="details-row"><span class="details-label">Tutor:</span> {{ reuniao.tutor.get_nome_completo }}</div>
+                        <div class="details-row"><span class="details-label">Tutorado:</span> {{ reuniao.tutorado.get_nome_completo }}</div>
+                    {% endif %}
+                    {% if reuniao.topicos and not eh_cancelamento %}
+                        <div class="details-row"><span class="details-label">Pauta:</span> {{ reuniao.topicos }}</div>
+                    {% endif %}
+                </div>
+
+                {% if not eh_cancelamento %}
+                    <p>Você pode acessar os detalhes da reunião diretamente no seu painel.</p>
+                    <div style="text-align: center;">
+                        <a href="{{ url_painel }}" class="btn-link" target="_blank">Acessar Painel de Tutorias</a>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="footer">
+                Este é um e-mail automático gerado pela Plataforma de Apoio a Tutorias do Salvaguarda.<br>
+                &copy; 2025-2026 Salvaguarda. Todos os direitos reservados.
+            </div>
+        </div>
+    </div>
+</body>
+</html>

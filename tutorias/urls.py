@@ -5,7 +5,7 @@ from .views.disponibilidade import (
 )
 from .views.reunioes import (
     solicitar_reuniao, minhas_reunioes, lista_reunioes,
-    detalhe_reuniao, editar_reuniao, cancelar_reuniao, realizar_reuniao
+    detalhe_reuniao, editar_reuniao, enviar_email_link, cancelar_reuniao, realizar_reuniao
 )
 from .views.tutorados import (
     lista_tutorados, vincular_tutorado, desvincular_tutorado,
@@ -35,6 +35,7 @@ urlpatterns = [
     path('reunioes/', lista_reunioes, name='lista_reunioes'),
     path('reunioes/<int:pk>/', detalhe_reuniao, name='detalhe_reuniao'),
     path('reunioes/<int:pk>/editar/', editar_reuniao, name='editar_reuniao'),
+    path('reunioes/<int:pk>/enviar-link/', enviar_email_link, name='enviar_email_link'),
 
     # Reuniões — tutorado
     path('minhas-reunioes/', minhas_reunioes, name='minhas_reunioes'),
