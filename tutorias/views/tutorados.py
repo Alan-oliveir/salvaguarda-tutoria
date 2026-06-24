@@ -2,7 +2,8 @@ from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
 
 from tutorias.decorators import tutor_required
-from tutorias.models import Reuniao
+from tutorias.forms import FichaDiagnosticaForm
+from tutorias.models import Reuniao, FichaDiagnostica
 from usuarios.models import PerfilTutorado
 
 
@@ -88,3 +89,32 @@ def editar_tutorado(request, pk):
     perfil.save()
     messages.success(request, 'Dados atualizados com sucesso!')
     return redirect('tutorias:detalhe_tutorado', pk=pk)
+
+
+@tutor_required
+def ficha_diagnostica(request, pk):
+    perfil = get_object_or_404(PerfilTutorado, pk=pk, tutor=request.user)
+    tutorado_user = perfil.usuario
+
+    # Busca a ficha existente do aluno ou cria uma nova em branco
+    ficha, created = FichaDiagnostica.objects.get_or_create(
+        tutorado=tutorado_user,
+        defaults={'tutor': request.user}
+    )
+
+    if request.method == 'POST':
+        form = FichaDiagnosticaForm(request.POST, instance=ficha)
+        if form.is_valid():
+            f = form.save(commit=False)
+            f.tutor = request.user  # Atualiza o autor da edição
+            f.save()
+            messages.success(request, 'Ficha diagnóstica salva com sucesso!')
+            return redirect('tutorias:detalhe_tutorado', pk=pk)
+    else:
+        form = FichaDiagnosticaForm(instance=ficha)
+
+    return render(request, 'ficha_diagnostica.html', {
+        'form': form,
+        'tutorado': perfil,
+        'usuario': tutorado_user
+    })

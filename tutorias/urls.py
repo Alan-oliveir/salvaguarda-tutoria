@@ -9,7 +9,7 @@ from .views.reunioes import (
 )
 from .views.tutorados import (
     lista_tutorados, vincular_tutorado, desvincular_tutorado,
-    detalhe_tutorado, editar_tutorado
+    detalhe_tutorado, editar_tutorado, ficha_diagnostica
 )
 
 app_name = 'tutorias'
@@ -21,6 +21,7 @@ urlpatterns = [
     path('<int:pk>/desvincular/', desvincular_tutorado, name='desvincular_tutorado'),
     path('<int:pk>/', detalhe_tutorado, name='detalhe_tutorado'),
     path('<int:pk>/editar/', editar_tutorado, name='editar_tutorado'),
+    path('tutorados/<int:pk>/ficha/', ficha_diagnostica, name='ficha_diagnostica'),
 
     # Disponibilidade do tutor
     path('disponibilidade/', disponibilidade, name='disponibilidade'),

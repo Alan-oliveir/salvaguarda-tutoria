@@ -108,3 +108,71 @@ class Reuniao(models.Model):
     def pode_realizar(self):
         from datetime import date
         return self.status == 'CONFIRMADA' and self.data <= date.today()
+
+
+class FichaDiagnostica(models.Model):
+    NIVEL_CHOICES = [
+        ('EXCELENTE', 'Excelente'),
+        ('BOM', 'Bom'),
+        ('RAZOAVEL', 'Razoável'),
+        ('BAIXO', 'Baixo'),
+        ('NULO', 'Nulo'),
+    ]
+
+    tutorado = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='ficha_diagnostica',
+        limit_choices_to={'tipo': 'TUTORADO'}
+    )
+
+    tutor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        related_name='fichas_preenchidas',
+        limit_choices_to={'tipo': 'TUTOR'}
+    )
+
+    data_preenchimento = models.DateTimeField(auto_now_add=True)
+    data_atualizacao = models.DateTimeField(auto_now=True)
+
+    # 1. DEMANDAS INFORMACIONAIS
+    info_salvaguarda = models.CharField("Funcionamento do Salvaguarda", max_length=15, choices=NIVEL_CHOICES,
+                                        default='NULO')
+    info_publica_privada = models.CharField("Diferença entre universidade pública e privada", max_length=15,
+                                            choices=NIVEL_CHOICES, default='NULO')
+    info_vestibulares = models.CharField("O que é vestibular e opções disponíveis", max_length=15,
+                                         choices=NIVEL_CHOICES, default='NULO')
+    info_enem_programas = models.CharField("ENEM, SISU, PROUNI e FIES", max_length=15, choices=NIVEL_CHOICES,
+                                           default='NULO')
+    info_nota_corte = models.CharField("Conceito de nota de corte", max_length=15, choices=NIVEL_CHOICES,
+                                       default='NULO')
+    info_universidades_regiao = models.CharField("Universidades da região e cursos", max_length=15,
+                                                 choices=NIVEL_CHOICES, default='NULO')
+    info_assistencia = models.CharField("Programas de assistência estudantil", max_length=15, choices=NIVEL_CHOICES,
+                                        default='NULO')
+    info_bolsas_privadas = models.CharField("Mecanismo de bolsas em privadas", max_length=15, choices=NIVEL_CHOICES,
+                                            default='NULO')
+
+    # 2. DEMANDAS ORGANIZACIONAIS
+    org_rotina = models.CharField("Segue rotina e cronograma", max_length=15, choices=NIVEL_CHOICES, default='NULO')
+    org_estuda_sozinho = models.CharField("Estuda sozinho e concilia tarefas", max_length=15, choices=NIVEL_CHOICES,
+                                          default='NULO')
+    org_estudo_ativo = models.CharField("Estudo ativo (Exercícios e Simulados)", max_length=15, choices=NIVEL_CHOICES,
+                                        default='NULO')
+    org_estudo_eficiente = models.CharField("Estuda de forma eficiente", max_length=15, choices=NIVEL_CHOICES,
+                                            default='NULO')
+
+    # 3. PERCEPÇÕES GERAIS
+    maiores_dificuldades = models.TextField(blank=True, null=True, help_text="Principais barreiras notadas na reunião.")
+    pontos_positivos = models.TextField(blank=True, null=True, help_text="Qualidades e facilidades do estudante.")
+    comentarios_extras = models.TextField("Demais comentários", blank=True, null=True,
+                                          help_text="Demandas extras ou observações livres.")
+
+    class Meta:
+        verbose_name = 'Ficha Diagnóstica'
+        verbose_name_plural = 'Fichas Diagnósticas'
+
+    def __str__(self):
+        return f"Ficha Diagnóstica - {self.tutorado.first_name}"

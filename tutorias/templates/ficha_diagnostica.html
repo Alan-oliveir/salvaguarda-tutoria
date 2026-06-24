@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Ficha Diagnóstica — {{ usuario.get_nome_completo }}{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+<style>
+  /* Transforma a lista padrão de rádio do Django em uma linha amigável */
+  .radio-flex { list-style: none; padding: 0; display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 0.5rem; }
+  .radio-flex li { display: flex; align-items: center; gap: 0.4rem; background: var(--sg-bg); padding: 0.5rem 1rem; border-radius: var(--radius-sm); border: 1px solid var(--sg-border); }
+  .radio-flex input[type="radio"] { accent-color: var(--sg-purple); width: 1.2rem; height: 1.2rem; cursor: pointer; }
+  .radio-flex label { cursor: pointer; font-size: 0.9rem; color: var(--sg-dark); margin-bottom: 0; }
+  .field-group { margin-bottom: 2rem; border-bottom: 1px dashed var(--sg-border); padding-bottom: 1.5rem; }
+  .field-group:last-child { border-bottom: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'tutorias:detalhe_tutorado' tutorado.pk %}">
+    <i data-lucide="arrow-left" class="icon" aria-hidden="true"></i> {{ usuario.get_nome_completo }}
+  </a>
+</p>
+
+<div class="page-hero" style="margin-bottom: 2rem;">
+  <div>
+    <h1><i data-lucide="clipboard-list" class="icon" style="vertical-align: text-bottom;"></i> Ficha Diagnóstica</h1>
+    <p style="margin-top:0.5rem;">Prontuário pedagógico do primeiro mês de tutoria.</p>
+  </div>
+</div>
+
+<div class="form-page">
+  <form method="post" class="form-card">
+    {% csrf_token %}
+
+    <div class="form-section">
+      <p class="form-section-title">1. Demandas Informacionais</p>
+      {% for field in form %}
+        {% if 'info_' in field.name %}
+          <div class="field-group">
+            <label style="font-weight: 700; color: var(--sg-dark); font-size: 1.05rem;">{{ field.label }}</label>
+            <ul class="radio-flex">{{ field }}</ul>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="form-section">
+      <p class="form-section-title">2. Demandas Organizacionais</p>
+      {% for field in form %}
+        {% if 'org_' in field.name %}
+          <div class="field-group">
+            <label style="font-weight: 700; color: var(--sg-dark); font-size: 1.05rem;">{{ field.label }}</label>
+            <ul class="radio-flex">{{ field }}</ul>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+
+    <div class="form-section">
+      <p class="form-section-title">3. Percepções Gerais (Texto)</p>
+      <div class="form-grid-2">
+        <div class="form-group col-full">
+          <label for="{{ form.maiores_dificuldades.id_for_label }}">Maiores Dificuldades</label>
+          {{ form.maiores_dificuldades }}
+        </div>
+        <div class="form-group col-full">
+          <label for="{{ form.pontos_positivos.id_for_label }}">Pontos Positivos</label>
+          {{ form.pontos_positivos }}
+        </div>
+        <div class="form-group col-full">
+          <label for="{{ form.comentarios_extras.id_for_label }}">Comentários Extras</label>
+          {{ form.comentarios_extras }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-footer-bar">
+      <a href="{% url 'tutorias:detalhe_tutorado' tutorado.pk %}" class="btn btn-secondary">Voltar ao Perfil</a>
+      <button type="submit" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:0.5rem;">
+        <i data-lucide="save" class="icon" aria-hidden="true"></i> Salvar Ficha Diagnóstica
+      </button>
+    </div>
+  </form>
+</div>
+{% endblock %}

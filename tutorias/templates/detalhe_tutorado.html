@@ -52,6 +52,9 @@
       </div>
     </div>
     <div class="hero-actions-top">
+      <a href="{% url 'tutorias:ficha_diagnostica' tutorado.pk %}" class="btn btn-primary" style="background: var(--sg-purple); border-color: var(--sg-purple);">
+        <i data-lucide="clipboard-list" class="icon" aria-hidden="true"></i> Ficha Diagnóstica
+      </a>
       <a href="{% url 'tutorias:editar_tutorado' tutorado.pk %}" class="btn btn-secondary">
         <i data-lucide="edit-2" class="icon" aria-hidden="true"></i> Editar
       </a>
