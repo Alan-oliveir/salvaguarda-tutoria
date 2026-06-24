@@ -34,37 +34,31 @@
         <span class="badge badge-serie">{{ tutorado.get_serie_display }}</span>
         {% if tutorado.fez_enem %}
         <span class="badge badge-enem-sim">
-          <i data-lucide="check" class="icon" aria-hidden="true"></i> Já fez
-          ENEM
+          <i data-lucide="check" class="icon" aria-hidden="true"></i> Já fez ENEM
         </span>
         {% else %}
         <span class="badge badge-enem-nao">Ainda não fez ENEM</span>
         {% endif %}
+
+        {% if tutorado.trabalha %}
+        <span class="badge" style="background: var(--sg-orange-light); color: var(--sg-orange);">
+          <i data-lucide="briefcase" style="width: 12px; height: 12px; vertical-align: middle;"></i> Trabalha
+        </span>
+        {% endif %}
+
         {% if usuario.get_idade %}
         <span class="badge">{{ usuario.get_idade }} anos</span>
         {% endif %}
       </div>
     </div>
     <div class="hero-actions-top">
-      <a
-        href="{% url 'tutorias:editar_tutorado' tutorado.pk %}"
-        class="btn btn-secondary"
-      >
+      <a href="{% url 'tutorias:editar_tutorado' tutorado.pk %}" class="btn btn-secondary">
         <i data-lucide="edit-2" class="icon" aria-hidden="true"></i> Editar
       </a>
-      <form
-        method="post"
-        action="{% url 'tutorias:desvincular_tutorado' tutorado.pk %}"
-        class="inline-form"
-      >
+      <form method="post" action="{% url 'tutorias:desvincular_tutorado' tutorado.pk %}" class="inline-form">
         {% csrf_token %}
-        <button
-          type="submit"
-          class="btn btn-danger"
-          onclick="return confirm('Desvincular {{ usuario.get_nome_completo }}?')"
-        >
-          <i data-lucide="user-minus" class="icon" aria-hidden="true"></i>
-          Desvincular
+        <button type="submit" class="btn btn-danger" onclick="return confirm('Desvincular {{ usuario.get_nome_completo }}?')">
+          <i data-lucide="user-minus" class="icon" aria-hidden="true"></i> Desvincular
         </button>
       </form>
     </div>
@@ -75,10 +69,7 @@
       {% if usuario.cidade %}
       <span>
         <i data-lucide="map-pin" class="icon" aria-hidden="true"></i>
-        <strong>
-          {{ usuario.cidade }}
-          {% if usuario.estado %}/{{ usuario.estado }}{% endif %}
-        </strong>
+        <strong>{{ usuario.cidade }} {% if usuario.estado %}/{{ usuario.estado }}{% endif %}</strong>
       </span>
       {% endif %}
       {% if tutorado.whatsapp %}
@@ -99,17 +90,22 @@
     <div class="contato-row mt-sm">
       <span>
         <i data-lucide="building-2" class="icon" aria-hidden="true"></i>
-        <strong>{{ tutorado.escola }}
-          {% if tutorado.turno_escolar %} · {{ tutorado.get_turno_escolar_display }}{% endif %}
-        </strong>
+        <strong>{{ tutorado.escola }} {% if tutorado.turno_escolar %} · {{ tutorado.get_turno_escolar_display }}{% endif %}</strong>
       </span>
     </div>
     {% endif %}
 
-    <div class="token-box">
+    {% if tutorado.carta_apresentacao %}
+    <div style="margin-top: 1.5rem; border-top: 1px solid var(--sg-border); padding-top: 1.5rem;">
+      <a href="{{ tutorado.carta_apresentacao }}" target="_blank" rel="noopener" class="btn btn-primary" style="display: inline-flex; align-items: center; gap: 0.5rem; background: #1a73e8; border-color: #1a73e8;">
+        <i data-lucide="file-text" style="width: 18px; height: 18px;"></i> Abrir Carta de Apresentação (Drive)
+      </a>
+    </div>
+    {% endif %}
+
+    <div class="token-box" style="margin-top: 1.5rem;">
       <span class="token-label">
-        <i data-lucide="key" class="icon" aria-hidden="true"></i> Token de
-        acesso:
+        <i data-lucide="key" class="icon" aria-hidden="true"></i> Token de acesso:
       </span>
       <span class="token-value" id="tokenVal">{{ tutorado.token }}</span>
       <button class="btn btn-secondary btn-copiar" onclick="copiarToken()">Copiar</button>
@@ -120,38 +116,27 @@
   </div>
 </div>
 
-<!-- Objetivos -->
-{% if tutorado.cursos_interesse or tutorado.objetivo_principal %}
+{% if tutorado.cursos_interesse or tutorado.universidade_pretendida or tutorado.objetivo_principal %}
 <div class="info-card">
   <p class="info-card-title">
-    <i data-lucide="target" class="icon" aria-hidden="true"></i> Objetivos
-    Acadêmicos
+    <i data-lucide="target" class="icon" aria-hidden="true"></i> Perfil e Objetivos
   </p>
   {% if tutorado.cursos_interesse %}
   <p><strong>Cursos de interesse:</strong> {{ tutorado.cursos_interesse }}</p>
   {% endif %}
+  {% if tutorado.universidade_pretendida %}
+  <p class="mt-sm"><strong>Universidade pretendida:</strong> {{ tutorado.universidade_pretendida }}</p>
+  {% endif %}
   {% if tutorado.objetivo_principal %}
-  <p class="mt-sm">
-    <strong>Objetivo principal:</strong> {{ tutorado.objetivo_principal }}
-  </p>
+  <div style="margin-top: 1rem; background: var(--sg-bg); padding: 1rem; border-radius: var(--radius-sm); border-left: 3px solid var(--sg-purple);">
+    <p style="font-size: 0.85rem; color: var(--sg-muted); margin-bottom: 0.3rem;"><strong>Informações enviadas pelo aluno:</strong></p>
+    <p style="font-style: italic;">"{{ tutorado.objetivo_principal }}"</p>
+  </div>
   {% endif %}
 </div>
 {% endif %}
 
-<!-- Responsável -->
-{% if tutorado.responsavel_nome %}
 <div class="info-card">
-  <p class="info-card-title">
-    <i data-lucide="user" class="icon" aria-hidden="true"></i> Responsável
-  </p>
-  <p>
-    {{ tutorado.responsavel_nome }}
-    {% if tutorado.responsavel_telefone %}
-      · {{ tutorado.responsavel_telefone }}
-    {% endif %}
-  </p>
-</div>
-{% endif %}
 
 <!-- Reuniões -->
 <div class="info-card">

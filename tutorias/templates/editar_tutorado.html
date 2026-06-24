@@ -25,9 +25,8 @@
   <form method="post" class="form-card">
     {% csrf_token %}
 
-    <!-- Dados Acadêmicos -->
     <div class="form-section">
-      <p class="form-section-title">Dados Acadêmicos</p>
+      <p class="form-section-title">Dados Acadêmicos e Pessoais</p>
       <div class="form-grid-2">
 
         <div class="form-group">
@@ -61,35 +60,59 @@
                  placeholder="Ex: Escola Estadual João da Silva">
         </div>
 
-        <div class="form-group col-full">
+        <div class="form-group">
           <label class="checkbox-row" for="fez_enem">
             <input type="checkbox" id="fez_enem" name="fez_enem" value="1"
                    {% if tutorado.fez_enem %}checked{% endif %}>
-            <span>Já prestou o ENEM ao menos uma vez</span>
+            <span>Já fez o ENEM</span>
+          </label>
+        </div>
+
+        <div class="form-group">
+          <label class="checkbox-row" for="trabalha">
+            <input type="checkbox" id="trabalha" name="trabalha" value="1"
+                   {% if tutorado.trabalha %}checked{% endif %}>
+            <span>Estudante trabalha</span>
           </label>
         </div>
 
       </div>
     </div>
 
-    <!-- Objetivos -->
     <div class="form-section">
-      <p class="form-section-title">Objetivos Acadêmicos</p>
-      <div class="form-group" style="margin-bottom:1rem;">
-        <label for="cursos_interesse">Cursos de interesse</label>
-        <textarea id="cursos_interesse" name="cursos_interesse"
-                  placeholder="Ex: Medicina, Engenharia Civil, Direito..."
-                  class="form-control">{{ tutorado.cursos_interesse }}
-        </textarea>
+      <p class="form-section-title">Objetivos e Perfil</p>
+
+      <div class="form-grid-2">
+        <div class="form-group">
+          <label for="cursos_interesse">Cursos de interesse</label>
+          <textarea id="cursos_interesse" name="cursos_interesse"
+                    placeholder="Ex: Medicina, Engenharia Civil, Direito..."
+                    class="form-control">{{ tutorado.cursos_interesse }}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="universidade_pretendida">Universidade pretendida</label>
+          <textarea id="universidade_pretendida" name="universidade_pretendida"
+                    placeholder="Ex: USP, UFRJ, UFMG..."
+                    class="form-control">{{ tutorado.universidade_pretendida|default:'' }}</textarea>
+        </div>
       </div>
-      <div class="form-group">
-        <label for="objetivo_principal">Objetivo principal com a tutoria</label>
-        <textarea id="objetivo_principal" name="objetivo_principal"
-                  placeholder="Ex: Passar em medicina na USP em 2026.">{{ tutorado.objetivo_principal|default:'' }}</textarea>
+
+      <div class="form-group" style="margin-top: 1rem;">
+        <label for="objetivo_principal">Informações para o Tutor (Objetivo)</label>
+        <textarea id="objetivo_principal" name="objetivo_principal" rows="3"
+                  placeholder="Informações que o aluno enviou na inscrição para o tutor.">{{ tutorado.objetivo_principal|default:'' }}</textarea>
+      </div>
+
+      <div class="form-group" style="margin-top: 1rem;">
+        <label for="carta_apresentacao">Link da Carta de Apresentação (Google Drive)</label>
+        <input type="url" id="carta_apresentacao" name="carta_apresentacao"
+               value="{{ tutorado.carta_apresentacao|default:'' }}"
+               class="form-control"
+               placeholder="https://drive.google.com/...">
       </div>
     </div>
 
-    <!-- Contato -->
     <div class="form-section">
       <p class="form-section-title">Contato</p>
       <div class="form-grid-2">
@@ -97,26 +120,8 @@
           <label for="whatsapp">WhatsApp</label>
           <input type="text" id="whatsapp" name="whatsapp"
                  value="{{ tutorado.whatsapp }}"
-                 placeholder="(XX) XXXXX-XXXX">
-        </div>
-      </div>
-    </div>
-
-    <!-- Responsável -->
-    <div class="form-section">
-      <p class="form-section-title">Responsável</p>
-      <div class="form-grid-2">
-        <div class="form-group">
-          <label for="responsavel_nome">Nome do responsável</label>
-          <input type="text" id="responsavel_nome" name="responsavel_nome"
-                 value="{{ tutorado.responsavel_nome|default:'' }}"
-                 placeholder="Ex: Maria da Silva">
-        </div>
-        <div class="form-group">
-          <label for="responsavel_telefone">Telefone do responsável</label>
-          <input type="text" id="responsavel_telefone" name="responsavel_telefone"
-                 value="{{ tutorado.responsavel_telefone|default:'' }}"
-                 placeholder="(XX) XXXXX-XXXX">
+                 placeholder="(XX) XXXXX-XXXX"
+                 class="form-control">
         </div>
       </div>
     </div>

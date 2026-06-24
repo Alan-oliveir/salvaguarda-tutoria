@@ -1,8 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.html import format_html
-from django.urls import reverse
-from django.utils.safestring import mark_safe
+
 from .models import CustomUser, PerfilTutor, PerfilTutorado
 
 
@@ -189,32 +188,52 @@ class PerfilTutorAdmin(admin.ModelAdmin):
 
 @admin.register(PerfilTutorado)
 class PerfilTutoradoAdmin(admin.ModelAdmin):
-    list_display = [
+    list_display = (
         'usuario',
+        'tutor',
+        'serie',
+        'fez_enem',
+        'trabalha',
         'escola',
-        'turno_escolar',
-        'responsavel_nome'
-    ]
+    )
 
-    list_filter = ['turno_escolar']
-    search_fields = [
+    list_filter = (
+        'serie',
+        'fez_enem',
+        'trabalha',
+        'turno_escolar',
+    )
+
+    search_fields = (
         'usuario__first_name',
         'usuario__last_name',
         'escola',
-        'responsavel_nome'
-    ]
+        'universidade_pretendida',
+    )
 
-    raw_id_fields = ['usuario']
+    raw_id_fields = ('usuario', 'tutor')
 
     fieldsets = (
-        ('Informações do Tutorado', {
-            'fields': ('usuario', 'escola', 'turno_escolar')
+        ('Vínculos', {
+            'fields': ('usuario', 'tutor')
         }),
-        ('Responsável', {
-            'fields': ('responsavel_nome', 'responsavel_telefone')
+        ('Dados Acadêmicos e Pessoais', {
+            'fields': (
+                'serie',
+                'turno_escolar',
+                'escola',
+                'fez_enem',
+                'trabalha',
+                'whatsapp'
+            )
         }),
-        ('Objetivos', {
-            'fields': ('objetivo_principal',)
+        ('Objetivos e Perfil', {
+            'fields': (
+                'cursos_interesse',
+                'universidade_pretendida',
+                'objetivo_principal',
+                'carta_apresentacao'
+            )
         }),
     )
 

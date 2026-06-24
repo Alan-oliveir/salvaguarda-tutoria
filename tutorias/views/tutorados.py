@@ -72,15 +72,19 @@ def editar_tutorado(request, pk):
             'series_choices': PerfilTutorado.SERIE_CHOICES,
             'turno_choices': PerfilTutorado.TURNO_CHOICES,
         })
+
+    # Atualiza os dados
     perfil.serie = request.POST.get('serie', perfil.serie)
     perfil.fez_enem = bool(request.POST.get('fez_enem'))
+    perfil.trabalha = bool(request.POST.get('trabalha'))
     perfil.cursos_interesse = request.POST.get('cursos_interesse', '')
+    perfil.universidade_pretendida = request.POST.get('universidade_pretendida', '')
     perfil.escola = request.POST.get('escola', '')
     perfil.turno_escolar = request.POST.get('turno_escolar', '')
     perfil.whatsapp = request.POST.get('whatsapp', '')
-    perfil.responsavel_nome = request.POST.get('responsavel_nome', '')
-    perfil.responsavel_telefone = request.POST.get('responsavel_telefone', '')
+    perfil.carta_apresentacao = request.POST.get('carta_apresentacao', '').strip()
     perfil.objetivo_principal = request.POST.get('objetivo_principal', '')
+
     perfil.save()
     messages.success(request, 'Dados atualizados com sucesso!')
     return redirect('tutorias:detalhe_tutorado', pk=pk)

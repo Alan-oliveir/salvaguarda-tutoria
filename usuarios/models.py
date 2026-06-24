@@ -120,7 +120,6 @@ class PerfilTutorado(models.Model):
         CustomUser, on_delete=models.CASCADE, related_name='perfil_tutorado'
     )
 
-    # Vínculo com tutor (null = ainda sem tutor atribuído)
     tutor = models.ForeignKey(
         CustomUser,
         on_delete=models.SET_NULL,
@@ -130,24 +129,22 @@ class PerfilTutorado(models.Model):
         limit_choices_to={'tipo': 'TUTOR'},
     )
 
-    # Dados acadêmicos (antes viviam no model Tutorado)
+    # Dados acadêmicos
     serie = models.CharField(max_length=4, choices=SERIE_CHOICES, default='3EM')
     fez_enem = models.BooleanField(default=False)
+    trabalha = models.BooleanField(default=False)  # NOVO CAMPO
     cursos_interesse = models.TextField(blank=True)
+    universidade_pretendida = models.CharField(max_length=200, blank=True, null=True)  # NOVO CAMPO
     escola = models.CharField(max_length=200, blank=True, null=True)
     turno_escolar = models.CharField(max_length=20, choices=TURNO_CHOICES, blank=True, null=True)
 
-    # Dados de contato do aluno (complementam o CustomUser)
+    # Dados de contato e arquivos
     whatsapp = models.CharField(max_length=20, blank=True)
+    carta_apresentacao = models.URLField(blank=True, null=True, help_text="Link do Drive")  # NOVO CAMPO
 
-    # Responsável
-    responsavel_nome = models.CharField(max_length=200, blank=True, null=True)
-    responsavel_telefone = models.CharField(max_length=15, blank=True, null=True)
-
-    # Objetivos
+    # Objetivos / Informações para o tutor
     objetivo_principal = models.TextField(blank=True, null=True)
 
-    # Token de acesso (para link direto futuro)
     token = models.CharField(max_length=16, blank=True, unique=True)
 
     class Meta:
