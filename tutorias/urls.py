@@ -9,7 +9,7 @@ from .views.reunioes import (
 )
 from .views.tutorados import (
     lista_tutorados, vincular_tutorado, desvincular_tutorado,
-    detalhe_tutorado, editar_tutorado, ficha_diagnostica
+    detalhe_tutorado, editar_tutorado, ficha_diagnostica, controle_horas, relatorio_impresso
 )
 
 app_name = 'tutorias'
@@ -44,4 +44,8 @@ urlpatterns = [
     # Ações compartilhadas
     path('reunioes/<int:pk>/cancelar/', cancelar_reuniao, name='cancelar_reuniao'),
     path('reunioes/<int:pk>/realizar/', realizar_reuniao, name='realizar_reuniao'),
+
+    # Relatório - controle de horas
+    path('controle-horas/', controle_horas, name='controle_horas'),
+    path('controle-horas/imprimir/', relatorio_impresso, name='relatorio_impresso'),
 ]

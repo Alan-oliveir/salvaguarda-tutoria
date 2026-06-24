@@ -1,6 +1,8 @@
 from django.conf import settings
 from django.db import models
 
+from django.utils import timezone
+
 
 class DisponibilidadeRecorrente(models.Model):
     """Blocos semanais fixos em que o tutor está disponível."""
@@ -176,3 +178,37 @@ class FichaDiagnostica(models.Model):
 
     def __str__(self):
         return f"Ficha Diagnóstica - {self.tutorado.first_name}"
+
+
+class AtividadeExtra(models.Model):
+    tutor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='atividades_extras',
+        limit_choices_to={'tipo': 'TUTOR'}
+    )
+
+    # Opcional, pois o tutor pode registrar "Leitura do manual" que não é para um aluno específico
+    tutorado = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='atividades_recebidas',
+        limit_choices_to={'tipo': 'TUTORADO'}
+    )
+
+    data = models.DateField("Data da Atividade", default=timezone.now)
+    descricao = models.CharField("Breve Descrição", max_length=255,
+                                 help_text="Ex: Pesquisa de cursos na UFRJ, Leitura do Manual, etc.")
+    duracao_minutos = models.PositiveIntegerField("Carga Horária (em minutos)", help_text="Ex: 90 para 1h30.")
+
+    data_registro = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Atividade Extra'
+        verbose_name_plural = 'Atividades Extras'
+        ordering = ['-data', '-data_registro']
+
+    def __str__(self):
+        return f"{self.descricao} - {self.tutor.first_name} ({self.duracao_minutos} min)"

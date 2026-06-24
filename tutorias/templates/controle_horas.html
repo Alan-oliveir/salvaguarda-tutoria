@@ -1,0 +1,101 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Controle de Horas — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+<style>
+  .form-grid-2 { gap: 2rem; align-items: stretch; }
+  .form-group { margin-bottom: 1.25rem; }
+  .stats-card { background: var(--sg-purple); color: white; padding: 2rem; border-radius: var(--radius-lg); text-align: center; height: 100%; display: flex; flex-direction: column; justify-content: center; box-sizing: border-box; }
+  .stats-card h2 { font-size: 3rem; margin: 0.5rem 0; }
+
+  .history-table { width: 100%; border-collapse: collapse; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+  .history-table th, .history-table td { padding: 1rem; text-align: left; border-bottom: 1px solid var(--sg-border); }
+  .history-table th { background: var(--sg-bg); color: var(--sg-dark); font-weight: 700; }
+
+  .filter-bar { display: flex; gap: 1rem; align-items: center; flex-wrap: wrap; }
+  .filter-form { display: flex; align-items: center; gap: 0.5rem; background: var(--sg-white); padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); border: 1px solid var(--sg-border); }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-hero" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 1.5rem;">
+  <div>
+    <h1><i data-lucide="clock" style="vertical-align: middle;"></i> Carga Horária</h1>
+    <p style="margin-top:0.5rem;">Lance suas atividades e acompanhe seu voluntariado.</p>
+  </div>
+
+  <div class="filter-bar">
+    <!-- Formulário que recarrega a página ao selecionar um mês -->
+    <form method="get" class="filter-form">
+      <label for="mes" style="font-weight: 600; font-size: 0.9rem; margin: 0; color: var(--sg-dark);">Mês:</label>
+      <select name="mes" id="mes" class="form-control" style="padding: 0.3rem; min-width: 160px;" onchange="this.form.submit()">
+        <option value="">Todo o Histórico</option>
+        {% for opcao in opcoes_meses %}
+          <option value="{{ opcao.valor }}" {% if mes_filtro == opcao.valor %}selected{% endif %}>
+            {{ opcao.rotulo }}
+          </option>
+        {% endfor %}
+      </select>
+    </form>
+
+    <a href="{% url 'tutorias:relatorio_impresso' %}?mes={{ mes_filtro }}" target="_blank" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 0.5rem; height: 100%;">
+      <i data-lucide="printer" style="width: 18px; height: 18px;"></i> Gerar PDF
+    </a>
+  </div>
+</div>
+
+<div class="form-grid-2">
+  <!-- Formulário de Lançamento -->
+  <div class="form-card" style="padding: 20px;">
+    <h3 style="margin-bottom: 1.5rem; color: var(--sg-dark);">Lançar Atividade Extra</h3>
+    <form method="post">
+      {% csrf_token %}
+      <div class="form-group"><label style="margin-bottom: 0.3rem;">Data</label>{{ form.data }}</div>
+      <div class="form-group"><label style="margin-bottom: 0.3rem;">Tutorado Relacionado</label>{{ form.tutorado }}</div>
+      <div class="form-group"><label style="margin-bottom: 0.3rem;">Descrição da Atividade</label>{{ form.descricao }}</div>
+      <div class="form-group"><label style="margin-bottom: 0.3rem;">Duração (Minutos)</label>{{ form.duracao_minutos }}</div>
+      <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;">Salvar Atividade</button>
+    </form>
+  </div>
+
+  <!-- Resumo de Horas -->
+  <div>
+    <div class="stats-card">
+      <p style="font-size: 1.1rem; opacity: 0.9;">
+        {% if mes_filtro %}Total do Mês{% else %}Total Acumulado{% endif %}
+      </p>
+      <h2>{{ horas_formatadas }}</h2>
+      <p style="font-size: 0.9rem; opacity: 0.8;">({{ total_minutos }} minutos logados)</p>
+    </div>
+  </div>
+</div>
+
+<h3 style="margin: 3rem 0 1rem; color: var(--sg-dark);">Histórico Detalhado</h3>
+<table class="history-table">
+  <thead>
+    <tr>
+      <th>Data</th>
+      <th>Tipo</th>
+      <th>Descrição</th>
+      <th>Aluno</th>
+      <th>Duração</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for item in historico %}
+    <tr>
+      <td>{{ item.data|date:"d/m/Y" }}</td>
+      <td><span class="badge" style="background: var(--sg-bg);">{{ item.tipo }}</span></td>
+      <td>{{ item.descricao }}</td>
+      <td>{{ item.aluno }}</td>
+      <td><strong>{{ item.minutos }} min</strong></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="5" style="text-align: center; color: var(--sg-muted); padding: 2rem;">Nenhum registro encontrado neste período.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
