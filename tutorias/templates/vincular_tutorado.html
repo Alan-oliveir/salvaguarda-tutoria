@@ -5,6 +5,17 @@
 
 {% block extra_head %}
 <link rel="stylesheet" href="{% static 'css/tutorados.css' %}">
+<style>
+  .empty-state {
+    text-align: center;
+    padding: 4rem 1rem;
+    background: var(--sg-white);
+    border: 1px dashed var(--sg-border);
+    border-radius: var(--radius-lg);
+  }
+  .empty-state h3 { font-size: 1.2rem; color: var(--sg-dark); margin: 1rem 0 0.5rem; }
+  .empty-state p { color: var(--sg-muted); font-size: 0.95rem; }
+</style>
 {% endblock %}
 
 {% block content %}
@@ -74,13 +85,10 @@
 </div>
 
 {% else %}
-<div class="empty-state">
-  <i data-lucide="users" class="empty-icon" aria-hidden="true"></i>
+<div class="empty-state" style="grid-column: 1/-1;">
+  <i data-lucide="users" style="width: 48px; height: 48px; color: var(--sg-muted);" aria-hidden="true"></i>
   <h3>Nenhum tutorado disponível</h3>
-  <p>
-    Todos os estudantes cadastrados já estão vinculados a um tutor,
-    ou ainda não há estudantes registrados no sistema.
-  </p>
+  <p>Todos os estudantes cadastrados já estão vinculados a um tutor, ou ainda não há estudantes registrados no sistema.</p>
   <p style="font-size:.88rem;color:var(--sg-muted);margin-top:.5rem;">
     Para entrar no sistema, o estudante precisa se registrar com o tipo <strong>Tutorado</strong>.
   </p>

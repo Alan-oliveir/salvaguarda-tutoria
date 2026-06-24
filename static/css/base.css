@@ -251,12 +251,16 @@ a:hover {
 .btn-logout {
   background: var(--sg-purple-light);
   color: var(--sg-purple);
-  border-color: var(--sg-purple-light);
+  border-color: var(--sg-purple);
+  padding: 0.45rem 1rem;
+  font-family: inherit;
 }
 .btn-logout:hover {
   background: var(--sg-purple);
   color: var(--sg-white);
   border-color: var(--sg-purple);
+  padding: 0.45rem 1rem;
+  font-family: inherit;
 }
 
 /* ── Alertas ── */

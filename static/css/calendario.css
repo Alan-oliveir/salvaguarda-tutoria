@@ -11,6 +11,7 @@
   padding: 1.5rem;
   box-shadow: var(--shadow-sm);
   margin-bottom: 1.5rem;
+  margin-top: 1.25rem;
 }
 
 /* ── Legenda ── */
@@ -51,6 +52,14 @@
   font-weight: 700;
   color: var(--sg-dark);
 }
+.fc .fc-toolbar-chunk {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.fc .fc-button-group {
+  gap: 0.35rem;
+}
 .fc .fc-button {
   background: var(--sg-purple-light);
   border-color: transparent;
@@ -59,6 +68,7 @@
   font-size: 0.82rem;
   border-radius: var(--radius-md) !important;
   transition: background 0.15s, color 0.15s;
+  margin: 0 !important;
 }
 .fc .fc-button:hover {
   background: var(--sg-purple);
