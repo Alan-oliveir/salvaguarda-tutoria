@@ -24,34 +24,34 @@
       <div class="card-icon admin-icon">👨‍💼</div>
       <div class="card-content">
         <h3>Usuários</h3>
-        <p class="card-number">{{ total_usuarios }}</p>
-        <small>Total de usuários</small>
+        <div class="card-main"><p class="card-number">{{ total_usuarios }}</p>
+        <small>Total de usuários</small></div>
       </div>
     </div>
     <div class="dashboard-card">
       <div class="card-icon tutor-icon">👨‍🏫</div>
       <div class="card-content">
         <h3>Tutores</h3>
-        <p class="card-number">{{ total_tutores }}</p>
-        <small>Tutores ativos</small>
+        <div class="card-main"><p class="card-number">{{ total_tutores }}</p>
+        <small>Tutores ativos</small></div>
       </div>
     </div>
     <div class="dashboard-card">
       <div class="card-icon student-icon">👨‍🎓</div>
       <div class="card-content">
         <h3>Tutorados</h3>
-        <p class="card-number">{{ total_tutorados }}</p>
-        <small>Estudantes cadastrados</small>
+        <div class="card-main"><p class="card-number">{{ total_tutorados }}</p>
+        <small>Estudantes cadastrados</small></div>
       </div>
     </div>
   </div>
 
-  <div class="action-grid">
+  <div class="action-grid" style="margin-top: 2rem;">
     <div class="action-card">
       <h3>Gerenciamento</h3>
       <ul class="action-list">
         <li><a href="{% url 'admin:index' %}" class="action-link">🔧 Administração Django</a></li>
-        <li><a href="#" class="action-link disabled">📊 Relatórios Gerais (em breve)</a></li>
+        <li><a href="{% url 'usuarios:relatorio_geral' %}" class="action-link">📊 Relatórios Gerais & Alertas</a></li>
       </ul>
     </div>
   </div>
@@ -62,24 +62,24 @@
       <div class="card-icon student-icon">👥</div>
       <div class="card-content">
         <h3>Meus Tutorados</h3>
-        <p class="card-number">{{ meus_tutorados }}</p>
-        <small>Estudantes vinculados</small>
+        <div class="card-main"><p class="card-number">{{ meus_tutorados }}</p>
+        <small>Estudantes vinculados</small></div>
       </div>
     </div>
     <div class="dashboard-card">
       <div class="card-icon meeting-icon">📅</div>
       <div class="card-content">
         <h3>Próximas Reuniões</h3>
-        <p class="card-number">{{ reunioes_pendentes }}</p>
-        <small>Reuniões agendadas</small>
+        <div class="card-main"><p class="card-number">{{ reunioes_pendentes }}</p>
+        <small>Reuniões agendadas</small></div>
       </div>
     </div>
     <div class="dashboard-card">
       <div class="card-icon material-icon">📚</div>
       <div class="card-content">
         <h3>Materiais</h3>
-        <p class="card-number">{{ total_materiais }}</p>
-        <small>Compartilhados por você</small>
+        <div class="card-main"><p class="card-number">{{ total_materiais }}</p>
+        <small>Compartilhados por você</small></div>
       </div>
     </div>
   </div>
@@ -140,24 +140,24 @@
       <div class="card-icon meeting-icon">📅</div>
       <div class="card-content">
         <h3>Próximas Reuniões</h3>
-        <p class="card-number">{{ reunioes_pendentes }}</p>
-        <small>Reuniões agendadas</small>
+        <div class="card-main"><p class="card-number">{{ reunioes_pendentes }}</p>
+        <small>Reuniões agendadas</small></div>
       </div>
     </div>
     <div class="dashboard-card">
       <div class="card-icon task-icon">📝</div>
       <div class="card-content">
         <h3>Tarefas Pendentes</h3>
-        <p class="card-number">{{ tarefas_pendentes }}</p>
-        <small>Exercícios e metas</small>
+        <div class="card-main"><p class="card-number">{{ tarefas_pendentes }}</p>
+        <small>Exercícios e metas</small></div>
       </div>
     </div>
     <div class="dashboard-card">
       <div class="card-icon material-icon">📚</div>
       <div class="card-content">
         <h3>Materiais</h3>
-        <p class="card-number">{{ total_materiais }}</p>
-        <small>Arquivos e links disponíveis</small>
+        <div class="card-main"><p class="card-number">{{ total_materiais }}</p>
+        <small>Arquivos e links disponíveis</small></div>
       </div>
     </div>
   </div>
@@ -186,6 +186,7 @@
         <li><a href="{% url 'materiais:lista_materiais' %}" class="action-link">📚 Materiais de Estudo</a></li>
         <li><a href="{% url 'tutorias:calendario' %}" class="action-link">📅 Agendar Reunião</a></li>
         <li><a href="{% url 'tutorias:minhas_reunioes' %}" class="action-link">📋 Minhas Reuniões</a></li>
+        <li><a href="{% url 'tutorias:cronograma' %}" class="action-link">📅 Cronograma de Estudos</a></li>
       </ul>
     </div>
   </div>

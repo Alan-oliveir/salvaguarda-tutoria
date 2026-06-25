@@ -1,0 +1,80 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Relatórios Gerais — Salvaguarda{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'usuarios:painel_inicial' %}">Painel</a> / Relatórios Gerais
+</p>
+
+<div class="page-hero" style="margin-bottom: 2.5rem;">
+  <div>
+    <h1><i data-lucide="bar-chart-2" style="vertical-align: middle;"></i> Relatórios da Coordenação</h1>
+    <p style="margin-top:0.5rem;">Métricas consolidadas e radar de acompanhamento do programa.</p>
+  </div>
+</div>
+
+<!-- Resumo Simplificado -->
+<div class="form-card" style="padding: 2.5rem; margin-bottom: 3.5rem;">
+  <h3 style="color: var(--sg-dark); margin-bottom: 1.5rem; font-size: 1.25rem;">Balanço Geral</h3>
+  <div style="display: flex; flex-direction: column; gap: 1.25rem;">
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--sg-border); padding-bottom: 0.75rem; font-size: 1.05rem;">
+      <span style="color: var(--sg-muted);">Total de Tutores Registrados:</span>
+      <strong style="color: var(--sg-dark);">{{ total_tutores }}</strong>
+    </div>
+    <div style="display: flex; justify-content: space-between; border-bottom: 1px solid var(--sg-border); padding-bottom: 0.75rem; font-size: 1.05rem;">
+      <span style="color: var(--sg-muted);">Total de Tutorados Registrados:</span>
+      <strong style="color: var(--sg-dark);">{{ total_tutorados }}</strong>
+    </div>
+    <div style="display: flex; justify-content: space-between; padding-top: 0.5rem; color: var(--sg-purple); font-size: 1.1rem; font-weight: bold;">
+      <span>Proporção Média (Alunos por Tutor):</span>
+      <span>{% if total_tutores > 0 %}{% widthratio total_tutorados total_tutores 1 %}{% else %}0{% endif %} alunos/tutor</span>
+    </div>
+  </div>
+</div>
+
+<!-- Radar de Alerta / Atenção Necessária -->
+{% if alunos_orfaos or tutores_inativos %}
+<h3 style="margin: 0 0 1.5rem; color: var(--sg-error); display: flex; align-items: center; gap: 0.5rem; font-size: 1.25rem;">
+  <i data-lucide="alert-triangle"></i> Radar de Prevenção e Engajamento
+</h3>
+
+<div class="form-grid-2" style="align-items: stretch; gap: 2rem;">
+  <!-- Coluna: Alunos sem Tutor -->
+  <div class="form-card" style="border-top: 4px solid var(--sg-error); padding: 2rem;">
+    <h4 style="font-size: 1.05rem; color: var(--sg-dark); margin-bottom: 1.5rem;">Alunos sem Tutor Vinculado ({{ alunos_orfaos.count }})</h4>
+    <ul style="padding-left: 1.5rem; font-size: 0.95rem; color: #555; display: flex; flex-direction: column; gap: 0.8rem;">
+      {% for perfil in alunos_orfaos %}
+        <li>
+          <strong style="color: var(--sg-dark);">{{ perfil.usuario.get_nome_completo }}</strong> <br>
+          <span style="font-size: 0.85rem; color: var(--sg-muted);">Série: {{ perfil.get_serie_display }}</span>
+        </li>
+      {% empty %}
+        <li style="list-style: none; margin-left: -1.5rem; color: var(--sg-success); font-weight: 600;">✅ Todos os alunos possuem tutor.</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <!-- Coluna: Tutores Inativos -->
+  <div class="form-card" style="border-top: 4px solid var(--sg-orange); padding: 2rem;">
+    <h4 style="font-size: 1.05rem; color: var(--sg-dark); margin-bottom: 1.5rem;">Tutores Inativos (+15 dias sem ação)</h4>
+    <ul style="padding-left: 1.5rem; font-size: 0.95rem; color: #555; display: flex; flex-direction: column; gap: 0.8rem;">
+      {% for item in tutores_inativos %}
+        <li>
+          <strong style="color: var(--sg-dark);">{{ item.user.get_nome_completo }}</strong> <br>
+          <span style="font-size: 0.85rem; color: var(--sg-muted);">Atende {{ item.qtd_alunos }} aluno(s) no momento.</span>
+        </li>
+      {% empty %}
+        <li style="list-style: none; margin-left: -1.5rem; color: var(--sg-success); font-weight: 600;">✅ Todos os tutores registraram ações recentemente.</li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% else %}
+<div class="form-card" style="margin-top: 1rem; background: var(--sg-success-light); border: 2px solid var(--sg-success); text-align: center; padding: 2.5rem 1rem; border-radius: var(--radius-lg);">
+  <p style="color: var(--sg-dark); font-size: 1.15rem;">Todos os alunos possuem tutores e todos os tutores registraram ações nos últimos 15 dias.</p>
+</div>
+{% endif %}
+
+{% endblock %}

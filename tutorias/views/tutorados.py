@@ -1,9 +1,12 @@
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render, redirect, get_object_or_404
 
+from tarefas.models import Tarefa
 from tutorias.decorators import tutor_required
 from tutorias.forms import FichaDiagnosticaForm, AtividadeExtraForm
-from tutorias.models import Reuniao, FichaDiagnostica, AtividadeExtra
+from tutorias.models import Reuniao, FichaDiagnostica, AtividadeExtra, GradeEstudo, CheckpointSemanal
 from usuarios.models import PerfilTutorado
 
 
@@ -183,13 +186,30 @@ def controle_horas(request):
     historico.sort(key=lambda x: x['data'], reverse=True)
     horas_formatadas = f"{total_minutos // 60}h {total_minutos % 60}m"
 
+    # Geração de texto automático
+    qtd_reunioes = reunioes_filtradas.count()
+    nomes_alunos = list(set([r.tutorado.first_name for r in reunioes_filtradas if r.tutorado]))
+
+    if nomes_alunos:
+        nomes_str = ", ".join(nomes_alunos[:-1]) + " e " + nomes_alunos[-1] if len(nomes_alunos) > 1 else nomes_alunos[
+            0]
+        texto_relatorio = f"Neste ciclo, realizei {qtd_reunioes} reuniões de acompanhamento com {nomes_str}. "
+    else:
+        texto_relatorio = f"Neste ciclo, não realizei reuniões diretas. "
+
+    if atividades_filtradas.exists():
+        texto_relatorio += f"Também registrei {atividades_filtradas.count()} atividades extras focadas em pesquisa e planejamento. "
+
+    texto_relatorio += f"A minha carga horária total deste período foi de {horas_formatadas}."
+
     return render(request, 'controle_horas.html', {
         'form': form,
         'historico': historico,
         'total_minutos': total_minutos,
         'horas_formatadas': horas_formatadas,
         'opcoes_meses': opcoes_meses,
-        'mes_filtro': mes_filtro
+        'mes_filtro': mes_filtro,
+        'texto_relatorio': texto_relatorio
     })
 
 
@@ -236,4 +256,90 @@ def relatorio_impresso(request):
         'horas_formatadas': horas_formatadas,
         'tutor': request.user,
         'periodo_texto': periodo_texto
+    })
+
+
+@tutor_required
+def ficha_impresso(request, pk):
+    perfil = get_object_or_404(PerfilTutorado, pk=pk, tutor=request.user)
+
+    try:
+        ficha = perfil.usuario.ficha_diagnostica
+    except:
+        messages.error(request, "Este aluno ainda não tem uma Ficha Diagnóstica preenchida.")
+        return redirect('tutorias:detalhe_tutorado', pk=pk)
+
+    # Busca o plano de ação (Tarefas de planejamento passadas por este tutor)
+    plano_acao = Tarefa.objects.filter(
+        tutorado=perfil.usuario,
+        tutor=request.user,
+        categoria='PLANEJAMENTO'
+    ).order_by('-data_criacao')
+
+    return render(request, 'ficha_impresso.html', {
+        'tutorado': perfil,
+        'ficha': ficha,
+        'plano_acao': plano_acao
+    })
+
+
+@login_required
+def cronograma_estudos_json(request):
+    """
+    Retorna a grade de estudos no formato de eventos recorrentes do FullCalendar.
+    Funciona tanto para o aluno ver o seu próprio cronograma, como para o tutor ver o do aluno.
+    """
+    # Verifica se um tutor está a pedir para ver a grade de um tutorado específico
+    tutorado_id = request.GET.get('tutorado_id')
+
+    if tutorado_id and request.user.tipo == 'TUTOR':
+        grade = GradeEstudo.objects.filter(tutorado_id=tutorado_id)
+    else:
+        # Caso contrário, mostra a grade do próprio utilizador logado (o aluno)
+        grade = GradeEstudo.objects.filter(tutorado=request.user)
+
+    eventos = []
+
+    # Mapeamento de cores para as disciplinas para ficar visualmente incrível
+    CORES_DISCIPLINAS = {
+        'PORTUGUES': '#1a73e8', 'REDACAO': '#d93025', 'MATEMATICA': '#f29900',
+        'FISICA': '#188038', 'QUIMICA': '#8e24aa', 'BIOLOGIA': '#009688',
+        'HISTORIA': '#795548', 'GEOGRAFIA': '#e91e63', 'FILOSOFIA': '#607d8b',
+        'SOCIOLOGIA': '#3f51b5', 'LINGUAS': '#00bcd4', 'REVISAO': '#333333'
+    }
+
+    for bloco in grade:
+        cor = CORES_DISCIPLINAS.get(bloco.disciplina, '#7b2fbe')
+
+        titulo = bloco.get_disciplina_display()
+        if bloco.quinzenal:
+            titulo += " (Quinzenal)"
+
+        eventos.append({
+            'title': titulo,
+            'startTime': bloco.horario_inicio.strftime('%H:%M'),
+            'endTime': bloco.horario_fim.strftime('%H:%M'),
+            'daysOfWeek': [bloco.dia_semana],
+            'backgroundColor': cor,
+            'borderColor': cor,
+            'textColor': '#ffffff',
+            'extendedProps': {
+                'id_bloco': bloco.id,
+                'disciplina_cod': bloco.disciplina
+            }
+        })
+
+    return JsonResponse(eventos, safe=False)
+
+
+@tutor_required
+def ver_cronograma_tutorado(request, pk):
+    """Permite ao tutor visualizar a grade horária e os checkpoints de um tutorado específico."""
+    perfil = get_object_or_404(PerfilTutorado, pk=pk, tutor=request.user)
+    checkpoints = CheckpointSemanal.objects.filter(tutorado=perfil.usuario).order_by('-data_fim_semana')
+
+    return render(request, 'ver_cronograma_tutorado.html', {
+        'tutorado': perfil,
+        'usuario': perfil.usuario,
+        'checkpoints': checkpoints
     })

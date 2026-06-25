@@ -78,8 +78,11 @@
 
     <div class="form-footer-bar">
       <a href="{% url 'tutorias:detalhe_tutorado' tutorado.pk %}" class="btn btn-secondary">Voltar ao Perfil</a>
+      <a href="{% url 'tutorias:ficha_impresso' tutorado.pk %}" target="_blank" class="btn btn-secondary">
+        <i data-lucide="printer" class="icon" aria-hidden="true"></i> Imprimir
+      </a>
       <button type="submit" class="btn btn-primary" style="display:inline-flex; align-items:center; gap:0.5rem;">
-        <i data-lucide="save" class="icon" aria-hidden="true"></i> Salvar Ficha Diagnóstica
+        <i data-lucide="save" class="icon" aria-hidden="true"></i> Salvar
       </button>
     </div>
   </form>

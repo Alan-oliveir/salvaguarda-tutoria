@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Cronograma de {{ usuario.get_nome_completo }} — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/calendario.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
+<style>
+  .fc-timegrid-slot { height: 2.8rem; }
+  .checkpoint-table { width: 100%; border-collapse: collapse; margin-top: 1rem; background: white; border-radius: var(--radius-md); overflow: hidden; box-shadow: var(--shadow-sm); }
+  .checkpoint-table th, .checkpoint-table td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--sg-border); font-size: 0.9rem; }
+  .checkpoint-table th { background: var(--sg-bg); font-weight: 700; }
+  .status-badge { padding: 0.25rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.8rem; font-weight: bold; }
+  .status-total { background: var(--sg-success-light); color: var(--sg-success); }
+  .status-parcial { background: var(--sg-orange-light); color: var(--sg-orange-dark); }
+  .status-nao { background: var(--sg-error-light); color: var(--sg-error); }
+</style>
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'tutorias:detalhe_tutorado' tutorado.pk %}">
+    <i data-lucide="arrow-left" class="icon" aria-hidden="true"></i> Voltar ao Perfil de {{ usuario.first_name }}
+  </a>
+</p>
+
+<div class="page-hero" style="margin-bottom: 2rem;">
+  <div>
+    <h1>Cronograma de Estudos: {{ usuario.get_nome_completo }}</h1>
+    <p style="margin-top:0.5rem;">Visualização pedagógica da rotina semanal organizada pelo estudante.</p>
+  </div>
+</div>
+
+<div class="calendario-wrapper">
+  <div id="calendar" data-events-url="{% url 'tutorias:cronograma_estudos_json' %}?tutorado_id={{ usuario.id }}"></div>
+</div>
+
+<h3 style="margin: 2.5rem 0 0.5rem; color: var(--sg-dark);">Histórico de Checkpoints Semanais</h3>
+<p style="font-size: 0.9rem; color: var(--sg-muted); margin-bottom: 1rem;">Como o estudante avaliou o cumprimento do cronograma ao final de cada semana:</p>
+
+<table class="checkpoint-table">
+  <thead>
+    <tr>
+      <th style="width: 20%;">Semana referente a</th>
+      <th style="width: 30%;">Desempenho</th>
+      <th style="width: 50%;">Observações / Relato do Aluno</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for cp in checkpoints %}
+    <tr>
+      <td><strong>{{ cp.data_fim_semana|date:"d/m/Y" }}</strong></td>
+      <td>
+        {% if cp.status == 'TOTAL' %}
+          <span class="status-badge status-total">🚀 Cumpriu toda a meta</span>
+        {% elif cp.status == 'PARCIAL' %}
+          <span class="status-badge status-parcial">⏳ Cumpri parcialmente</span>
+        {% else %}
+          <span class="status-badge status-nao">⚠️ Não conseguiu cumprir</span>
+        {% endif %}
+      </td>
+      <td style="font-style: italic; color: #555;">
+        {% if cp.observacoes %}"{{ cp.observacoes }}"{% else %}<span style="color: var(--sg-muted);">Sem comentários adicionais.</span>{% endif %}
+      </td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="3" style="text-align: center; color: var(--sg-muted); padding: 2rem;">O estudante ainda não registrou nenhum checkpoint semanal.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    var eventsUrl = calendarEl.getAttribute('data-events-url');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'timeGridWeek',
+      headerToolbar: false,
+      dayHeaderFormat: { weekday: 'long' },
+      allDaySlot: false,
+      slotMinTime: '06:00:00',
+      slotMaxTime: '23:59:59',
+      firstDay: 1,
+      locale: 'pt-br',
+      height: 'auto',
+      events: eventsUrl,
+      editable: false, // Garante que o tutor NÃO pode arrastar ou alterar os blocos do aluno
+      eventStartEditable: false
+    });
+    calendar.render();
+  });
+</script>
+{% endblock %}

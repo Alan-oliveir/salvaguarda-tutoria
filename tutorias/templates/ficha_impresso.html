@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Ficha de {{ tutorado.usuario.get_nome_completo }}</title>
+    <style>
+        body { font-family: 'Arial', sans-serif; color: #333; line-height: 1.5; background: #fff; margin:0; }
+        .page { max-width: 800px; margin: 0 auto; padding: 2rem; }
+        .header { text-align: center; border-bottom: 2px solid #5C328E; padding-bottom: 1rem; margin-bottom: 2rem; }
+        .header h1 { color: #5C328E; font-size: 1.8rem; margin: 0; }
+        h2 { font-size: 1.2rem; color: #5C328E; border-bottom: 1px solid #ddd; padding-bottom: 0.3rem; margin-top: 2rem; }
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+        .info-box { background: #f9f9f9; padding: 1rem; border: 1px solid #ddd; border-radius: 4px; }
+        table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: 0.95rem; }
+        th, td { border: 1px solid #000; padding: 6px 10px; text-align: left; }
+        th { background-color: #f2f2f2; width: 70%; }
+
+        .no-print { display: block; margin: 2rem 0; text-align: center; }
+        .btn { background: #5C328E; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+        @media print { .no-print { display: none; } @page { margin: 1.5cm; } }
+    </style>
+</head>
+<body>
+    <div class="no-print"><button class="btn" onclick="window.print()">🖨️ Salvar como PDF</button></div>
+    <div class="page">
+        <div class="header">
+            <h1>Programa Salvaguarda</h1>
+            <p>Ficha de Acompanhamento Diagnóstico</p>
+        </div>
+
+        <div class="grid-2 info-box">
+            <div>
+                <strong>Estudante:</strong> {{ tutorado.usuario.get_nome_completo }}<br>
+                <strong>Série:</strong> {{ tutorado.get_serie_display }}<br>
+                <strong>Escola:</strong> {{ tutorado.escola|default:"Não informada" }}
+            </div>
+            <div>
+                <strong>Tutor(a):</strong> {{ ficha.tutor.get_nome_completo }}<br>
+                <strong>Curso Alvo:</strong> {{ tutorado.cursos_interesse|default:"Indefinido" }}<br>
+                <strong>Última atualização:</strong> {{ ficha.data_atualizacao|date:"d/m/Y" }}
+            </div>
+        </div>
+
+        <h2>1. Demandas Avaliadas</h2>
+        <table>
+            <tbody>
+                <tr><th>Conceito de Universidades Públicas x Privadas</th><td>{{ ficha.get_info_publica_privada_display }}</td></tr>
+                <tr><th>Entendimento sobre Vestibulares</th><td>{{ ficha.get_info_vestibulares_display }}</td></tr>
+                <tr><th>Conhecimento do ENEM / SISU / PROUNI</th><td>{{ ficha.get_info_enem_programas_display }}</td></tr>
+                <tr><th>Conhecimento sobre Nota de Corte</th><td>{{ ficha.get_info_nota_corte_display }}</td></tr>
+                <tr><th>Segue Rotina e Cronograma</th><td>{{ ficha.get_org_rotina_display }}</td></tr>
+                <tr><th>Possui Estudo Ativo e Eficiente</th><td>{{ ficha.get_org_estudo_ativo_display }}</td></tr>
+            </tbody>
+        </table>
+
+        <h2>2. Percepções Gerais</h2>
+        <div class="info-box" style="background: white;">
+            <p><strong>Maiores Dificuldades:</strong><br> {{ ficha.maiores_dificuldades|default:"Nada registrado." }}</p>
+            <p><strong>Pontos Positivos:</strong><br> {{ ficha.pontos_positivos|default:"Nada registrado." }}</p>
+        </div>
+
+        <h2>3. Plano de Ação (Tarefas de Planejamento Atribuídas)</h2>
+        {% if plano_acao %}
+        <ul>
+            {% for tarefa in plano_acao %}
+            <li style="margin-bottom: 0.5rem;">
+                <strong>{{ tarefa.titulo }}</strong> (Criado em {{ tarefa.data_criacao|date:"d/m/Y" }})
+                {% if tarefa.status == 'CONCLUIDA' %}<span style="color: green; font-weight: bold;">[CONCLUÍDO]</span>{% else %}<span style="color: red;">[PENDENTE]</span>{% endif %}
+                <br><span style="font-size: 0.9rem; color: #555;">{{ tarefa.descricao }}</span>
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p style="color: #666; font-style: italic;">Nenhuma tarefa da categoria "Planejamento e Estratégia" foi atribuída a este aluno ainda.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

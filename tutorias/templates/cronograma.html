@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Meu Cronograma de Estudos — Salvaguarda{% endblock %}
+
+{% block extra_head %}
+<link rel="stylesheet" href="{% static 'css/calendario.css' %}">
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.css" rel="stylesheet">
+
+<style>
+  /* Customizações específicas para o Cronograma Escolar */
+  .fc-timegrid-slot { height: 3rem; } /* Dá um pouco mais de espaço vertical para as matérias */
+  .checkpoint-card { background: var(--sg-white); border: 1px solid var(--sg-border); border-radius: var(--radius-lg); padding: 1.5rem; box-shadow: var(--shadow-sm); margin-top: 2rem; }
+  .checkpoint-options { display: flex; gap: 1rem; margin: 1rem 0; flex-wrap: wrap; }
+  .checkpoint-radio { display: none; }
+  .checkpoint-label { flex: 1; min-width: 200px; padding: 1rem; border: 2px solid var(--sg-border); border-radius: var(--radius-md); cursor: pointer; text-align: center; font-weight: 600; transition: all 0.2s; background: #fafafa; }
+  .checkpoint-radio:checked + .checkpoint-label.total { border-color: var(--sg-success); background: var(--sg-success-light); color: var(--sg-success); }
+  .checkpoint-radio:checked + .checkpoint-label.parcial { border-color: var(--sg-orange); background: var(--sg-orange-light); color: var(--sg-orange-dark); }
+  .checkpoint-radio:checked + .checkpoint-label.nao { border-color: var(--sg-error); background: var(--sg-error-light); color: var(--sg-error); }
+</style>
+{% endblock %}
+
+{% block content %}
+<p class="breadcrumb">
+  <a href="{% url 'usuarios:painel_inicial' %}">Painel</a> / Cronograma
+</p>
+
+<div class="page-hero" style="margin-bottom: 2rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+  <div>
+    <h1><i data-lucide="calendar-days" style="vertical-align: middle;"></i> Minha Rotina de Estudos</h1>
+    <p style="margin-top:0.5rem;">Organize as disciplinas que você vai estudar fixamente em cada dia da semana.</p>
+  </div>
+  <button class="btn btn-primary" id="btnAbrirModalForm" style="display: inline-flex; align-items: center; gap: 0.5rem;">
+    <i data-lucide="plus" style="width: 18px; height: 18px;"></i> Estruturar Horário
+  </button>
+</div>
+
+<div class="calendario-wrapper">
+  <div id="calendar"
+       data-events-url="{% url 'tutorias:cronograma_estudos_json' %}"
+       data-delete-url="{% url 'tutorias:deletar_bloco_estudo' 0 %}">
+  </div>
+  <p class="calendario-hint">
+    <i data-lucide="info" style="width:13px;height:13px;vertical-align:middle;"></i>
+    Dica: A visualização acima mostra a sua grade fixa que se repete semanalmente de forma automática.
+  </p>
+</div>
+
+<div class="checkpoint-card">
+  <h3 style="color: var(--sg-dark); display: flex; align-items: center; gap: 0.5rem;">
+    <i data-lucide="badge-check" style="color: var(--sg-purple);"></i> Checkpoint de Desempenho
+  </h3>
+  <p style="font-size: 0.9rem; color: var(--sg-muted); margin-top: 0.25rem;">
+    Compromisso pedagógico: Ao final de cada semana (no Domingo), reserve 1 minuto para avaliar como foi o cumprimento do seu cronograma.
+  </p>
+
+  <form method="post">
+    {% csrf_token %}
+    <input type="hidden" name="checkpoint" value="1">
+
+    <div class="checkpoint-options">
+      <input type="radio" name="status" value="TOTAL" id="status_total" class="checkpoint-radio" required>
+      <label for="status_total" class="checkpoint-label total">🚀 Consegui cumprir toda a meta!</label>
+
+      <input type="radio" name="status" value="PARCIAL" id="status_parcial" class="checkpoint-radio">
+      <label for="status_parcial" class="checkpoint-label parcial">⏳ Cumpri parcialmente</label>
+
+      <input type="radio" name="status" value="NAO" id="status_nao" class="checkpoint-radio">
+      <label for="status_nao" class="checkpoint-label nao">⚠️ Não consegui cumprir esta semana</label>
+    </div>
+
+    <div class="form-group">
+      <label for="observacoes" style="font-weight: 600; font-size: 0.9rem; margin-bottom: 0.4rem; display: block;">Como foi a sua semana? (Opcional)</label>
+      <textarea name="observacoes" id="observacoes" rows="2" class="form-control" placeholder="Tive imprevistos com o colégio, rendi muito bem em exatas, focado em redação..."></textarea>
+    </div>
+
+    <button type="submit" class="btn btn-secondary" style="margin-top: 0.5rem; background: var(--sg-purple-light); color: var(--sg-purple); font-weight: bold; border: none;">
+      Registrar Avaliação Semanal
+    </button>
+  </form>
+</div>
+
+<div class="modal-overlay" id="modalFormOverlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <div class="modal-header">
+      <div>
+        <h2>Adicionar Horário de Estudo</h2>
+        <p class="modal-header-meta">Monte os blocos de matérias da sua rotina.</p>
+      </div>
+      <button class="modal-close" id="btnFecharModalForm">
+        <i data-lucide="x" style="width:18px;height:18px;"></i>
+      </button>
+    </div>
+
+    <form method="post" action="#">
+      {% csrf_token %}
+      <input type="hidden" name="adicionar_bloco" value="1">
+      <div class="modal-body">
+        <div class="form-grid-2">
+
+          <div class="form-group">
+            <label for="id_disciplina">Disciplina *</label>
+            <select name="disciplina" id="id_disciplina" required class="form-control">
+              <option value="">Selecione...</option>
+              {% for cod, label in disciplinas_choices %}
+                <option value="{{ cod }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="id_dia_semana">Dia da Semana *</label>
+            <select name="dia_semana" id="id_dia_semana" required class="form-control">
+              <option value="1">Segunda-feira</option>
+              <option value="2">Terça-feira</option>
+              <option value="3">Quarta-feira</option>
+              <option value="4">Quinta-feira</option>
+              <option value="5">Sexta-feira</option>
+              <option value="6">Sábado</option>
+              <option value="0">Domingo</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="id_horario_inicio">Horário de Início *</label>
+            <input type="time" name="horario_inicio" id="id_horario_inicio" required class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label for="id_horario_fim">Horário de Término *</label>
+            <input type="time" name="horario_fim" id="id_horario_fim" required class="form-control">
+          </div>
+
+          <div class="form-group col-full">
+            <label class="checkbox-row" for="id_quinzenal">
+              <input type="checkbox" name="quinzenal" id="id_quinzenal" value="1">
+              <span>Alternar esta matéria a cada 15 dias (ex: Filosofia/Sociologia)</span>
+            </label>
+          </div>
+
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btnCancelarModalForm" class="btn btn-secondary">Cancelar</button>
+        <button type="submit" class="btn btn-primary">Adicionar ao Cronograma</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    // 1. Inicialização do FullCalendar no Modo Grade Semanal Otimizada
+    var calendarEl = document.getElementById('calendar');
+    var eventsUrl = calendarEl.getAttribute('data-events-url');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'timeGridWeek', // Mostra a semana inteira de domingo a sábado
+      headerToolbar: false, // Remove os botões de avançar/voltar meses já que a grade é fixa semanal
+      dayHeaderFormat: { weekday: 'long' }, // Exibe apenas "Segunda-feira", "Terça-feira" sem números de calendário
+      allDaySlot: false,
+      slotMinTime: '06:00:00', // Inicia a grade do dia às 6h da manhã
+      slotMaxTime: '23:59:59', // Termina às 00h
+      firstDay: 1, // Faz a semana visual iniciar na Segunda-feira de forma natural
+      locale: 'pt-br',
+      height: 'auto',
+      events: eventsUrl, // Carrega dinamicamente da API JSON do Django
+
+      // Ao clicar em uma matéria existente no cronograma, daremos a opção de exclusão
+      eventClick: function(info) {
+        var idBloco = info.event.extendedProps.id_bloco;
+
+        if (confirm("Deseja remover o horário de '" + info.event.title + "' do seu cronograma?")) {
+            // Pega a URL base e substitui o '0' pelo ID real do bloco clicado
+            var urlBase = calendarEl.getAttribute('data-delete-url').replace('/0/', '/' + idBloco + '/');
+
+            // Cria um formulário dinâmico que envia um POST seguro (evita deleção acidental via GET)
+            var form = document.createElement('form');
+            form.method = 'POST';
+            form.action = urlBase;
+
+            var csrfInput = document.createElement('input');
+            csrfInput.type = 'hidden';
+            csrfInput.name = 'csrfmiddlewaretoken';
+            csrfInput.value = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+            form.appendChild(csrfInput);
+            document.body.appendChild(form);
+            form.submit();
+        }
+      }
+    });
+    calendar.render();
+
+    // 2. Controladores de Abertura/Fechamento do Modal de Cadastro
+    const overlay = document.getElementById('modalFormOverlay');
+    const btnAbrir = document.getElementById('btnAbrirModalForm');
+    const btnFechar = document.getElementById('btnFecharModalForm');
+    const btnCancelar = document.getElementById('btnCancelarModalForm');
+
+    btnAbrir.addEventListener('click', () => overlay.classList.add('open'));
+    btnFechar.addEventListener('click', () => overlay.classList.remove('open'));
+    btnCancelar.addEventListener('click', () => overlay.classList.remove('open'));
+  });
+</script>
+{% endblock %}

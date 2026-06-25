@@ -5,6 +5,7 @@ from .views import (
     CustomLogoutView,
     RegistroView,
     painel_inicial,
+    relatorio_geral,
     perfil_usuario,
     redirect_after_login,
     CustomPasswordResetView,
@@ -22,6 +23,7 @@ urlpatterns = [
     path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('registro/', RegistroView.as_view(), name='registro'),
     path('painel/', painel_inicial, name='painel_inicial'),
+    path('relatorio-geral/', relatorio_geral, name='relatorio_geral'),
     path('perfil/', perfil_usuario, name='perfil_usuario'),
 
     # Rotas de recuperação de senha:

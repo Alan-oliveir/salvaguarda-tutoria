@@ -1,15 +1,16 @@
 from django.urls import path
 
+from .views.cronograma import cronograma, deletar_bloco_estudo
 from .views.disponibilidade import (
     disponibilidade, deletar_disponibilidade, calendario, slots_json
 )
 from .views.reunioes import (
-    solicitar_reuniao, minhas_reunioes, lista_reunioes,
-    detalhe_reuniao, editar_reuniao, enviar_email_link, cancelar_reuniao, realizar_reuniao
+    solicitar_reuniao, minhas_reunioes, lista_reunioes, detalhe_reuniao, editar_reuniao, enviar_email_link,
+    cancelar_reuniao, realizar_reuniao
 )
 from .views.tutorados import (
-    lista_tutorados, vincular_tutorado, desvincular_tutorado,
-    detalhe_tutorado, editar_tutorado, ficha_diagnostica, controle_horas, relatorio_impresso
+    lista_tutorados, vincular_tutorado, desvincular_tutorado, detalhe_tutorado, editar_tutorado, ficha_diagnostica,
+    controle_horas, relatorio_impresso, ficha_impresso, cronograma_estudos_json, ver_cronograma_tutorado
 )
 
 app_name = 'tutorias'
@@ -22,6 +23,7 @@ urlpatterns = [
     path('<int:pk>/', detalhe_tutorado, name='detalhe_tutorado'),
     path('<int:pk>/editar/', editar_tutorado, name='editar_tutorado'),
     path('tutorados/<int:pk>/ficha/', ficha_diagnostica, name='ficha_diagnostica'),
+    path('tutorados/<int:pk>/ficha-impresso/', ficha_impresso, name='ficha_impresso'),
 
     # Disponibilidade do tutor
     path('disponibilidade/', disponibilidade, name='disponibilidade'),
@@ -48,4 +50,10 @@ urlpatterns = [
     # Relatório - controle de horas
     path('controle-horas/', controle_horas, name='controle_horas'),
     path('controle-horas/imprimir/', relatorio_impresso, name='relatorio_impresso'),
+
+    # Cronograma de estudos - tutorado
+    path('cronograma/', cronograma, name='cronograma'),
+    path('api/cronograma-eventos/', cronograma_estudos_json, name='cronograma_estudos_json'),
+    path('cronograma/deletar/<int:pk>/', deletar_bloco_estudo, name='deletar_bloco_estudo'),
+    path('tutorados/<int:pk>/cronograma/', ver_cronograma_tutorado, name='ver_cronograma_tutorado'),
 ]

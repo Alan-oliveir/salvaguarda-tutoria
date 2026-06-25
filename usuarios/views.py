@@ -1,6 +1,8 @@
 from datetime import date
+from datetime import timedelta
 
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth.views import PasswordChangeView
@@ -10,10 +12,12 @@ from django.contrib.auth.views import (
 )
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.utils import timezone
 from django.views.generic import CreateView
 
 from materiais.models import Material
 from tarefas.models import Tarefa
+from tutorias.models import Reuniao, AtividadeExtra
 from .forms import CustomPasswordChangeForm
 from .forms import CustomPasswordResetForm, CustomSetPasswordForm
 from .forms import CustomUserCreationForm
@@ -57,17 +61,14 @@ class RegistroView(CreateView):
 
 @login_required
 def painel_inicial(request):
-    from tutorias.models import Reuniao
-
     tipo = request.user.tipo.upper()
     context = {'tipo': tipo, 'user': request.user}
+    User = get_user_model()
 
     if tipo == 'ADMIN':
-        context.update({
-            'total_usuarios': CustomUser.objects.count(),
-            'total_tutores': CustomUser.objects.filter(tipo='TUTOR').count(),
-            'total_tutorados': CustomUser.objects.filter(tipo='TUTORADO').count(),
-        })
+        context['total_usuarios'] = User.objects.count()
+        context['total_tutores'] = User.objects.filter(tipo='TUTOR').count()
+        context['total_tutorados'] = User.objects.filter(tipo='TUTORADO').count()
 
     elif tipo == 'TUTOR':
         tutorados = PerfilTutorado.objects.filter(tutor=request.user)
@@ -132,6 +133,44 @@ def perfil_usuario(request):
         return redirect('usuarios:perfil_usuario')
 
     return render(request, 'perfil.html', {'user': request.user})
+
+
+@login_required
+def relatorio_geral(request):
+    """Nova view dedicada ao painel de relatórios do administrador."""
+    if request.user.tipo != 'ADMIN':
+        return redirect('usuarios:painel_inicial')
+
+    User = get_user_model()
+
+    # Métricas Globais
+    total_usuarios = User.objects.count()
+    total_tutores = User.objects.filter(tipo='TUTOR').count()
+    total_tutorados = User.objects.filter(tipo='TUTORADO').count()
+
+    # 1: Alunos Órfãos
+    alunos_orfaos = PerfilTutorado.objects.filter(tutor__isnull=True).select_related('usuario')
+
+    # 2: Tutores Inativos (15 dias sem registros)
+    data_limite = timezone.now().date() - timedelta(days=15)
+    tutores = User.objects.filter(tipo='TUTOR', is_active=True)
+    tutores_inativos = []
+
+    for tutor in tutores:
+        tem_reuniao = Reuniao.objects.filter(tutor=tutor, data__gte=data_limite).exists()
+        tem_atividade = AtividadeExtra.objects.filter(tutor=tutor, data__gte=data_limite).exists()
+
+        if not tem_reuniao and not tem_atividade:
+            qtd_alunos = PerfilTutorado.objects.filter(tutor=tutor).count()
+            tutores_inativos.append({'user': tutor, 'qtd_alunos': qtd_alunos})
+
+    return render(request, 'relatorio_geral.html', {
+        'total_usuarios': total_usuarios,
+        'total_tutores': total_tutores,
+        'total_tutorados': total_tutorados,
+        'alunos_orfaos': alunos_orfaos,
+        'tutores_inativos': tutores_inativos,
+    })
 
 
 def redirect_after_login(request):

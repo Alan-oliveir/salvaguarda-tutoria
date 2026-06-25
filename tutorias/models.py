@@ -212,3 +212,92 @@ class AtividadeExtra(models.Model):
 
     def __str__(self):
         return f"{self.descricao} - {self.tutor.first_name} ({self.duracao_minutos} min)"
+
+
+class GradeEstudo(models.Model):
+    # Numeração nativa do FullCalendar (0 = Domingo, 1 = Segunda...)
+    DIA_CHOICES = [
+        (1, 'Segunda-feira'),
+        (2, 'Terça-feira'),
+        (3, 'Quarta-feira'),
+        (4, 'Quinta-feira'),
+        (5, 'Sexta-feira'),
+        (6, 'Sábado'),
+        (0, 'Domingo'),
+    ]
+
+    DISCIPLINA_CHOICES = [
+        ('PORTUGUES', 'Português'),
+        ('REDACAO', 'Redação'),
+        ('MATEMATICA', 'Matemática'),
+        ('FISICA', 'Física'),
+        ('QUIMICA', 'Química'),
+        ('BIOLOGIA', 'Biologia'),
+        ('HISTORIA', 'História'),
+        ('GEOGRAFIA', 'Geografia'),
+        ('FILOSOFIA', 'Filosofia'),
+        ('SOCIOLOGIA', 'Sociologia'),
+        ('LINGUAS', 'Língua Estrangeira'),
+        ('REVISAO', 'Revisão / Simulados'),
+    ]
+
+    tutorado = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='grade_estudos',
+        limit_choices_to={'tipo': 'TUTORADO'}
+    )
+
+    dia_semana = models.IntegerField("Dia da Semana", choices=DIA_CHOICES)
+    horario_inicio = models.TimeField("Horário de Início")
+    horario_fim = models.TimeField("Horário de Término")
+    disciplina = models.CharField(max_length=20, choices=DISCIPLINA_CHOICES)
+
+    # Para lidar com os casos como Filosofia/Sociologia
+    quinzenal = models.BooleanField(
+        "Alternar a cada 15 dias?",
+        default=False,
+        help_text="Marque se esta disciplina for alternada com outra no mesmo horário."
+    )
+
+    class Meta:
+        verbose_name = 'Bloco de Estudo'
+        verbose_name_plural = 'Grade de Estudos'
+        ordering = ['dia_semana', 'horario_inicio']
+
+    def __str__(self):
+        return f"{self.get_disciplina_display()} ({self.get_dia_semana_display()}) - {self.tutorado.first_name}"
+
+
+class CheckpointSemanal(models.Model):
+    STATUS_CHOICES = [
+        ('TOTAL', 'Consegui cumprir toda a meta'),
+        ('PARCIAL', 'Cumpri parcialmente'),
+        ('NAO', 'Não consegui cumprir o cronograma'),
+    ]
+
+    tutorado = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='checkpoints'
+    )
+
+    # A data que representa o fim dessa semana de estudos (geralmente um Domingo)
+    data_fim_semana = models.DateField("Referente à semana de:")
+
+    status = models.CharField(max_length=10, choices=STATUS_CHOICES)
+    observacoes = models.TextField(
+        "Como foi a sua semana?",
+        blank=True,
+        help_text="O que funcionou bem? Teve imprevistos?"
+    )
+
+    data_registro = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        verbose_name = 'Checkpoint Semanal'
+        verbose_name_plural = 'Checkpoints Semanais'
+        ordering = ['-data_fim_semana']
+
+    def __str__(self):
+        return f"Checkpoint {self.data_fim_semana.strftime('%d/%m')} - {self.tutorado.first_name}"

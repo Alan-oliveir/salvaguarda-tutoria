@@ -140,6 +140,18 @@
 {% endif %}
 
 <div class="info-card">
+  <div class="info-card-header" style="display: flex; justify-content: space-between; align-items: center;">
+    <p class="info-card-title">
+      <i data-lucide="calendar-days" class="icon" aria-hidden="true"></i> Rotina e Organização de Estudos
+    </p>
+    <a href="{% url 'tutorias:ver_cronograma_tutorado' tutorado.pk %}" class="btn btn-secondary" style="font-size: 0.82rem; padding: 0.35rem 0.85rem">
+      Visualizar Cronograma Completo
+    </a>
+  </div>
+  <p class="mt-sm" style="font-size: 0.9rem; color: var(--sg-muted);">
+    Acompanhe os horários fixos de estudo planejados pelo estudante e veja as avaliações de desempenho semanais (Checkpoints).
+  </p>
+</div>
 
 <!-- Reuniões -->
 <div class="info-card">
