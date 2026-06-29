@@ -1,0 +1,38 @@
+name: Deploy to Oracle Cloud
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v3
+
+    - name: Executar Deploy via SSH na Oracle Cloud
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.ORACLE_SERVER_IP }}
+        username: ${{ secrets.ORACLE_SERVER_USER }}
+        key: ${{ secrets.ORACLE_SSH_PRIVATE_KEY }}
+        script: |
+          cd ~/salvaguarda-app || git clone https://github.com/${{ github.repository }}.git ~/salvaguarda-app && cd ~/salvaguarda-app
+          
+          git pull origin main
+
+          docker stop salvaguarda-container || true
+          docker rm salvaguarda-container || true
+          
+          docker build -t salvaguarda-django .
+          
+          docker run -d \
+            --name salvaguarda-container \
+            -p 80:8000 \
+            --restart always \
+            -e DATABASE_URL="${{ secrets.NEON_DATABASE_URL }}" \
+            -e SECRET_KEY="${{ secrets.DJANGO_SECRET_KEY }}" \
+            -e DEBUG="False" \
+            salvaguarda-django
