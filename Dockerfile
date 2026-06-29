@@ -1,5 +1,5 @@
 # Usa uma imagem oficial do Python leve
-FROM python:3.11-slim
+FROM python:3.14-slim
 
 # Define variáveis de ambiente para o Python operar de forma otimizada no container
 ENV PYTHONDONTWRITEBYTECODE=1
