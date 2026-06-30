@@ -25,7 +25,7 @@ Para que um tutor possa orientar um estudante, este deve estar previamente cadas
 
 3. Identifique o estudante correto, valide informações como o ano escolar e clique no botão **Vincular**.
 
-### Visualizando Prontuários e Detalhes
+### Visualizando a Listagem de Tutorados
 Após a vinculação, o estudante passa a constar na sua listagem oficial de acompanhamento.
 
 1. Acesse a seção **Meus Tutorados**.
