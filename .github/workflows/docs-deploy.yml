@@ -28,12 +28,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 20
+          cache: "npm"
 
-      - name: Instalar dependências (se tiver package.json) ou apenas Vitepress
-        run: npm install vitepress
+      - name: Instalar dependências
+        run: npm ci
 
       - name: Build do VitePress
         run: npx vitepress build docs
+
+      - name: Criar arquivo .nojekyll
+        run: touch docs/.vitepress/dist/.nojekyll
 
       - name: Upload do artefato
         uses: actions/upload-pages-artifact@v3
