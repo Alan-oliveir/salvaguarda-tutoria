@@ -168,8 +168,8 @@ cython_debug/
 node_modules/
 
 # Vitepress
-docs/.vitepress/cache/
-docs/.vitepress/dist/
+**/.vitepress/cache/
+**/.vitepress/dist/
 
 # Static files
 staticfiles/
