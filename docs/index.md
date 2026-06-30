@@ -6,7 +6,7 @@ hero:
   text: "Plataforma de Apoio Educacional"
   tagline: "Conectando tutores voluntários e estudantes da rede pública de forma inteligente."
   image:
-    src: public/demo.gif
+    src: /demo.gif
     alt: Demonstração do App Salvaguarda
   actions:
     - theme: brand
